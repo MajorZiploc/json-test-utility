@@ -152,3 +152,35 @@ export class JsonRefactor {
    */
   public fromKeyValArray(keyValueArray: Array<{ key: string; value: any }>): any;
 }
+
+export class MigrationHandler {
+  /**
+   *
+   * This operation in immutable
+   *
+   *
+   * @param jsons - list of jsons to migrate
+   * @param migrators
+   *  list of migrators that take old jsons and create new jsons based on them.
+   *  its an order list where the created json of one migrator becomes the old json/input of the next
+   */
+  migrateJsons(jsons: any[], migrators: IJsonMigrator[]): any[];
+
+  /**
+   * Create a log file of all alterations to be made to the jsons.
+   *
+   * @param migrators
+   */
+  logMigration(migrators: IJsonMigrator[]): Promise<void>;
+
+  /**
+   * 1. Reads a folder and grabs ALL files in that folder and expects them to be jsons.
+   * 2. Performs the migration
+   * 3. logs the migration if wanted
+   *
+   * @param folderPath
+   * @param migrators
+   * @param shouldLog
+   */
+  migrateFolder(folderPath: string, migrators: IJsonMigrator[], shouldLog: boolean): Promise<void>;
+}
