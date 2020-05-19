@@ -1,7 +1,7 @@
 /**
  * Implement in order to use the MigrationHandler
  */
-export interface IJsonMigrator {
+export class IJsonMigrator {
   /**
    *
    * @param json The json to be migrated
@@ -14,7 +14,7 @@ export interface IJsonMigrator {
   description(): string;
 }
 
-interface MigrationHandler {
+declare class MigrationHandler {
   /**
    *
    * This operation in immutable
@@ -48,7 +48,7 @@ interface MigrationHandler {
 /**
  * A collection of ways to alter and compare jsons.
  */
-interface JsonRefactor {
+declare class JsonRefactor {
   /**
    * Create a copy of a json
    *
