@@ -6,8 +6,8 @@ var NameMigrator = /** @class */ (function () {
     function NameMigrator() {
     }
     NameMigrator.prototype.apply = function (json) {
-        var subJson = JsonRefactor_1.jr.subJson(json, ['status', 'date']);
-        return JsonRefactor_1.jr.addField(subJson, 'name', (json.prefix.length == 0 ? '' : json.prefix + ' ') + json.firstName + ' ' + json.lastName);
+        var subJson = JsonRefactor_1.jsonRefactor.subJson(json, ['status', 'date']);
+        return JsonRefactor_1.jsonRefactor.addField(subJson, 'name', (json.prefix.length == 0 ? '' : json.prefix + ' ') + json.firstName + ' ' + json.lastName);
     };
     NameMigrator.prototype.description = function () {
         return 'places all name fields into one field';

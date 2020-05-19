@@ -1,5 +1,5 @@
 import { IJsonMigrator } from '../../IJsonMigrator';
-import { jr } from './../../JsonRefactor';
+import { jsonRefactor as jr } from './../../JsonRefactor';
 
 class NameMigrator implements IJsonMigrator {
   apply(json: any) {

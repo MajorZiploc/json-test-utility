@@ -6,7 +6,7 @@ var DateMigrator = /** @class */ (function () {
     function DateMigrator() {
     }
     DateMigrator.prototype.apply = function (json) {
-        return JsonRefactor_1.jr.setField(json, 'date', json.date.replace(/\//g, '-'));
+        return JsonRefactor_1.jsonRefactor.setField(json, 'date', json.date.replace(/\//g, '-'));
     };
     DateMigrator.prototype.description = function () {
         return 'Converts / to - for the date field';

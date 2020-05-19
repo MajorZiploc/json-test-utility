@@ -1,4 +1,5 @@
 import { IJsonMigrator } from './IJsonMigrator';
-import { jr } from './JsonRefactor';
+import { jsonRefactor } from './JsonRefactor';
+import { jsonComparer } from './JsonComparer';
 import { migrationHandler } from './MigrationHandler';
-export { IJsonMigrator, jr, migrationHandler };
+export { IJsonMigrator, jsonRefactor, jsonComparer, migrationHandler };

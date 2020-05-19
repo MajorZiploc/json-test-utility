@@ -45,6 +45,7 @@ declare class MigrationHandler {
    */
   migrateFolder(folderPath: string, migrators: IJsonMigrator[], shouldLog?: boolean): Promise<void>;
 }
+
 /**
  * A collection of ways to alter and compare jsons.
  */
@@ -91,73 +92,12 @@ declare class JsonRefactor {
   sameKeys(json1: any, json2: any): boolean;
 
   /**
-   * Check if a json is a subset of another json.
-   *
-   * @param subJson
-   * @param superJson
-   */
-  isSubset(subJson: any, superJson: any): boolean;
-
-  /**
-   * Check if a json is a subset of another json based on keys
-   *
-   * @param subJson
-   * @param superJson
-   */
-  isSubsetKeys(subJson: any, superJson: any): boolean;
-
-  /**
-   *
-   * json subset check with extra flexiablity.
-   *
-   * @param subJson
-   * @param superJson
-   * @param specialSubKeys
-   *  (Ordered List) Keys from the subset json that will be compared in a special way.
-   * @param specialFns
-   *  (Ordered List) The special way in which special subset and superset json values will be compared.
-   * @param specialSuperKeys
-   *  (Ordered List) Keys from the subset json that will be compared in a special way.
-   * @param compareRest
-   *  A flag that states if the rest (non special) of the values in the json should be compared based on strict equalivence
-   */
-  isSubsetSpecialCases(
-    subJson: any,
-    superJson: any,
-    specialSubKeys: string[],
-    specialFns: Array<(subValue: any, superValue: any) => boolean>,
-    specialSuperKeys?: string[],
-    compareRest?: boolean
-  ): boolean;
-
-  /**
    * Creates a subset json based on what keys you want to keep from the original json.
    *
    * @param json
    * @param keys
    */
   subJson(json: any, keys: string[]): any;
-
-  /**
-   * Ignores order.
-   *
-   * Checks if all elements from the subset array exist in the super set array.
-   *
-   * @param subArray
-   * @param superArray
-   */
-  isSubsetArray(subArray: any[], superArray: any[]): boolean;
-
-  /**
-   * Ignores order.
-   *
-   * Checks if all elements of the first array exist in the second array and
-   * Checks if all elements from the second array exist in the first array.
-   *
-   * @param array1
-   * @param array2
-   */
-  containSameElements(array1: any[], array2: any[]): boolean;
 
   /**
    * Creates a subset json based on what keys you want to exclude from the original json.
@@ -182,6 +122,74 @@ declare class JsonRefactor {
   fromKeyValArray(keyValueArray: Array<{ key: string; value: any }>): any;
 }
 
-export const jr: JsonRefactor;
+/**
+ * A collection of ways to compare jsons.
+ */
+class JsonComparer {
+  /**
+   * Check if a json is a subset of another json.
+   *
+   * @param subJson
+   * @param superJson
+   */
+  public isSubset(subJson: any, superJson: any): boolean;
+
+  /**
+   * Check if a json is a subset of another json based on keys
+   *
+   * @param subJson
+   * @param superJson
+   */
+  public isSubsetKeys(subJson: any, superJson: any): boolean;
+
+  /**
+   *
+   * json subset check with extra flexiablity.
+   *
+   * @param subJson
+   * @param superJson
+   * @param specialSubKeys
+   *  (Ordered List) Keys from the subset json that will be compared in a special way.
+   * @param specialFns
+   *  (Ordered List) The special way in which special subset and superset json values will be compared.
+   * @param specialSuperKeys
+   *  (Ordered List) Keys from the subset json that will be compared in a special way.
+   * @param compareRest
+   *  A flag that states if the rest (non special) of the values in the json should be compared based on strict equalivence
+   */
+  public isSubsetSpecialCases(
+    subJson: any,
+    superJson: any,
+    specialSubKeys: string[],
+    specialFns: Array<(subValue: any, superValue: any) => boolean>,
+    specialSuperKeys?: string[],
+    compareRest?: boolean
+  ): boolean;
+
+  /**
+   * Ignores order.
+   *
+   * Checks if all elements from the subset array exist in the super set array.
+   *
+   * @param subArray
+   * @param superArray
+   */
+  public isSubsetArray(subArray: any[], superArray: any[]): boolean;
+
+  /**
+   * Ignores order.
+   *
+   * Checks if all elements of the first array exist in the second array and
+   * Checks if all elements from the second array exist in the first array.
+   *
+   * @param array1
+   * @param array2
+   */
+  public containSameElements(array1: any[], array2: any[]): boolean;
+}
+
+export const jsonComparer: JsonComparer;
+
+export const jsonRefactor: JsonRefactor;
 
 export const migrationHandler: MigrationHandler;
