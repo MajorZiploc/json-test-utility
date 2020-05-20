@@ -2,6 +2,7 @@ import * as testTools from '../testTools';
 import { migrationHandler } from '../MigrationHandler';
 import * as _ from 'lodash';
 import * as m from './JsonMigrators';
+import { ListOfJsonMigratorOf } from './../ListOfJsonMigrator';
 import * as test from 'tape-catch';
 
 const testData: testTools.testInput[] = [
@@ -48,7 +49,7 @@ test('Check full json migration lifecycle', async t => {
   const data = './src/spec/MigrationTestData';
   await migrationHandler.migrateFolder(
     data,
-    [m.dateMigrator, m.nameMigrator].map(mi => new m.ListOfJsonMigrator(mi)),
+    [m.dateMigrator, m.nameMigrator].map(mi => ListOfJsonMigratorOf(mi)),
     true
   );
   // const actual = d.testFn(data);

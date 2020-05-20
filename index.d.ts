@@ -14,6 +14,15 @@ export class IJsonMigrator {
   description(): string;
 }
 
+/**
+ * Implement in order to use the MigrationHandler if each of the jsons is a list of jsons
+ *
+ * @param eleMigrator A jsonmigrator object that operates on a single json from the json list
+ * @returns
+ *  A jsonMigrator that operates on a list of jsons.
+ */
+export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator);
+
 declare class MigrationHandler {
   /**
    *

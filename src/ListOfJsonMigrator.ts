@@ -1,7 +1,6 @@
-import { IJsonMigrator } from '../../IJsonMigrator';
-import { nameMigrator } from './NameMigrator';
+import { IJsonMigrator } from './IJsonMigrator';
 
-export class ListOfJsonMigrator implements IJsonMigrator {
+class ListOfJsonMigrator implements IJsonMigrator {
   jsonMigrator: IJsonMigrator;
   constructor(jsonMigrator) {
     this.jsonMigrator = jsonMigrator;
@@ -12,4 +11,8 @@ export class ListOfJsonMigrator implements IJsonMigrator {
   description(): string {
     return this.jsonMigrator.description();
   }
+}
+
+export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator) {
+  return new ListOfJsonMigrator(eleMigrator);
 }
