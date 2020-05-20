@@ -125,7 +125,7 @@ declare class JsonRefactor {
 /**
  * A collection of ways to compare jsons.
  */
-class JsonComparer {
+declare class JsonComparer {
   /**
    * Check if a json is a subset of another json with the comparer function.
    *
