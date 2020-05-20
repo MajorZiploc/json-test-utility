@@ -2,6 +2,7 @@ import * as testTools from '../testTools';
 import { migrationHandler } from '../MigrationHandler';
 import * as _ from 'lodash';
 import * as m from './JsonMigrators';
+import * as test from 'tape-catch';
 
 const testData: testTools.testInput[] = [
   {
@@ -43,3 +44,11 @@ const testData: testTools.testInput[] = [
 ];
 
 testTools.tester(testData);
+test('Check full json migration lifecycle', t => {
+  const data = './src/spec/MigrationTestData';
+  migrationHandler.migrateFolder(data, [m.dateMigrator, m.nameMigrator], true);
+  // const actual = d.testFn(data);
+  // const expected = d.expected;
+  // t.true(_.isEqual(actual, expected), reporter(actual, expected));
+  t.end();
+});
