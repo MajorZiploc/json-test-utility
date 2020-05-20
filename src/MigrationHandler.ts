@@ -25,11 +25,27 @@ class MigrationHandler {
    * @param migrators
    */
   async logMigration(migrators: IJsonMigrator[]) {
-    const logFileName = (new Date() + '.log').replace(/\s/g, '_');
-    //await fs.createFile(logFileName).catch(err => console.log(err));
+    const now = new Date();
+    const logFileName = (
+      'JsonMigration_' +
+      now.getMonth() +
+      '-' +
+      now.getDay() +
+      '-' +
+      now.getFullYear() +
+      '_h' +
+      now.getHours() +
+      '_m' +
+      now.getMinutes() +
+      '_mil' +
+      now.getMilliseconds() +
+      '.log'
+    ).replace(/\s/g, '_');
+    await fs.writeFile(logFileName, 'JSON MIGRATION LOG\n\n'); //.catch(err => console.log(err));
     for (var i = 0; i < migrators.length; i++) {
       const migrator = migrators[i];
-      const logEntry = 'Migration #' + i + '-------------------\n' + migrator.description + '\n';
+      const logEntry =
+        ' ------------------- ' + 'Migration #' + (i + 1) + ' -------------------\n' + migrator.description() + '\n\n';
       await fs.appendFile(logFileName, logEntry);
     }
   }

@@ -64,25 +64,41 @@ var MigrationHandler = /** @class */ (function () {
      */
     MigrationHandler.prototype.logMigration = function (migrators) {
         return __awaiter(this, void 0, void 0, function () {
-            var logFileName, i, migrator, logEntry;
+            var now, logFileName, i, migrator, logEntry;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        logFileName = (new Date() + '.log').replace(/\s/g, '_');
-                        i = 0;
-                        _a.label = 1;
+                        now = new Date();
+                        logFileName = ('JsonMigration_' +
+                            now.getMonth() +
+                            '-' +
+                            now.getDay() +
+                            '-' +
+                            now.getFullYear() +
+                            '_h' +
+                            now.getHours() +
+                            '_m' +
+                            now.getMinutes() +
+                            '_mil' +
+                            now.getMilliseconds() +
+                            '.log').replace(/\s/g, '_');
+                        return [4 /*yield*/, fs.writeFile(logFileName, 'JSON MIGRATION LOG\n\n')];
                     case 1:
-                        if (!(i < migrators.length)) return [3 /*break*/, 4];
-                        migrator = migrators[i];
-                        logEntry = 'Migration #' + i + '-------------------\n' + migrator.description + '\n';
-                        return [4 /*yield*/, fs.appendFile(logFileName, logEntry)];
+                        _a.sent(); //.catch(err => console.log(err));
+                        i = 0;
+                        _a.label = 2;
                     case 2:
-                        _a.sent();
-                        _a.label = 3;
+                        if (!(i < migrators.length)) return [3 /*break*/, 5];
+                        migrator = migrators[i];
+                        logEntry = ' ------------------- ' + 'Migration #' + (i + 1) + ' -------------------\n' + migrator.description() + '\n\n';
+                        return [4 /*yield*/, fs.appendFile(logFileName, logEntry)];
                     case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
                         i++;
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 2];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
