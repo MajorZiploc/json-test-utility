@@ -127,7 +127,18 @@ declare class JsonRefactor {
  */
 class JsonComparer {
   /**
-   * Check if a json is a subset of another json.
+   * Check if a json is a subset of another json with the comparer function.
+   *
+   * NOTE: This function is used on every value in the json.
+   *
+   * @param subJson
+   * @param superJson
+   * @param compareFn How to compare the values from each json
+   */
+  public isSubsetWith(subJson: any, superJson: any, compareFn: (f: any, s: any) => boolean);
+
+  /**
+   * Check if a json is a subset of another json through strict equivalence
    *
    * @param subJson
    * @param superJson
@@ -175,6 +186,21 @@ class JsonComparer {
    * @param superArray
    */
   public isSubsetArray(subArray: any[], superArray: any[]): boolean;
+
+  /**
+   *
+   * Ignores order.
+   *
+   * Checks if all elements of the first array exist in the second array and
+   * Checks if all elements from the second array exist in the first array.
+   *
+   * NOTE: uses the comparer function to do the comparsion for each element
+   *
+   * @param array1
+   * @param array2
+   * @param comparer how each element is compared
+   */
+  public containSameElementsWith(array1: any[], array2: any[], comparer: (f: any, s: any) => boolean);
 
   /**
    * Ignores order.

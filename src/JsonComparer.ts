@@ -1,51 +1,21 @@
 import * as _ from 'lodash';
 import { jsonRefactor as jr } from './JsonRefactor';
 
-/**
- * A collection of ways to compare jsons.
- */
 class JsonComparer {
-  private isSubsetGeneral(subJson, superJson, compareFn) {
+  public isSubsetWith(subJson: any, superJson: any, compareFn: (f: any, s: any) => boolean) {
     const subKVA = jr.toKeyValArray(subJson);
     const superKVA = jr.toKeyValArray(superJson);
     return subKVA.every(subKv => superKVA.some(supKv => compareFn(subKv, supKv)));
   }
 
-  /**
-   * Check if a json is a subset of another json.
-   *
-   * @param subJson
-   * @param superJson
-   */
   public isSubset(subJson, superJson) {
-    return this.isSubsetGeneral(subJson, superJson, _.isEqual);
+    return this.isSubsetWith(subJson, superJson, _.isEqual);
   }
 
-  /**
-   * Check if a json is a subset of another json based on keys
-   *
-   * @param subJson
-   * @param superJson
-   */
   public isSubsetKeys(subJson, superJson) {
-    return this.isSubsetGeneral(subJson, superJson, (sub, sup) => _.isEqual(sub.key, sup.key));
+    return this.isSubsetWith(subJson, superJson, (sub, sup) => _.isEqual(sub.key, sup.key));
   }
 
-  /**
-   *
-   * json subset check with extra flexiablity.
-   *
-   * @param subJson
-   * @param superJson
-   * @param specialSubKeys
-   *  (Ordered List) Keys from the subset json that will be compared in a special way.
-   * @param specialFns
-   *  (Ordered List) The special way in which special subset and superset json values will be compared.
-   * @param specialSuperKeys
-   *  (Ordered List) Keys from the subset json that will be compared in a special way.
-   * @param compareRest
-   *  A flag that states if the rest (non special) of the values in the json should be compared based on strict equalivence
-   */
   public isSubsetSpecialCases(
     subJson,
     superJson,
@@ -71,29 +41,20 @@ class JsonComparer {
     return didSpecialsPass;
   }
 
-  /**
-   * Ignores order.
-   *
-   * Checks if all elements from the subset array exist in the super set array.
-   *
-   * @param subArray
-   * @param superArray
-   */
-  public isSubsetArray(subArray: any[], superArray: any[]) {
-    return subArray.every(subV => superArray.some(supV => _.isEqual(subV, supV)));
+  public isSubsetArrayWith(subArray: any[], superArray: any[], comparer: (f: any, s: any) => boolean) {
+    return subArray.every(subV => superArray.some(supV => comparer(subV, supV)));
   }
 
-  /**
-   * Ignores order.
-   *
-   * Checks if all elements of the first array exist in the second array and
-   * Checks if all elements from the second array exist in the first array.
-   *
-   * @param array1
-   * @param array2
-   */
+  public isSubsetArray(subArray: any[], superArray: any[]) {
+    return this.isSubsetArrayWith(subArray, superArray, _.isEqual);
+  }
+
+  public containSameElementsWith(array1: any[], array2: any[], comparer: (f: any, s: any) => boolean) {
+    return this.isSubsetArrayWith(array1, array2, comparer) && this.isSubsetArrayWith(array1, array2, comparer);
+  }
+
   public containSameElements(array1: any[], array2: any[]) {
-    return this.isSubsetArray(array1, array2) && this.isSubsetArray(array1, array2);
+    return this.containSameElementsWith(array1, array2, _.isEqual);
   }
 }
 
