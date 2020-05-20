@@ -1,4 +1,5 @@
 import { jsonRefactor as jr } from '../JsonRefactor';
+import { jsonComparer as jc } from '../JsonComparer';
 import * as testTools from '../testTools';
 import * as _ from 'lodash';
 
@@ -49,6 +50,21 @@ const testData: testTools.testInput[] = [
     },
     testFn: input => jr.sameKeys(input.json1, input.json2),
     label: 'sameKeys - for jsons with different keys',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: { x: 12, y: { g: 'ba' }, z: [1, 2, 3] },
+    testFn: input => {
+      const actual = jr.toKeyValArray(input);
+      const expected = [
+        { key: 'x', value: 12 },
+        { key: 'y', value: { g: 'ba' } },
+        { key: 'z', value: [1, 2, 3] },
+      ];
+      return jc.containSameElements(actual, expected);
+    },
+    label: 'toKeyValArray',
     shouldRun: true,
   },
   {
