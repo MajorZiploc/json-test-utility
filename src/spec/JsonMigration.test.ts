@@ -46,7 +46,11 @@ const testData: testTools.testInput[] = [
 testTools.tester(testData);
 test('Check full json migration lifecycle', async t => {
   const data = './src/spec/MigrationTestData';
-  await migrationHandler.migrateFolder(data, [m.dateMigrator, m.nameMigrator], true);
+  await migrationHandler.migrateFolder(
+    data,
+    [m.dateMigrator, m.nameMigrator].map(mi => new m.ListOfJsonMigrator(mi)),
+    true
+  );
   // const actual = d.testFn(data);
   // const expected = d.expected;
   // t.true(_.isEqual(actual, expected), reporter(actual, expected));
