@@ -93,14 +93,6 @@ declare class JsonRefactor {
   setField(json: any, key: string, value: any): any;
 
   /**
-   * Compares 2 jsons based on keys alone.
-   *
-   * @param json1
-   * @param json2
-   */
-  sameKeys(json1: any, json2: any): boolean;
-
-  /**
    * Creates a subset json based on what keys you want to keep from the original json.
    *
    * @param json
@@ -160,6 +152,14 @@ declare class JsonRefactor {
  * A collection of ways to compare jsons.
  */
 declare class JsonComparer {
+  /**
+   * Compares 2 jsons based on keys alone.
+   *
+   * @param json1
+   * @param json2
+   */
+  sameKeys(json1: any, json2: any): boolean;
+
   /**
    * Check if a json is a subset of another json with the comparer function.
    *

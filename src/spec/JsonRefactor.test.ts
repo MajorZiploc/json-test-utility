@@ -34,26 +34,6 @@ const testData: testTools.testInput[] = [
   },
   {
     expected: true,
-    input: {
-      json1: { x: 123, y: { z: 1 } },
-      json2: { x: 'asdffd', y: { fdsa: 1 } },
-    },
-    testFn: input => jr.sameKeys(input.json1, input.json2),
-    label: 'sameKeys - for jsons with same keys',
-    shouldRun: true,
-  },
-  {
-    expected: false,
-    input: {
-      json1: { x: 123, y: { z: 1 } },
-      json2: { x: 'asdffd', y: { fdsa: 1 }, s: 1 },
-    },
-    testFn: input => jr.sameKeys(input.json1, input.json2),
-    label: 'sameKeys - for jsons with different keys',
-    shouldRun: true,
-  },
-  {
-    expected: true,
     input: { x: 12, y: { g: 'ba' }, z: [1, 2, 3] },
     testFn: input => {
       const actual = jr.toKeyValArray(input);

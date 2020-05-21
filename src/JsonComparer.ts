@@ -56,6 +56,10 @@ class JsonComparer {
   public containSameElements(array1: any[], array2: any[]) {
     return this.containSameElementsWith(array1, array2, _.isEqual);
   }
+
+  public sameKeys(json1, json2) {
+    return this.isSubsetKeys(json1, json2) && this.isSubsetKeys(json2, json1);
+  }
 }
 
 export const jsonComparer = new JsonComparer();

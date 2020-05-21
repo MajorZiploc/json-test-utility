@@ -44,6 +44,9 @@ var JsonComparer = /** @class */ (function () {
     JsonComparer.prototype.containSameElements = function (array1, array2) {
         return this.containSameElementsWith(array1, array2, _.isEqual);
     };
+    JsonComparer.prototype.sameKeys = function (json1, json2) {
+        return this.isSubsetKeys(json1, json2) && this.isSubsetKeys(json2, json1);
+    };
     return JsonComparer;
 }());
 exports.jsonComparer = new JsonComparer();

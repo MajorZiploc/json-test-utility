@@ -46,6 +46,26 @@ const testData: testTools.testInput[] = [
   },
   {
     expected: true,
+    input: {
+      json1: { x: 123, y: { z: 1 } },
+      json2: { x: 'asdffd', y: { fdsa: 1 } },
+    },
+    testFn: input => jc.sameKeys(input.json1, input.json2),
+    label: 'sameKeys - for jsons with same keys',
+    shouldRun: true,
+  },
+  {
+    expected: false,
+    input: {
+      json1: { x: 123, y: { z: 1 } },
+      json2: { x: 'asdffd', y: { fdsa: 1 }, s: 1 },
+    },
+    testFn: input => jc.sameKeys(input.json1, input.json2),
+    label: 'sameKeys - for jsons with different keys',
+    shouldRun: true,
+  },
+  {
+    expected: true,
     input: { array1: [1, 2, { qq: ';-;' }], array2: [{ qq: ';-;' }, 2, 1] },
     testFn: input => jc.containSameElements(input.array1, input.array2),
     label: 'Check if the arrays have the same elements.',
@@ -62,7 +82,7 @@ const testData: testTools.testInput[] = [
         input.json1,
         input.json2,
         ['x1', 'y'],
-        [(sub, sup) => _.isEqual(sub.toLowerCase(), sup.toLowerCase()), (sub, sup) => jr.sameKeys(sub, sup)],
+        [(sub, sup) => _.isEqual(sub.toLowerCase(), sup.toLowerCase()), (sub, sup) => jc.sameKeys(sub, sup)],
         ['x', 'y']
       ),
     label: 'isSubsetSpecialCases - is a subset check',

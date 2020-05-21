@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var JsonComparer_1 = require("./../JsonComparer");
-var JsonRefactor_1 = require("../JsonRefactor");
 var testTools = require("../testTools");
 var _ = require("lodash");
 var testData = [
@@ -47,6 +46,26 @@ var testData = [
     },
     {
         expected: true,
+        input: {
+            json1: { x: 123, y: { z: 1 } },
+            json2: { x: 'asdffd', y: { fdsa: 1 } },
+        },
+        testFn: function (input) { return JsonComparer_1.jsonComparer.sameKeys(input.json1, input.json2); },
+        label: 'sameKeys - for jsons with same keys',
+        shouldRun: true,
+    },
+    {
+        expected: false,
+        input: {
+            json1: { x: 123, y: { z: 1 } },
+            json2: { x: 'asdffd', y: { fdsa: 1 }, s: 1 },
+        },
+        testFn: function (input) { return JsonComparer_1.jsonComparer.sameKeys(input.json1, input.json2); },
+        label: 'sameKeys - for jsons with different keys',
+        shouldRun: true,
+    },
+    {
+        expected: true,
         input: { array1: [1, 2, { qq: ';-;' }], array2: [{ qq: ';-;' }, 2, 1] },
         testFn: function (input) { return JsonComparer_1.jsonComparer.containSameElements(input.array1, input.array2); },
         label: 'Check if the arrays have the same elements.',
@@ -59,7 +78,7 @@ var testData = [
             json2: { x: 'bigboy', y: { z: 'anas' }, jk: 'extra' },
         },
         testFn: function (input) {
-            return JsonComparer_1.jsonComparer.isSubsetSpecialCases(input.json1, input.json2, ['x1', 'y'], [function (sub, sup) { return _.isEqual(sub.toLowerCase(), sup.toLowerCase()); }, function (sub, sup) { return JsonRefactor_1.jsonRefactor.sameKeys(sub, sup); }], ['x', 'y']);
+            return JsonComparer_1.jsonComparer.isSubsetSpecialCases(input.json1, input.json2, ['x1', 'y'], [function (sub, sup) { return _.isEqual(sub.toLowerCase(), sup.toLowerCase()); }, function (sub, sup) { return JsonComparer_1.jsonComparer.sameKeys(sub, sup); }], ['x', 'y']);
         },
         label: 'isSubsetSpecialCases - is a subset check',
         shouldRun: true,

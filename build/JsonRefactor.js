@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.jsonRefactor = void 0;
 var _ = require("lodash");
-var JsonComparer_1 = require("./JsonComparer");
 var JsonRefactor = /** @class */ (function () {
     function JsonRefactor() {
     }
@@ -20,9 +19,6 @@ var JsonRefactor = /** @class */ (function () {
     };
     JsonRefactor.prototype.setField = function (json, key, value) {
         return this.addField(json, key, value);
-    };
-    JsonRefactor.prototype.sameKeys = function (json1, json2) {
-        return JsonComparer_1.jsonComparer.isSubsetKeys(json1, json2) && JsonComparer_1.jsonComparer.isSubsetKeys(json2, json1);
     };
     JsonRefactor.prototype.subJson = function (json, keys) {
         return this.fromKeyValArray(this.toKeyValArray(json).filter(function (kv) { return keys.some(function (k) { return _.isEqual(k, kv.key); }); }));

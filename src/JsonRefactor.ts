@@ -21,10 +21,6 @@ class JsonRefactor {
     return this.addField(json, key, value);
   }
 
-  public sameKeys(json1, json2) {
-    return jc.isSubsetKeys(json1, json2) && jc.isSubsetKeys(json2, json1);
-  }
-
   public subJson(json, keys: string[]) {
     return this.fromKeyValArray(this.toKeyValArray(json).filter(kv => keys.some(k => _.isEqual(k, kv.key))));
   }
