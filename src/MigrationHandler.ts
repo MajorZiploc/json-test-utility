@@ -65,7 +65,7 @@ class MigrationHandler {
         JSON.parse(await fs.readFile(path.join(folderPath, fileName), 'utf8'))
       )
     );
-    const migratedJsons = this.migrateJsons(jsons, migrators); //.map(a => a.map(j => jr.addField(j, 'e', 3)));
+    const migratedJsons = this.migrateJsons(jsons, migrators);
     if (shouldLog) {
       this.logMigration(migrators);
     }
