@@ -129,6 +129,31 @@ declare class JsonRefactor {
    * @param keyValueArray
    */
   fromKeyValArray(keyValueArray: Array<{ key: string; value: any }>): any;
+
+  /**
+   *
+   * Combines jsons as long as they do not share the same key names
+   *
+   * @param json1
+   * @param json2
+   * @returns json1 + json2
+   * @throws an Error if there are any keys that are the same
+   */
+  concatJsons(json1: any, json2: any): any;
+
+  /**
+   *
+   * Removes keys that exist in both json1 and json2 from json1.
+   * Then returns the rest of json1.
+   * Values will be from json1
+   *
+   * returnJson = json1 - json2
+   *
+   * @param json1
+   * @param json2
+   * @returns json1 - json2
+   */
+  minusJsons(json1: any, json2: any): any;
 }
 
 /**

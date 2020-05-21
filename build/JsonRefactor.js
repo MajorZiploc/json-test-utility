@@ -37,6 +37,26 @@ var JsonRefactor = /** @class */ (function () {
         var _this = this;
         return keyValueArray.reduce(function (acc, ele) { return _this.addField(acc, ele.key, ele.value); }, {});
     };
+    JsonRefactor.prototype.concatJsons = function (json1, json2) {
+        var kva1 = this.toKeyValArray(json1);
+        var kva2 = this.toKeyValArray(json2);
+        var joinedKVA = kva1.concat(kva2);
+        var groupedByKey = _.groupBy(joinedKVA, function (kv) { return kv.key; });
+        var duppedEntries = this.toKeyValArray(groupedByKey).filter(function (g) { return g.value.length > 1; });
+        if (duppedEntries.length > 0) {
+            throw new Error('The two jsons that are being combined have keys in common.\nCommon keys:\n' +
+                duppedEntries.map(function (e) { return e.key; }).join('\n'));
+        }
+        else {
+            return this.fromKeyValArray(joinedKVA);
+        }
+    };
+    JsonRefactor.prototype.minusJsons = function (json1, json2) {
+        var kva1 = this.toKeyValArray(json1);
+        var kva2 = this.toKeyValArray(json2);
+        var filteredKVA1 = kva1.filter(function (kv1) { return !kva2.some(function (kv2) { return _.isEqual(kv1.key, kv2.key); }); });
+        return this.fromKeyValArray(filteredKVA1);
+    };
     return JsonRefactor;
 }());
 exports.jsonRefactor = new JsonRefactor();

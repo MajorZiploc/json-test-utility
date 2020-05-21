@@ -33,12 +33,35 @@ class JsonRefactor {
     return this.fromKeyValArray(this.toKeyValArray(json).filter(kv => !keys.some(k => _.isEqual(k, kv.key))));
   }
 
-  public toKeyValArray(json) {
+  public toKeyValArray(json: any): Array<{ key: string; value: any }> {
     return Object.entries(json).map(e => ({ key: e[0], value: e[1] }));
   }
 
   public fromKeyValArray(keyValueArray: Array<{ key: string; value: any }>) {
     return keyValueArray.reduce((acc, ele) => this.addField(acc, ele.key, ele.value), {});
+  }
+
+  public concatJsons(json1: any, json2: any): any {
+    const kva1 = this.toKeyValArray(json1);
+    const kva2 = this.toKeyValArray(json2);
+    const joinedKVA = kva1.concat(kva2);
+    const groupedByKey = _.groupBy(joinedKVA, kv => kv.key);
+    const duppedEntries = this.toKeyValArray(groupedByKey).filter(g => g.value.length > 1);
+    if (duppedEntries.length > 0) {
+      throw new Error(
+        'The two jsons that are being combined have keys in common.\nCommon keys:\n' +
+          duppedEntries.map(e => e.key).join('\n')
+      );
+    } else {
+      return this.fromKeyValArray(joinedKVA);
+    }
+  }
+
+  public minusJsons(json1: any, json2: any): any {
+    const kva1 = this.toKeyValArray(json1);
+    const kva2 = this.toKeyValArray(json2);
+    const filteredKVA1 = kva1.filter(kv1 => !kva2.some(kv2 => _.isEqual(kv1.key, kv2.key)));
+    return this.fromKeyValArray(filteredKVA1);
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "json-test-utility",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JSON utility for refactoring, comparing, and migrating json test data.",
   "main": "./build/index.js",
   "types": "./index.d.ts",
@@ -8,10 +8,11 @@
   "author": "Manyu Lakhotia",
   "license": "MIT",
   "scripts": {
-    "specs-jr": "node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonRefactor.test.ts | tap-spec",
-    "specs-jc": "node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonComparer.test.ts | tap-spec",
-    "specs-jm": "node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonMigration.test.ts | tap-spec",
-    "specs": "node -r ts-node/register node_modules/tape/bin/tape src/spec/*.test.ts | tap-spec"
+    "specs-jr": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonRefactor.test.ts | tap-spec",
+    "specs-jc": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonComparer.test.ts | tap-spec",
+    "specs-jm": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonMigration.test.ts | tap-spec",
+    "specs": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/*.test.ts | tap-spec",
+    "toJS": "tsc"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.151",
