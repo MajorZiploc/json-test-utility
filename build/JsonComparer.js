@@ -70,6 +70,25 @@ var JsonComparer = /** @class */ (function () {
         }
         return true;
     };
+    JsonComparer.prototype.findAllKeyPaths = function (json, regexKeyPattern, regexOptions, deepCheck) {
+        var isJson = this.isJSON.bind(this);
+        var shouldRecur = deepCheck !== null && deepCheck !== void 0 ? deepCheck : true;
+        var regex = regexOptions == null ? new RegExp(regexKeyPattern) : new RegExp(regexKeyPattern, regexOptions);
+        function findAllHelper(json, currentPath, isJson) {
+            var kva = JsonRefactor_1.jsonRefactor.toKeyValArray(json);
+            var currentPathStr = currentPath == null ? '' : currentPath + '.';
+            // check root keys of the json for matches
+            var shallowKeyPaths = kva.filter(function (kv) { return kv.key.match(regex); }).map(function (kv) { return currentPathStr + kv.key; });
+            // check values for jsons
+            var deepPaths = shouldRecur
+                ? _.flatten(kva.filter(function (kv) { return isJson(kv.value); }).map(function (kv) { return findAllHelper(kv.value, currentPathStr + kv.key, isJson); }))
+                : [];
+            return shallowKeyPaths.concat(deepPaths);
+        }
+        return _.flatten(JsonRefactor_1.jsonRefactor
+            .toKeyValArray(_.groupBy(findAllHelper(json, null, isJson), function (s) { return s.split('.').length; }))
+            .map(function (kv) { return kv.value.sort(); }));
+    };
     return JsonComparer;
 }());
 exports.jsonComparer = new JsonComparer();

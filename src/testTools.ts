@@ -10,6 +10,9 @@ export function safeStringify(thing) {
 }
 
 export function reporter(actual, expected) {
+  if (_.isEqual(actual, expected)) {
+    return 'Actual and Expected are both equal to: ' + safeStringify(actual);
+  }
   return 'Actual: ' + safeStringify(actual) + '\nExpected: ' + safeStringify(expected);
 }
 

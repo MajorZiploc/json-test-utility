@@ -60,6 +60,7 @@ class JsonComparer {
   public sameKeys(json1, json2) {
     return this.isSubsetKeys(json1, json2) && this.isSubsetKeys(json2, json1);
   }
+
   public isJSON(thing: any): boolean {
     let m = thing;
     if (typeof m == 'object') {
@@ -80,6 +81,30 @@ class JsonComparer {
       return false;
     }
     return true;
+  }
+
+  public findAllKeyPaths(json: any, regexKeyPattern: string, regexOptions?: string, deepCheck?: boolean) {
+    const isJson = this.isJSON.bind(this);
+    const shouldRecur = deepCheck ?? true;
+    const regex = regexOptions == null ? new RegExp(regexKeyPattern) : new RegExp(regexKeyPattern, regexOptions);
+    function findAllHelper(json: any, currentPath: string, isJson) {
+      const kva = jr.toKeyValArray(json);
+      const currentPathStr = currentPath == null ? '' : currentPath + '.';
+      // check root keys of the json for matches
+      const shallowKeyPaths = kva.filter(kv => kv.key.match(regex)).map(kv => currentPathStr + kv.key);
+      // check values for jsons
+      const deepPaths = shouldRecur
+        ? _.flatten(
+            kva.filter(kv => isJson(kv.value)).map(kv => findAllHelper(kv.value, currentPathStr + kv.key, isJson))
+          )
+        : [];
+      return shallowKeyPaths.concat(deepPaths);
+    }
+    return _.flatten(
+      jr
+        .toKeyValArray(_.groupBy(findAllHelper(json, null, isJson), s => s.split('.').length))
+        .map(kv => kv.value.sort())
+    );
   }
 }
 

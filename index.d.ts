@@ -254,6 +254,17 @@ declare class JsonComparer {
    * @returns true if is a json, else false
    */
   public isJSON(thing: any): boolean;
+
+  /**
+   * Recursive by default
+   * Find key paths in a json that match the provided regex
+   *
+   * @param json the json to search for key matches
+   * @param regexKeyPattern standard regex pattern. ex: ^.{1,}z*a?[\\w\\d]$
+   * @param regexOptions standard regex options like, g and i
+   * @param deepCheck defaults to true
+   */
+  public findAllKeyPaths(json: any, regexKeyPattern: string, regexOptions?: string, deepCheck?: boolean);
 }
 
 export const jsonComparer: JsonComparer;
