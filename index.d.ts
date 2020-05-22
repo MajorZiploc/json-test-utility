@@ -246,6 +246,14 @@ declare class JsonComparer {
    * @param array2
    */
   public containSameElements(array1: any[], array2: any[]): boolean;
+
+  /**
+   * Check if something is a json.
+   *
+   * @param thing to be checked
+   * @returns true if is a json, else false
+   */
+  public isJSON(thing: any): boolean;
 }
 
 export const jsonComparer: JsonComparer;

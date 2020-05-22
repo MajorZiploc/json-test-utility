@@ -47,6 +47,29 @@ var JsonComparer = /** @class */ (function () {
     JsonComparer.prototype.sameKeys = function (json1, json2) {
         return this.isSubsetKeys(json1, json2) && this.isSubsetKeys(json2, json1);
     };
+    JsonComparer.prototype.isJSON = function (thing) {
+        var m = thing;
+        if (typeof m == 'object') {
+            try {
+                m = JSON.stringify(m);
+            }
+            catch (err) {
+                return false;
+            }
+        }
+        if (typeof m == 'string') {
+            try {
+                m = JSON.parse(m);
+            }
+            catch (err) {
+                return false;
+            }
+        }
+        if (typeof m != 'object') {
+            return false;
+        }
+        return true;
+    };
     return JsonComparer;
 }());
 exports.jsonComparer = new JsonComparer();
