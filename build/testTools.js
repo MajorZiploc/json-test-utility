@@ -56,16 +56,20 @@ function reporter(actual, expected) {
 }
 exports.reporter = reporter;
 function tester(testData) {
+    if (testData.every(function (d) { var _a; return !((_a = d.shouldRun) !== null && _a !== void 0 ? _a : true); })) {
+        console.log('All test cases are marked as shouldRun=false!');
+    }
     testData.forEach(function (d) {
-        var tester = d.shouldRun ? test : test.skip;
+        var _a, _b, _c;
+        var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
+        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : _.isEqual;
+        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : reporter;
+        var tester = shouldRun ? test : test.skip;
         tester(d.label, function (t) {
-            var data = d.input;
-            var dataCopy = _.clone(data);
-            var actual = d.testFn(data);
+            var input = d.input;
+            var actual = d.testFn(input);
             var expected = d.expected;
-            t.true(_.isEqual(actual, expected), reporter(actual, expected));
-            var isImmutable = _.isEqual(data, dataCopy);
-            t.true(isImmutable, 'Checking that the input data was not changed.');
+            t.true(comparer(actual, expected), testReporter(actual, expected));
             t.end();
         });
     });
@@ -73,22 +77,26 @@ function tester(testData) {
 exports.tester = tester;
 function testerAsync(testData) {
     var _this = this;
+    if (testData.every(function (d) { var _a; return !((_a = d.shouldRun) !== null && _a !== void 0 ? _a : true); })) {
+        console.log('All test cases are marked as shouldRun=false!');
+    }
     testData.forEach(function (d) {
-        var tester = d.shouldRun ? test : test.skip;
+        var _a, _b, _c;
+        var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
+        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : _.isEqual;
+        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : reporter;
+        var tester = shouldRun ? test : test.skip;
         tester(d.label, function (t) { return __awaiter(_this, void 0, void 0, function () {
-            var data, dataCopy, actual, expected, isImmutable;
+            var input, actual, expected;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        data = d.input;
-                        dataCopy = _.clone(data);
-                        return [4 /*yield*/, d.testFn(data)];
+                        input = d.input;
+                        return [4 /*yield*/, d.asyncTestFn(input)];
                     case 1:
                         actual = _a.sent();
                         expected = d.expected;
-                        t.true(_.isEqual(actual, expected), reporter(actual, expected));
-                        isImmutable = _.isEqual(data, dataCopy);
-                        t.true(isImmutable, 'Checking that the input data was not changed.');
+                        t.true(comparer(actual, expected), testReporter(actual, expected));
                         t.end();
                         return [2 /*return*/];
                 }

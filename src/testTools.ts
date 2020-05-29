@@ -15,42 +15,59 @@ export function reporter(actual, expected) {
   }
   return 'Actual: ' + safeStringify(actual) + '\nExpected: ' + safeStringify(expected);
 }
-
 export interface testInput {
   expected: any;
   input: any;
   testFn: (input: any) => any;
   label: string;
-  shouldRun: boolean;
+  shouldRun?: boolean;
+  comparer?: (actual: any, expected: any) => boolean;
+  reporter?: (actual: any, expected: any) => string;
+}
+
+export interface testInputAsync {
+  expected: any;
+  input: any;
+  asyncTestFn: (input: any) => Promise<any>;
+  label: string;
+  shouldRun?: boolean;
+  comparer?: (actual: any, expected: any) => boolean;
+  reporter?: (actual: any, expected: any) => string;
 }
 
 export function tester(testData: testInput[]) {
+  if (testData.every(d => !(d.shouldRun ?? true))) {
+    console.log('All test cases are marked as shouldRun=false!');
+  }
   testData.forEach(d => {
-    const tester = d.shouldRun ? test : test.skip;
+    const shouldRun = d.shouldRun ?? true;
+    const comparer = d.comparer ?? _.isEqual;
+    const testReporter = d.reporter ?? reporter;
+    const tester = shouldRun ? test : test.skip;
     tester(d.label, t => {
-      const data = d.input;
-      const dataCopy = _.clone(data);
-      const actual = d.testFn(data);
+      const input = d.input;
+      const actual = d.testFn(input);
       const expected = d.expected;
-      t.true(_.isEqual(actual, expected), reporter(actual, expected));
-      const isImmutable = _.isEqual(data, dataCopy);
-      t.true(isImmutable, 'Checking that the input data was not changed.');
+      t.true(comparer(actual, expected), testReporter(actual, expected));
       t.end();
     });
   });
 }
 
-export function testerAsync(testData: testInput[]) {
+export function testerAsync(testData: testInputAsync[]) {
+  if (testData.every(d => !(d.shouldRun ?? true))) {
+    console.log('All test cases are marked as shouldRun=false!');
+  }
   testData.forEach(d => {
-    const tester = d.shouldRun ? test : test.skip;
+    const shouldRun = d.shouldRun ?? true;
+    const comparer = d.comparer ?? _.isEqual;
+    const testReporter = d.reporter ?? reporter;
+    const tester = shouldRun ? test : test.skip;
     tester(d.label, async t => {
-      const data = d.input;
-      const dataCopy = _.clone(data);
-      const actual = await d.testFn(data);
+      const input = d.input;
+      const actual = await d.asyncTestFn(input);
       const expected = d.expected;
-      t.true(_.isEqual(actual, expected), reporter(actual, expected));
-      const isImmutable = _.isEqual(data, dataCopy);
-      t.true(isImmutable, 'Checking that the input data was not changed.');
+      t.true(comparer(actual, expected), testReporter(actual, expected));
       t.end();
     });
   });
