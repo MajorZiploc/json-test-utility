@@ -30,7 +30,7 @@ class JsonRefactor {
   }
 
   public toKeyValArray(json: any): Array<{ key: string; value: any }> {
-    return Object.entries(json).map(e => ({ key: e[0], value: e[1] }));
+    return Object.keys(json).map(key => ({ key: key, value: json[key] }));
   }
 
   public fromKeyValArray(keyValueArray: Array<{ key: string; value: any }>) {

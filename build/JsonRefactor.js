@@ -27,7 +27,7 @@ var JsonRefactor = /** @class */ (function () {
         return this.fromKeyValArray(this.toKeyValArray(json).filter(function (kv) { return !keys.some(function (k) { return _.isEqual(k, kv.key); }); }));
     };
     JsonRefactor.prototype.toKeyValArray = function (json) {
-        return Object.entries(json).map(function (e) { return ({ key: e[0], value: e[1] }); });
+        return Object.keys(json).map(function (key) { return ({ key: key, value: json[key] }); });
     };
     JsonRefactor.prototype.fromKeyValArray = function (keyValueArray) {
         var _this = this;
