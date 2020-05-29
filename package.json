@@ -10,6 +10,7 @@
   "scripts": {
     "specs-jr": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonRefactor.test.ts | tap-spec",
     "specs-jc": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonComparer.test.ts | tap-spec",
+    "specs-jmk": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonMasker.test.ts | tap-spec",
     "specs-jm": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonMigration.test.ts | tap-spec",
     "specs": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/*.test.ts | tap-spec",
     "toJS": "tsc"
