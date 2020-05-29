@@ -27,7 +27,7 @@ const testData: testTools.testInput[] = [
     },
     testFn: input => jmk.maskData(input.json),
     label: 'maskData - Check that the masker returns different values but the same keys',
-    shouldRun: true,
+    shouldRun: false,
   },
   {
     expected: { name: 'James123 asd f', l: [{ x: 'lol' }, 1, 3], jj: { cotton: 'candy' } },
@@ -37,7 +37,7 @@ const testData: testTools.testInput[] = [
     comparer: (actual: any, expected: any) => !_.isEqual(actual, expected) && jc.sameKeys(actual, expected),
     testFn: input => jmk.maskData(input.json),
     label: 'maskData - Check that the masker returns different values but the same keys',
-    shouldRun: true,
+    shouldRun: false,
   },
 ];
 

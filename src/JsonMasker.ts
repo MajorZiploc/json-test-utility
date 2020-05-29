@@ -7,16 +7,21 @@ class JsonMasker {
     return this.maskDataHelper(json);
   }
   private maskDataHelper(json: any) {
-    // check if its a list
-    // call maskList(json)
-    // check if its a json
-    // jc.isJSON
-    // call maskJson(json)
+    if(Array.isArray(json)){
+      this.maskList(json);
+    } else if (json.isJSON) {
+      this.maskJson(json);
+    } else {
+
+    }
   }
   maskList(list: any[]): any[] {
     return [];
   }
   maskJson(json: any): any {
+      if (Array.isArray(json)){
+        this.maskList(json)
+      }
     // jr.toKeyValArray;
     // jr.fromKeyValArray;
   }
