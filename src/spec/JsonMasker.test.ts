@@ -20,7 +20,11 @@ const testData: testTools.testInput[] = [
     input: {
       json: [{ name: 'James123 asd f', l: [{ x: 'lol' }, 1, 3], jj: { cotton: 'candy' } }, { x: 56 }],
     },
-    comparer: (actual: any, expected: any) => !_.isEqual(actual, expected) && jc.sameKeys(actual, expected),
+    comparer: (actual: any, expected: any) => {
+      const zl = _.zipWith(actual, expected, (a, e) => ({ a, e }));
+      const bool = zl.every(o => !_.isEqual(o.a, o.e) && jc.sameKeys(o.a, o.e));
+      return bool;
+    },
     testFn: input => jmk.maskData(input.json),
     label: 'maskData - Check that the masker returns different values but the same keys',
     shouldRun: true,
