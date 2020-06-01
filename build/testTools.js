@@ -62,14 +62,14 @@ function tester(testData) {
     testData.forEach(function (d) {
         var _a, _b, _c;
         var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
-        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : _.isEqual;
-        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : reporter;
+        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : (function (a, e, i) { return _.isEqual(a, e); });
+        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : (function (a, e, i) { return reporter(a, e); });
         var tester = shouldRun ? test : test.skip;
         tester(d.label, function (t) {
             var input = d.input;
             var actual = d.testFn(input);
             var expected = d.expected;
-            t.true(comparer(actual, expected), testReporter(actual, expected));
+            t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
             t.end();
         });
     });
@@ -83,8 +83,8 @@ function testerAsync(testData) {
     testData.forEach(function (d) {
         var _a, _b, _c;
         var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
-        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : _.isEqual;
-        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : reporter;
+        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : (function (a, e, i) { return _.isEqual(a, e); });
+        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : (function (a, e, i) { return reporter(a, e); });
         var tester = shouldRun ? test : test.skip;
         tester(d.label, function (t) { return __awaiter(_this, void 0, void 0, function () {
             var input, actual, expected;
@@ -96,7 +96,7 @@ function testerAsync(testData) {
                     case 1:
                         actual = _a.sent();
                         expected = d.expected;
-                        t.true(comparer(actual, expected), testReporter(actual, expected));
+                        t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
                         t.end();
                         return [2 /*return*/];
                 }

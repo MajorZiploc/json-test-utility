@@ -21,8 +21,8 @@ export interface testInput {
   testFn: (input: any) => any;
   label: string;
   shouldRun?: boolean;
-  comparer?: (actual: any, expected: any) => boolean;
-  reporter?: (actual: any, expected: any) => string;
+  comparer?: (actual: any, expected: any, input?: any) => boolean;
+  reporter?: (actual: any, expected: any, input?: any) => string;
 }
 
 export interface testInputAsync {
@@ -31,8 +31,8 @@ export interface testInputAsync {
   asyncTestFn: (input: any) => Promise<any>;
   label: string;
   shouldRun?: boolean;
-  comparer?: (actual: any, expected: any) => boolean;
-  reporter?: (actual: any, expected: any) => string;
+  comparer?: (actual: any, expected: any, input?: any) => boolean;
+  reporter?: (actual: any, expected: any, input?: any) => string;
 }
 
 export function tester(testData: testInput[]) {
@@ -41,14 +41,14 @@ export function tester(testData: testInput[]) {
   }
   testData.forEach(d => {
     const shouldRun = d.shouldRun ?? true;
-    const comparer = d.comparer ?? _.isEqual;
-    const testReporter = d.reporter ?? reporter;
+    const comparer = d.comparer ?? ((a, e, i) => _.isEqual(a, e));
+    const testReporter = d.reporter ?? ((a, e, i) => reporter(a, e));
     const tester = shouldRun ? test : test.skip;
     tester(d.label, t => {
       const input = d.input;
       const actual = d.testFn(input);
       const expected = d.expected;
-      t.true(comparer(actual, expected), testReporter(actual, expected));
+      t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
       t.end();
     });
   });
@@ -60,14 +60,14 @@ export function testerAsync(testData: testInputAsync[]) {
   }
   testData.forEach(d => {
     const shouldRun = d.shouldRun ?? true;
-    const comparer = d.comparer ?? _.isEqual;
-    const testReporter = d.reporter ?? reporter;
+    const comparer = d.comparer ?? ((a, e, i) => _.isEqual(a, e));
+    const testReporter = d.reporter ?? ((a, e, i) => reporter(a, e));
     const tester = shouldRun ? test : test.skip;
     tester(d.label, async t => {
       const input = d.input;
       const actual = await d.asyncTestFn(input);
       const expected = d.expected;
-      t.true(comparer(actual, expected), testReporter(actual, expected));
+      t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
       t.end();
     });
   });
