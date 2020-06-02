@@ -1,0 +1,8 @@
+JSON MIGRATION LOG
+
+ ------------------- Migration #1 -------------------
+Converts / to - for the date field
+
+ ------------------- Migration #2 -------------------
+places all name fields into one field
+

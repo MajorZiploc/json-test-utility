@@ -27,7 +27,7 @@ var testData = [
         },
         testFn: function (input) { return JsonMasker_1.jsonMasker.maskData(input.json); },
         label: 'maskData - Check that the masker returns different values but the same keys',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: { name: 'James123 asd f', l: [{ x: 'lol' }, 1, 3], jj: { cotton: 'candy' } },
@@ -37,7 +37,7 @@ var testData = [
         comparer: function (actual, expected) { return !_.isEqual(actual, expected) && JsonComparer_1.jsonComparer.sameKeys(actual, expected); },
         testFn: function (input) { return JsonMasker_1.jsonMasker.maskData(input.json); },
         label: 'maskData - Check that the masker returns different values but the same keys',
-        shouldRun: false,
+        shouldRun: true,
     },
 ];
 testTools.tester(testData);

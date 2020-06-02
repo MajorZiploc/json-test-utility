@@ -34,6 +34,8 @@ class JsonMasker {
       jsonArray.map(element => {
         if (Array.isArray(element.value)) {
           return { key: element.key, value: this.maskList(element.value) };
+        } else if (jc.isJSON(element.value)) {
+          return { key: element.key, value: this.maskJson(element.value) };
         } else if (isNaN(element.value)) {
           return { key: element.key, value: this.maskString(element.value) };
         } else {
@@ -43,49 +45,41 @@ class JsonMasker {
     );
   }
 
-  maskNumber(num: number): number {
+  maskNumber(num: number) {
     const numStr = num.toString();
     const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
     const sign = matchList[1] ?? '';
     const wholeNumber = matchList[2] ?? '0';
-    const decemialPoint = matchList[3] ?? '';
-    const decemialValue = matchList[4] ?? '';
-
-    // if match group is not found, then it is undefined or ''?
-
-    // if (num.toString().length === 1) {
-    //   return num * 11;
-    // } else {
-    //   let numString = num.toString();
-    //   let numStringArray = [];
-    //   let newNum;
-    //   if (num % 1 !== 0 && num < -1) {
-    //     numStringArray = numString.split('');
-    //     numStringArray.shift();
-    //     numString = numStringArray.join();
-    //     numString.split('.');
-    //   } else if (num % 1 !== 0) {
-    //   } else if (num < 1) {
-    //   } else {
-    //     while (newNum !== Number(numString)) {
-    //       numStringArray = numString.split('');
-    //       numStringArray.sort(() => Math.random() - 0.5);
-    //     }
-    //     return newNum;
-    //   }
-    // }
+    const decimalPoint = matchList[3] ?? '';
+    const decimalValue = matchList[4] ?? '';
+    let newWholeNumber;
+    let newDecimalValue;
+    
+    do {
+      if(numStr.length === 1){
+        newWholeNumber = num * 11; 
+      } else {
+        newWholeNumber = wholeNumber.split('').sort(() => Math.random() - 0.5).join('');
+      }
+    } while(newWholeNumber === wholeNumber)
+    if(decimalValue !== ""){
+      do {
+        newDecimalValue = wholeNumber.split('').sort(() => Math.random() - 0.5).join('');
+      } while(decimalValue === newDecimalValue)
+      return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
+    }
+    return Number(sign + newWholeNumber);
   }
 
   maskString(str: string): string {
-    if (str === '') {
-      // pick a return char
-      //return it
-    }
     let newString;
-    while (newString !== str) {
-      let stringArray = str.split('');
-      newString = stringArray.sort(() => Math.random() - 0.5).join('');
+    let stringArray = str.split('');
+    if (str === "") {
+      return Math.random().toString(36).slice(-5);
     }
+    do {
+      newString = stringArray.sort(() => Math.random() - 0.5).join('');
+    } while (newString === str)
     return newString;
   }
 }
