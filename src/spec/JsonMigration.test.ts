@@ -45,56 +45,66 @@ const testData: testTools.testInput[] = [
   },
 ];
 
-testTools.tester(testData);
-test('Check full json migration lifecycle', async t => {
-  const data = './src/spec/MigrationTestData';
-  const dev = [
-    {
-      status: 200,
-      date: '11/12/20',
-      prefix: 'Mr. Sir',
-      firstName: 'Jacoby',
-      lastName: 'Bryan',
-    },
-  ];
+const dev = [
+  {
+    status: 200,
+    date: '11/12/20',
+    prefix: 'Mr. Sir',
+    firstName: 'Jacoby',
+    lastName: 'Bryan',
+  },
+];
 
-  const dev2 = [
-    {
-      status: 302,
-      date: '1/2/19',
-      prefix: '',
-      firstName: 'James',
-      lastName: 'Yoyo',
+const dev2 = [
+  {
+    status: 302,
+    date: '1/2/19',
+    prefix: '',
+    firstName: 'James',
+    lastName: 'Yoyo',
+  },
+];
+testTools.tester(testData);
+
+const testDataAsync: testTools.testInputAsync[] = [
+  {
+    label: 'Checks full migration lifecycle',
+    setup: async () => {
+      await fs.writeFile(__dirname + '/MigrationTestData/dev.json', JSON.stringify(dev, null, 2));
+      await fs.writeFile(__dirname + '/MigrationTestData/dev2.json', JSON.stringify(dev2, null, 2));
     },
-  ];
-  await fs.writeFile(__dirname + '/MigrationTestData/dev.json', JSON.stringify(dev, null, 2));
-  await fs.writeFile(__dirname + '/MigrationTestData/dev2.json', JSON.stringify(dev2, null, 2));
-  await migrationHandler.migrateFolder(
-    data,
-    [m.dateMigrator, m.nameMigrator].map(mi => ListOfJsonMigratorOf(mi)),
-    false
-  );
-  const expected = [
-    {
-      status: 200,
-      date: '11-12-20',
-      name: 'Mr. Sir Jacoby Bryan',
+    cleanup: async () => {
+      await fs.remove(__dirname + '/MigrationTestData/dev.json');
+      await fs.remove(__dirname + '/MigrationTestData/dev2.json');
     },
-    {
-      status: 302,
-      date: '1-2-19',
-      name: 'James Yoyo',
+    asyncTestFn: async input => {
+      await migrationHandler.migrateFolder(
+        input.data,
+        [m.dateMigrator, m.nameMigrator].map(mi => ListOfJsonMigratorOf(mi)),
+        false
+      );
+      const actual = _.flatten(
+        await Promise.all(
+          [__dirname + '/MigrationTestData/dev.json', __dirname + '/MigrationTestData/dev2.json'].map(
+            async p => await fs.readJSON(p)
+          )
+        )
+      );
+      return actual;
     },
-  ];
-  const actual = _.flatten(
-    await Promise.all(
-      [__dirname + '/MigrationTestData/dev.json', __dirname + '/MigrationTestData/dev2.json'].map(
-        async p => await fs.readJSON(p)
-      )
-    )
-  );
-  t.true(_.isEqual(actual, expected), testTools.reporter(actual, expected));
-  await fs.writeFile(__dirname + '/MigrationTestData/dev.json', JSON.stringify(dev, null, 2));
-  await fs.writeFile(__dirname + '/MigrationTestData/dev2.json', JSON.stringify(dev2, null, 2));
-  t.end();
-});
+    input: { data: './src/spec/MigrationTestData' },
+    expected: [
+      {
+        status: 200,
+        date: '11-12-20',
+        name: 'Mr. Sir Jacoby Bryan',
+      },
+      {
+        status: 302,
+        date: '1-2-19',
+        name: 'James Yoyo',
+      },
+    ],
+  },
+];
+testTools.testerAsync(testDataAsync);

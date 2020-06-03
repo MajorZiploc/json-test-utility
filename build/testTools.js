@@ -60,16 +60,20 @@ function tester(testData) {
         console.log('All test cases are marked as shouldRun=false!');
     }
     testData.forEach(function (d) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
         var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : (function (a, e, i) { return _.isEqual(a, e); });
         var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : (function (a, e, i) { return reporter(a, e); });
         var tester = shouldRun ? test : test.skip;
+        var setup = (_d = d.setup) !== null && _d !== void 0 ? _d : (function () { });
+        var cleanup = (_e = d.cleanup) !== null && _e !== void 0 ? _e : (function () { });
         tester(d.label, function (t) {
+            setup();
             var input = d.input;
             var actual = d.testFn(input);
             var expected = d.expected;
             t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
+            cleanup();
             t.end();
         });
     });
@@ -81,22 +85,33 @@ function testerAsync(testData) {
         console.log('All test cases are marked as shouldRun=false!');
     }
     testData.forEach(function (d) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
         var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : (function (a, e, i) { return _.isEqual(a, e); });
         var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : (function (a, e, i) { return reporter(a, e); });
         var tester = shouldRun ? test : test.skip;
+        var setup = (_d = d.setup) !== null && _d !== void 0 ? _d : (function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+            return [2 /*return*/];
+        }); }); });
+        var cleanup = (_e = d.cleanup) !== null && _e !== void 0 ? _e : (function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+            return [2 /*return*/];
+        }); }); });
         tester(d.label, function (t) { return __awaiter(_this, void 0, void 0, function () {
             var input, actual, expected;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
+                    case 0: return [4 /*yield*/, setup()];
+                    case 1:
+                        _a.sent();
                         input = d.input;
                         return [4 /*yield*/, d.asyncTestFn(input)];
-                    case 1:
+                    case 2:
                         actual = _a.sent();
                         expected = d.expected;
                         t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
+                        return [4 /*yield*/, cleanup()];
+                    case 3:
+                        _a.sent();
                         t.end();
                         return [2 /*return*/];
                 }
