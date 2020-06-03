@@ -314,3 +314,12 @@ export enum DataMaskingStrategy {
   Md5,
   Nullify,
 }
+
+export interface StrategyOptions {
+  overall?: DataMaskingStrategy | ((originalJson: any) => any);
+  string?: DataMaskingStrategy | ((originalString: string) => string);
+  number?: DataMaskingStrategy | ((originalNumber: number) => number);
+  boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
+  date?: DataMaskingStrategy | ((originalDate: string) => string);
+  html?: DataMaskingStrategy | ((originalHtml: string) => string);
+}
