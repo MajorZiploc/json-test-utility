@@ -4,11 +4,10 @@ import { jsonComparer as jc } from './JsonComparer';
 
 class JsonMasker {
   maskData(json: any, strategyOptions?: StrategyOptions) {
-    const stratOptions = this.ensureStrategyOptions(strategyOptions);
-    return this.maskDataHelper(json, stratOptions);
+    return this.maskDataHelper(json, strategyOptions);
   }
 
-  private maskDataHelper(json: any, strategyOptions: StrategyOptions) {
+  private maskDataHelper(json: any, strategyOptions?: StrategyOptions) {
     if (Array.isArray(json)) {
       return this.maskList(json, strategyOptions);
     } else {
@@ -25,21 +24,22 @@ class JsonMasker {
   }
 
   private ensureStrategyOptions(strategyOptions?: StrategyOptions): StrategyOptions {
-    const sOptions = strategyOptions ?? {};
-    const labels = ['overall', 'string', 'number', 'html', 'date', 'boolean'];
-    const strats = _.range(labels.length).map(i => this.defaultMaskingStrategy());
-    const labelAndStrat_s = _.zipWith(labels, strats, (label, strat) => ({ label, strat }));
-    return labelAndStrat_s.reduce((acc, labelAndStrat) => {
-      const s = acc[labelAndStrat.label] ?? labelAndStrat.strat;
-      return jr.setField(acc, labelAndStrat.label, s);
-    }, sOptions);
+    const sOptions = strategyOptions ?? { json: this.defaultMaskingStrategy() };
+    return sOptions;
+    // const labels = ['json', 'string', 'number', 'html', 'date', 'boolean', 'list];
+    // const strats = _.range(labels.length).map(i => this.defaultMaskingStrategy());
+    // const labelAndStrat_s = _.zipWith(labels, strats, (label, strat) => ({ label, strat }));
+    // return labelAndStrat_s.reduce((acc, labelAndStrat) => {
+    //   const s = acc[labelAndStrat.label] ?? labelAndStrat.strat;
+    //   return jr.setField(acc, labelAndStrat.label, s);
+    // }, sOptions);
   }
 
   private defaultMaskingStrategy(): DataMaskingStrategy {
     return DataMaskingStrategy.Scramble;
   }
 
-  maskList(list: any[], strategyOptions: StrategyOptions): any[] {
+  maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
     return list.map(element => {
       if (Array.isArray(element)) {
         return this.maskList(element, strategyOptions);
@@ -53,7 +53,7 @@ class JsonMasker {
     });
   }
 
-  maskJson(json: any, strategyOptions: StrategyOptions): any {
+  maskJson(json: any, strategyOptions?: StrategyOptions): any {
     const jsonArray = jr.toKeyValArray(json);
     return jr.fromKeyValArray(
       jsonArray.map(element => {
@@ -70,7 +70,7 @@ class JsonMasker {
     );
   }
 
-  maskNumber(num: number, strategyOptions: StrategyOptions) {
+  maskNumber(num: number, strategyOptions?: StrategyOptions) {
     const numStr = num.toString();
     const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
     const sign = matchList[1] ?? '';
@@ -110,7 +110,7 @@ class JsonMasker {
     return Number(sign + newWholeNumber);
   }
 
-  maskString(str: string, strategyOptions: StrategyOptions): string {
+  maskString(str: string, strategyOptions?: StrategyOptions): string {
     let strObj = _.groupBy(
       'three'.split('').map((c, i) => ({ c, i })),
       j => j.c
@@ -168,10 +168,11 @@ const DataMaskingStrategyList = [
 ];
 
 export interface StrategyOptions {
-  overall?: DataMaskingStrategy | ((originalJson: any) => any);
+  json?: DataMaskingStrategy | ((originalJson: any) => any);
   string?: DataMaskingStrategy | ((originalString: string) => string);
   number?: DataMaskingStrategy | ((originalNumber: number) => number);
   boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
   date?: DataMaskingStrategy | ((originalDate: string) => string);
   html?: DataMaskingStrategy | ((originalHtml: string) => string);
+  list?: DataMaskingStrategy | ((originalList: any) => any);
 }
