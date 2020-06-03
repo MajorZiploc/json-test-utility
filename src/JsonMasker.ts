@@ -50,7 +50,7 @@ class JsonMasker {
     return DataMaskingStrategyList.some(s => s === option);
   }
 
-  private isFunctionStrategy(option: DataMaskingStrategy | ((originalThing: any) => any)) {
+  private isFunction(option: DataMaskingStrategy | ((originalThing: any) => any)) {
     return option && {}.toString.call(option) === '[object Function]';
   }
 
@@ -70,7 +70,32 @@ class JsonMasker {
     return DataMaskingStrategy.Scramble;
   }
 
+  private chooseStrategy(
+    strategyOptions: StrategyOptions | null,
+    subStrategy: DataMaskingStrategy | ((original: any) => any) | null
+  ): DataMaskingStrategy | ((original: any) => any) {
+    if (strategyOptions === null) {
+      return this.defaultMaskingStrategy();
+    }
+    if (subStrategy !== null) {
+      return subStrategy;
+    }
+    return strategyOptions?.overall ?? this.defaultMaskingStrategy;
+  }
+
   maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
+    const stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions?.list);
+    if (this.isFunction(stratOrFn)) {
+      const fn = stratOrFn as any;
+      return fn(list);
+    }
+    const strategy = stratOrFn as any;
+    if (strategy === DataMaskingStrategy.Identity) {
+      return list;
+    }
+    if (strategy === DataMaskingStrategy.Nullify) {
+      return [];
+    }
     return list.map(element => {
       if (Array.isArray(element)) {
         return this.maskList(element, strategyOptions);

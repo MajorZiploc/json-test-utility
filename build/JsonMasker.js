@@ -60,7 +60,7 @@ var JsonMasker = /** @class */ (function () {
     JsonMasker.prototype.isDataMaskingStrategy = function (option) {
         return DataMaskingStrategyList.some(function (s) { return s === option; });
     };
-    JsonMasker.prototype.isFunctionStrategy = function (option) {
+    JsonMasker.prototype.isFunction = function (option) {
         return option && {}.toString.call(option) === '[object Function]';
     };
     JsonMasker.prototype.ensureStrategyOptions = function (strategyOptions) {
@@ -77,8 +77,30 @@ var JsonMasker = /** @class */ (function () {
     JsonMasker.prototype.defaultMaskingStrategy = function () {
         return DataMaskingStrategy.Scramble;
     };
+    JsonMasker.prototype.chooseStrategy = function (strategyOptions, subStrategy) {
+        var _a;
+        if (strategyOptions === null) {
+            return this.defaultMaskingStrategy();
+        }
+        if (subStrategy !== null) {
+            return subStrategy;
+        }
+        return (_a = strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall) !== null && _a !== void 0 ? _a : this.defaultMaskingStrategy;
+    };
     JsonMasker.prototype.maskList = function (list, strategyOptions) {
         var _this = this;
+        var stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.list);
+        if (this.isFunction(stratOrFn)) {
+            var fn = stratOrFn;
+            return fn(list);
+        }
+        var strategy = stratOrFn;
+        if (strategy === DataMaskingStrategy.Identity) {
+            return list;
+        }
+        if (strategy === DataMaskingStrategy.Nullify) {
+            return [];
+        }
         return list.map(function (element) {
             if (Array.isArray(element)) {
                 return _this.maskList(element, strategyOptions);
