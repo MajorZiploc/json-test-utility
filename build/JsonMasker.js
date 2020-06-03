@@ -121,7 +121,7 @@ var JsonMasker = /** @class */ (function () {
     };
     JsonMasker.prototype.maskJson = function (json, strategyOptions) {
         var _this = this;
-        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.json, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
+        var stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.json);
         if (this.isFunction(stratOrFn)) {
             var fn = stratOrFn;
             return fn(json);
@@ -134,12 +134,6 @@ var JsonMasker = /** @class */ (function () {
             // TODO: Should the value be passed through a nullify process for each data type?
             return JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(json).map(function (kv) { return ({ key: kv.key, value: null }); }));
         }
-        // if (strategy === DataMaskingStrategy.Scramble) {
-        //   throw new Error('Scramble masking path not implemented for json');
-        // }
-        // if (strategy === DataMaskingStrategy.Md5) {
-        //   throw new Error('Md5 masking path not implemented for json');
-        // }
         var jsonArray = JsonRefactor_1.jsonRefactor.toKeyValArray(json);
         return JsonRefactor_1.jsonRefactor.fromKeyValArray(jsonArray.map(function (element) {
             if (Array.isArray(element.value)) {
