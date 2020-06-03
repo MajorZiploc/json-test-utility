@@ -1,24 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsonMasker = void 0;
+exports.DataMaskingStrategy = exports.jsonMasker = void 0;
 var _ = require("lodash");
 var JsonRefactor_1 = require("./JsonRefactor");
 var JsonComparer_1 = require("./JsonComparer");
 var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
     }
-    JsonMasker.prototype.maskData = function (json) {
-        return this.maskDataHelper(json);
+    JsonMasker.prototype.maskData = function (json, strategyOptions) {
+        return this.maskDataHelper(json, strategyOptions);
     };
-    JsonMasker.prototype.maskDataHelper = function (json) {
+    JsonMasker.prototype.maskDataHelper = function (json, strategyOptions) {
         if (Array.isArray(json)) {
-            return this.maskList(json);
+            return this.maskList(json, strategyOptions);
         }
         else {
-            return this.maskJson(json);
+            return this.maskJson(json, strategyOptions);
         }
     };
-    JsonMasker.prototype.maskList = function (list) {
+    JsonMasker.prototype.maskList = function (list, strategyOptions) {
         var _this = this;
         return list.map(function (element) {
             if (Array.isArray(element)) {
@@ -35,7 +35,7 @@ var JsonMasker = /** @class */ (function () {
             }
         });
     };
-    JsonMasker.prototype.maskJson = function (json) {
+    JsonMasker.prototype.maskJson = function (json, strategyOptions) {
         var _this = this;
         var jsonArray = JsonRefactor_1.jsonRefactor.toKeyValArray(json);
         return JsonRefactor_1.jsonRefactor.fromKeyValArray(jsonArray.map(function (element) {
@@ -53,7 +53,7 @@ var JsonMasker = /** @class */ (function () {
             }
         }));
     };
-    JsonMasker.prototype.maskNumber = function (num) {
+    JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
         var _a, _b, _c, _d;
         var numStr = num.toString();
         var matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
@@ -72,35 +72,41 @@ var JsonMasker = /** @class */ (function () {
                     newWholeNumber = wholeNumber + '0';
                 }
                 else {
-                    newWholeNumber = wholeNumber.split('').sort(function () { return Math.random() - 0.5; }).join('');
+                    newWholeNumber = wholeNumber
+                        .split('')
+                        .sort(function () { return Math.random() - 0.5; })
+                        .join('');
                 }
             }
         } while (newWholeNumber === wholeNumber);
-        if (decimalValue !== "") {
+        if (decimalValue !== '') {
             do {
                 if (this.allNumbersSame(decimalValue)) {
                     newDecimalValue = '0' + decimalValue;
                 }
                 else {
-                    newDecimalValue = wholeNumber.split('').sort(function () { return Math.random() - 0.5; }).join('');
+                    newDecimalValue = wholeNumber
+                        .split('')
+                        .sort(function () { return Math.random() - 0.5; })
+                        .join('');
                 }
             } while (decimalValue === newDecimalValue);
             return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
         }
         return Number(sign + newWholeNumber);
     };
-    JsonMasker.prototype.maskString = function (str) {
-        var strObj = _.groupBy(('three'.split('').map(function (c, i) { return ({ c: c, i: i }); })), function (j) { return j.c; });
+    JsonMasker.prototype.maskString = function (str, strategyOptions) {
+        var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
         var newString;
         var stringArray = str.split('');
-        if (str === "" || !(/\S/.test(str))) {
+        if (str === '' || !/\S/.test(str)) {
             return Math.random().toString(36).slice(-5);
         }
         else if (str.length === 1) {
             return str + str;
         }
         else if (this.allCharsSame(str)) {
-            return Math.random().toString(36).slice(-(str.length));
+            return Math.random().toString(36).slice(-str.length);
         }
         do {
             newString = stringArray.sort(function () { return Math.random() - 0.5; }).join('');
@@ -108,7 +114,7 @@ var JsonMasker = /** @class */ (function () {
         return newString;
     };
     JsonMasker.prototype.allNumbersSame = function (num) {
-        var numArray = num.split("");
+        var numArray = num.split('');
         for (var i = 0; i < numArray.length; i++) {
             if (numArray[i] !== numArray[i + 1]) {
                 return false;
@@ -128,4 +134,11 @@ var JsonMasker = /** @class */ (function () {
     return JsonMasker;
 }());
 exports.jsonMasker = new JsonMasker();
+var DataMaskingStrategy;
+(function (DataMaskingStrategy) {
+    DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
+    DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
+    DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
+    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
+})(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
 //# sourceMappingURL=JsonMasker.js.map

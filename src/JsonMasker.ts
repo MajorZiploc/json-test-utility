@@ -3,18 +3,18 @@ import { jsonRefactor as jr } from './JsonRefactor';
 import { jsonComparer as jc } from './JsonComparer';
 
 class JsonMasker {
-  maskData(json: any) {
-    return this.maskDataHelper(json);
+  maskData(json: any, strategyOptions?: StrategyOptions) {
+    return this.maskDataHelper(json, strategyOptions);
   }
-  private maskDataHelper(json: any) {
+  private maskDataHelper(json: any, strategyOptions?: StrategyOptions) {
     if (Array.isArray(json)) {
-      return this.maskList(json);
+      return this.maskList(json, strategyOptions);
     } else {
-      return this.maskJson(json);
+      return this.maskJson(json, strategyOptions);
     }
   }
 
-  maskList(list: any[]): any[] {
+  maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
     return list.map(element => {
       if (Array.isArray(element)) {
         return this.maskList(element);
@@ -28,7 +28,7 @@ class JsonMasker {
     });
   }
 
-  maskJson(json: any): any {
+  maskJson(json: any, strategyOptions?: StrategyOptions): any {
     const jsonArray = jr.toKeyValArray(json);
     return jr.fromKeyValArray(
       jsonArray.map(element => {
@@ -45,7 +45,7 @@ class JsonMasker {
     );
   }
 
-  maskNumber(num: number) {
+  maskNumber(num: number, strategyOptions?: StrategyOptions) {
     const numStr = num.toString();
     const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
     const sign = matchList[1] ?? '';
@@ -85,7 +85,7 @@ class JsonMasker {
     return Number(sign + newWholeNumber);
   }
 
-  maskString(str: string): string {
+  maskString(str: string, strategyOptions?: StrategyOptions): string {
     let strObj = _.groupBy(
       'three'.split('').map((c, i) => ({ c, i })),
       j => j.c
