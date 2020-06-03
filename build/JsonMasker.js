@@ -79,6 +79,19 @@ var JsonMasker = /** @class */ (function () {
     };
     JsonMasker.prototype.maskJson = function (json, strategyOptions) {
         var _this = this;
+        var stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.json);
+        if (this.isFunction(stratOrFn)) {
+            var fn = stratOrFn;
+            return fn(json);
+        }
+        var strategy = stratOrFn;
+        if (strategy === DataMaskingStrategy.Identity) {
+            return json;
+        }
+        if (strategy === DataMaskingStrategy.Nullify) {
+            // TODO: Should the value be passed through a nullify process for each data type?
+            return JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(json).map(function (kv) { return ({ key: kv.key, value: null }); }));
+        }
         var jsonArray = JsonRefactor_1.jsonRefactor.toKeyValArray(json);
         return JsonRefactor_1.jsonRefactor.fromKeyValArray(jsonArray.map(function (element) {
             if (Array.isArray(element.value)) {

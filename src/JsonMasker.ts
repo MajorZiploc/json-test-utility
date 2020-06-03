@@ -79,6 +79,19 @@ class JsonMasker {
   }
 
   maskJson(json: any, strategyOptions?: StrategyOptions): any {
+    const stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions?.json);
+    if (this.isFunction(stratOrFn)) {
+      const fn = stratOrFn as any;
+      return fn(json);
+    }
+    const strategy = stratOrFn as any;
+    if (strategy === DataMaskingStrategy.Identity) {
+      return json;
+    }
+    if (strategy === DataMaskingStrategy.Nullify) {
+      // TODO: Should the value be passed through a nullify process for each data type?
+      return jr.fromKeyValArray(jr.toKeyValArray(json).map(kv => ({ key: kv.key, value: null })));
+    }
     const jsonArray = jr.toKeyValArray(json);
     return jr.fromKeyValArray(
       jsonArray.map(element => {
