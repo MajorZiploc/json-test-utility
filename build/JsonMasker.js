@@ -25,9 +25,9 @@ var JsonMasker = /** @class */ (function () {
         return option && {}.toString.call(option) === '[object Function]';
     };
     JsonMasker.prototype.ensureStrategyOptions = function (strategyOptions) {
-        var sOptions = strategyOptions !== null && strategyOptions !== void 0 ? strategyOptions : { json: this.defaultMaskingStrategy() };
+        var sOptions = strategyOptions !== null && strategyOptions !== void 0 ? strategyOptions : { overall: this.defaultMaskingStrategy() };
         return sOptions;
-        // const labels = ['json', 'string', 'number', 'html', 'date', 'boolean', 'list];
+        // const labels = ['overall', 'json', 'string', 'number', 'html', 'date', 'boolean', 'list];
         // const strats = _.range(labels.length).map(i => this.defaultMaskingStrategy());
         // const labelAndStrat_s = _.zipWith(labels, strats, (label, strat) => ({ label, strat }));
         // return labelAndStrat_s.reduce((acc, labelAndStrat) => {
@@ -40,7 +40,6 @@ var JsonMasker = /** @class */ (function () {
     };
     JsonMasker.prototype.maskList = function (list, strategyOptions) {
         var _this = this;
-        // if(strategyOptions.)
         return list.map(function (element) {
             if (Array.isArray(element)) {
                 return _this.maskList(element, strategyOptions);
