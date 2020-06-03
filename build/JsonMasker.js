@@ -8,7 +8,8 @@ var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
     }
     JsonMasker.prototype.maskData = function (json, strategyOptions) {
-        return this.maskDataHelper(json, strategyOptions);
+        var stratOptions = this.ensureStrategyOptions(strategyOptions);
+        return this.maskDataHelper(json, stratOptions);
     };
     JsonMasker.prototype.maskDataHelper = function (json, strategyOptions) {
         if (Array.isArray(json)) {
@@ -18,20 +19,41 @@ var JsonMasker = /** @class */ (function () {
             return this.maskJson(json, strategyOptions);
         }
     };
+    JsonMasker.prototype.isDataMaskingStrategy = function (option) {
+        return DataMaskingStrategyList.some(function (s) { return s === option; });
+    };
+    JsonMasker.prototype.isFunctionStrategy = function (option) {
+        return option && {}.toString.call(option) === '[object Function]';
+    };
+    JsonMasker.prototype.ensureStrategyOptions = function (strategyOptions) {
+        var _this = this;
+        var sOptions = strategyOptions !== null && strategyOptions !== void 0 ? strategyOptions : {};
+        var labels = ['overall', 'string', 'number', 'html', 'date', 'boolean'];
+        var strats = _.range(labels.length).map(function (i) { return _this.defaultMaskingStrategy(); });
+        var labelAndStrat_s = _.zipWith(labels, strats, function (label, strat) { return ({ label: label, strat: strat }); });
+        return labelAndStrat_s.reduce(function (acc, labelAndStrat) {
+            var _a;
+            var s = (_a = acc[labelAndStrat.label]) !== null && _a !== void 0 ? _a : labelAndStrat.strat;
+            return JsonRefactor_1.jsonRefactor.setField(acc, labelAndStrat.label, s);
+        }, sOptions);
+    };
+    JsonMasker.prototype.defaultMaskingStrategy = function () {
+        return DataMaskingStrategy.Scramble;
+    };
     JsonMasker.prototype.maskList = function (list, strategyOptions) {
         var _this = this;
         return list.map(function (element) {
             if (Array.isArray(element)) {
-                return _this.maskList(element);
+                return _this.maskList(element, strategyOptions);
             }
             else if (JsonComparer_1.jsonComparer.isJSON(element)) {
-                return _this.maskJson(element);
+                return _this.maskJson(element, strategyOptions);
             }
             else if (isNaN(element)) {
-                return _this.maskString(element);
+                return _this.maskString(element, strategyOptions);
             }
             else {
-                return _this.maskNumber(element);
+                return _this.maskNumber(element, strategyOptions);
             }
         });
     };
@@ -40,16 +62,16 @@ var JsonMasker = /** @class */ (function () {
         var jsonArray = JsonRefactor_1.jsonRefactor.toKeyValArray(json);
         return JsonRefactor_1.jsonRefactor.fromKeyValArray(jsonArray.map(function (element) {
             if (Array.isArray(element.value)) {
-                return { key: element.key, value: _this.maskList(element.value) };
+                return { key: element.key, value: _this.maskList(element.value, strategyOptions) };
             }
             else if (JsonComparer_1.jsonComparer.isJSON(element.value)) {
-                return { key: element.key, value: _this.maskJson(element.value) };
+                return { key: element.key, value: _this.maskJson(element.value, strategyOptions) };
             }
             else if (isNaN(element.value)) {
-                return { key: element.key, value: _this.maskString(element.value) };
+                return { key: element.key, value: _this.maskString(element.value, strategyOptions) };
             }
             else {
-                return { key: element.key, value: _this.maskNumber(element.value) };
+                return { key: element.key, value: _this.maskNumber(element.value, strategyOptions) };
             }
         }));
     };
@@ -141,4 +163,10 @@ var DataMaskingStrategy;
     DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
     DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
 })(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
+var DataMaskingStrategyList = [
+    DataMaskingStrategy.Identity,
+    DataMaskingStrategy.Scramble,
+    DataMaskingStrategy.Md5,
+    DataMaskingStrategy.Nullify,
+];
 //# sourceMappingURL=JsonMasker.js.map
