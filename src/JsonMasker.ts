@@ -127,3 +127,10 @@ class JsonMasker {
 }
 
 export const jsonMasker = new JsonMasker();
+
+export enum DataMaskingStrategy {
+  Identity,
+  Scramble,
+  Md5,
+  Nullify,
+}
