@@ -55,9 +55,9 @@ class JsonMasker {
   }
 
   private ensureStrategyOptions(strategyOptions?: StrategyOptions): StrategyOptions {
-    const sOptions = strategyOptions ?? { json: this.defaultMaskingStrategy() };
+    const sOptions = strategyOptions ?? { overall: this.defaultMaskingStrategy() };
     return sOptions;
-    // const labels = ['json', 'string', 'number', 'html', 'date', 'boolean', 'list];
+    // const labels = ['overall', 'json', 'string', 'number', 'html', 'date', 'boolean', 'list];
     // const strats = _.range(labels.length).map(i => this.defaultMaskingStrategy());
     // const labelAndStrat_s = _.zipWith(labels, strats, (label, strat) => ({ label, strat }));
     // return labelAndStrat_s.reduce((acc, labelAndStrat) => {
@@ -199,6 +199,7 @@ const DataMaskingStrategyList = [
 ];
 
 export interface StrategyOptions {
+  overall?: DataMaskingStrategy | ((originalOverall: any) => any);
   json?: DataMaskingStrategy | ((originalJson: any) => any);
   string?: DataMaskingStrategy | ((originalString: string) => string);
   number?: DataMaskingStrategy | ((originalNumber: number) => number);
