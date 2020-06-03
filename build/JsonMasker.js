@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsonMasker = exports.DataMaskingStrategy = void 0;
+exports.jsonMasker = void 0;
 var _ = require("lodash");
 var JsonRefactor_1 = require("./JsonRefactor");
 var JsonComparer_1 = require("./JsonComparer");
@@ -209,10 +209,7 @@ var JsonMasker = /** @class */ (function () {
                     newWholeNumber = wholeNumber + '0';
                 }
                 else {
-                    newWholeNumber = wholeNumber
-                        .split('')
-                        .sort(function () { return Math.random() - 0.5; })
-                        .join('');
+                    newWholeNumber = wholeNumber.split('').sort(function () { return Math.random() - 0.5; }).join('');
                 }
             }
         } while (newWholeNumber === wholeNumber);
@@ -222,48 +219,33 @@ var JsonMasker = /** @class */ (function () {
                     newDecimalValue = '0' + decimalValue;
                 }
                 else {
-                    newDecimalValue = this.shuffle(wholeNumber.split('')).join('');
+                    newDecimalValue = wholeNumber.split('').sort(function () { return Math.random() - 0.5; }).join('');
                 }
             } while (decimalValue === newDecimalValue);
             return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
         }
         return Number(sign + newWholeNumber);
     };
-    JsonMasker.prototype.maskString = function (str, strategyOptions) {
-        return this.maskThing(str, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.string, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.strStrats, 'string');
-    };
-    JsonMasker.prototype.maskBool = function (bool, strategyOptions) {
-        return this.maskThing(bool, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.boolean, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.boolStrats, 'boolean');
-    };
-    JsonMasker.prototype.maskBoolScramble = function (bool) {
-        var max = 100;
-        var min = 0;
-        var num = Math.floor(Math.random() * (max - min) + min);
-        return num % 2 === 0;
-    };
-    JsonMasker.prototype.maskStrScramble = function (str) {
-        var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
+    JsonMasker.prototype.maskString = function (str) {
+        var strObj = _.groupBy(('three'.split('').map(function (c, i) { return ({ c: c, i: i }); })), function (j) { return j.c; });
         var newString;
         var stringArray = str.split('');
-        if (str === '' || !/\S/.test(str)) {
+        if (str === "" || !(/\S/.test(str))) {
             return Math.random().toString(36).slice(-5);
         }
         else if (str.length === 1) {
             return str + str;
         }
         else if (this.allCharsSame(str)) {
-            return Math.random().toString(36).slice(-str.length);
+            return Math.random().toString(36).slice(-(str.length));
         }
         do {
             newString = this.shuffle(stringArray).join('');
         } while (newString === str);
         return newString;
     };
-    JsonMasker.prototype.shuffle = function (thing) {
-        return thing.sort(function () { return Math.random() - 0.5; });
-    };
     JsonMasker.prototype.allNumbersSame = function (num) {
-        var numArray = num.split('');
+        var numArray = num.split("");
         for (var i = 0; i < numArray.length; i++) {
             if (numArray[i] !== numArray[i + 1]) {
                 return false;
