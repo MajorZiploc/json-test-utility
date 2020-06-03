@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsonMasker = void 0;
+exports.DataMaskingStrategy = exports.jsonMasker = void 0;
 var _ = require("lodash");
 var JsonRefactor_1 = require("./JsonRefactor");
 var JsonComparer_1 = require("./JsonComparer");
@@ -56,30 +56,6 @@ var JsonMasker = /** @class */ (function () {
         else {
             return this.maskJson(json, strategyOptions);
         }
-    };
-    JsonMasker.prototype.isDataMaskingStrategy = function (option) {
-        return this.DataMaskingStrategyList.some(function (s) { return s === option; });
-    };
-    JsonMasker.prototype.isFunction = function (option) {
-        return option && {}.toString.call(option) === '[object Function]';
-    };
-    JsonMasker.prototype.ensureStrategyOptions = function (strategyOptions) {
-        var sOptions = strategyOptions !== null && strategyOptions !== void 0 ? strategyOptions : { overall: this.defaultMaskingStrategy() };
-        return sOptions;
-        // const labels = ['overall', 'json', 'string', 'number', 'html', 'date', 'boolean', 'list];
-        // const strats = _.range(labels.length).map(i => this.defaultMaskingStrategy());
-        // const labelAndStrat_s = _.zipWith(labels, strats, (label, strat) => ({ label, strat }));
-        // return labelAndStrat_s.reduce((acc, labelAndStrat) => {
-        //   const s = acc[labelAndStrat.label] ?? labelAndStrat.strat;
-        //   return jr.setField(acc, labelAndStrat.label, s);
-        // }, sOptions);
-    };
-    JsonMasker.prototype.defaultMaskingStrategy = function () {
-        return DataMaskingStrategy.Scramble;
-    };
-    JsonMasker.prototype.chooseStrategy = function (strategies) {
-        var _a;
-        return (_a = strategies.find(function (s) { return s != null; })) !== null && _a !== void 0 ? _a : this.defaultMaskingStrategy();
     };
     JsonMasker.prototype.maskList = function (list, strategyOptions) {
         var _this = this;
@@ -160,37 +136,7 @@ var JsonMasker = /** @class */ (function () {
             }
         }));
     };
-    JsonMasker.prototype.maskThing = function (thing, priorityOfStrategies, strategies, dataType) {
-        var stratOrFn = this.chooseStrategy(priorityOfStrategies);
-        if (this.isFunction(stratOrFn)) {
-            var fn = stratOrFn;
-            return fn(thing);
-        }
-        var strategy = stratOrFn;
-        var stratFn = strategies[DataMaskingStrategy[strategy]];
-        if (stratFn != null) {
-            return stratFn(thing);
-        }
-        else {
-            this.StrategyNotSupported(strategy, dataType, strategies);
-        }
-    };
     JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
-        return this.maskThing(num, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.numStrats, 'number');
-    };
-    JsonMasker.prototype.StrategyNotSupported = function (strategy, dataType, strategies) {
-        throw new Error(dataType +
-            ' does not support the ' +
-            DataMaskingStrategy[strategy] +
-            ' strategy.\nThe following strategies are supported: [' +
-            JsonRefactor_1.jsonRefactor
-                .toKeyValArray(strategies)
-                .filter(function (kv) { return kv.value != null; })
-                .map(function (kv) { return kv.key; })
-                .join(', ') +
-            ']');
-    };
-    JsonMasker.prototype.maskNumScramble = function (num) {
         var _a, _b, _c, _d;
         var numStr = num.toString();
         var matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
@@ -209,7 +155,10 @@ var JsonMasker = /** @class */ (function () {
                     newWholeNumber = wholeNumber + '0';
                 }
                 else {
-                    newWholeNumber = wholeNumber.split('').sort(function () { return Math.random() - 0.5; }).join('');
+                    newWholeNumber = wholeNumber
+                        .split('')
+                        .sort(function () { return Math.random() - 0.5; })
+                        .join('');
                 }
             }
         } while (newWholeNumber === wholeNumber);
@@ -219,25 +168,28 @@ var JsonMasker = /** @class */ (function () {
                     newDecimalValue = '0' + decimalValue;
                 }
                 else {
-                    newDecimalValue = wholeNumber.split('').sort(function () { return Math.random() - 0.5; }).join('');
+                    newDecimalValue = wholeNumber
+                        .split('')
+                        .sort(function () { return Math.random() - 0.5; })
+                        .join('');
                 }
             } while (decimalValue === newDecimalValue);
             return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
         }
         return Number(sign + newWholeNumber);
     };
-    JsonMasker.prototype.maskString = function (str) {
-        var strObj = _.groupBy(('three'.split('').map(function (c, i) { return ({ c: c, i: i }); })), function (j) { return j.c; });
+    JsonMasker.prototype.maskString = function (str, strategyOptions) {
+        var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
         var newString;
         var stringArray = str.split('');
-        if (str === "" || !(/\S/.test(str))) {
+        if (str === '' || !/\S/.test(str)) {
             return Math.random().toString(36).slice(-5);
         }
         else if (str.length === 1) {
             return str + str;
         }
         else if (this.allCharsSame(str)) {
-            return Math.random().toString(36).slice(-(str.length));
+            return Math.random().toString(36).slice(-str.length);
         }
         do {
             newString = this.shuffle(stringArray).join('');
@@ -245,7 +197,7 @@ var JsonMasker = /** @class */ (function () {
         return newString;
     };
     JsonMasker.prototype.allNumbersSame = function (num) {
-        var numArray = num.split("");
+        var numArray = num.split('');
         for (var i = 0; i < numArray.length; i++) {
             if (numArray[i] !== numArray[i + 1]) {
                 return false;
@@ -265,4 +217,11 @@ var JsonMasker = /** @class */ (function () {
     return JsonMasker;
 }());
 exports.jsonMasker = new JsonMasker();
+var DataMaskingStrategy;
+(function (DataMaskingStrategy) {
+    DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
+    DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
+    DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
+    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
+})(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
 //# sourceMappingURL=JsonMasker.js.map

@@ -34,48 +34,9 @@ interface Strategies {
 }
 
 class JsonMasker {
-  private DataMaskingStrategyList: DataMaskingStrategy[];
-  private DataMaskingStrategyNameList: string[];
-  private numStrats: Strategies;
-  private strStrats: Strategies;
-  private boolStrats: Strategies;
-  constructor() {
-    const DataMaskingStrategyList = [
-      DataMaskingStrategy.Identity,
-      DataMaskingStrategy.Scramble,
-      // DataMaskingStrategy.Md5,
-      DataMaskingStrategy.Nullify,
-      // DataMaskingStrategy.Deep // will be used to mask things inside lists and jsons even if json and list have a masking strategy of their own
-    ];
-    this.DataMaskingStrategyList = DataMaskingStrategyList;
-    const DataMaskingStrategyNameList = [];
-    for (var enumMember in DataMaskingStrategy) {
-      var isValueProperty = parseInt(enumMember, 10) >= 0;
-      if (isValueProperty) {
-        DataMaskingStrategyNameList.push(DataMaskingStrategy[enumMember]);
-      }
-    }
-    this.DataMaskingStrategyNameList = DataMaskingStrategyNameList;
-
-    this.numStrats = jr.fromKeyValArray(this.DataMaskingStrategyNameList.map(n => ({ key: n, value: null })));
-    this.numStrats[identity] = num => num;
-    this.numStrats[scramble] = this.maskNumScramble.bind(this);
-    this.numStrats[nullify] = num => 0;
-
-    this.strStrats = jr.fromKeyValArray(this.DataMaskingStrategyNameList.map(n => ({ key: n, value: null })));
-    this.strStrats[identity] = str => str;
-    this.strStrats[scramble] = this.maskStrScramble.bind(this);
-    this.strStrats[nullify] = str => '';
-
-    this.boolStrats = jr.fromKeyValArray(this.DataMaskingStrategyNameList.map(n => ({ key: n, value: null })));
-    this.boolStrats[identity] = bool => bool;
-    this.boolStrats[scramble] = this.maskBoolScramble.bind(this);
-    this.boolStrats[nullify] = bool => false;
-  }
-  public maskData(json: any, strategyOptions?: StrategyOptions) {
+  maskData(json: any, strategyOptions?: StrategyOptions) {
     return this.maskDataHelper(json, strategyOptions);
   }
-
   private maskDataHelper(json: any, strategyOptions?: StrategyOptions) {
     if (Array.isArray(json)) {
       return this.maskList(json, strategyOptions);
@@ -84,57 +45,8 @@ class JsonMasker {
     }
   }
 
-  private isDataMaskingStrategy(option: DataMaskingStrategy | ((originalThing: any) => any)) {
-    return this.DataMaskingStrategyList.some(s => s === option);
-  }
-
-  private isFunction(option: DataMaskingStrategy | ((originalThing: any) => any)) {
-    return option && {}.toString.call(option) === '[object Function]';
-  }
-
-  private ensureStrategyOptions(strategyOptions?: StrategyOptions): StrategyOptions {
-    const sOptions = strategyOptions ?? { overall: this.defaultMaskingStrategy() };
-    return sOptions;
-    // const labels = ['overall', 'json', 'string', 'number', 'html', 'date', 'boolean', 'list];
-    // const strats = _.range(labels.length).map(i => this.defaultMaskingStrategy());
-    // const labelAndStrat_s = _.zipWith(labels, strats, (label, strat) => ({ label, strat }));
-    // return labelAndStrat_s.reduce((acc, labelAndStrat) => {
-    //   const s = acc[labelAndStrat.label] ?? labelAndStrat.strat;
-    //   return jr.setField(acc, labelAndStrat.label, s);
-    // }, sOptions);
-  }
-
-  private defaultMaskingStrategy(): DataMaskingStrategy {
-    return DataMaskingStrategy.Scramble;
-  }
-
-  private chooseStrategy(
-    strategies: (DataMaskingStrategy | ((original: any) => any) | null)[]
-  ): DataMaskingStrategy | ((original: any) => any) {
-    return strategies.find(s => s != null) ?? this.defaultMaskingStrategy();
-  }
-
-  private maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
-    const stratOrFn = this.chooseStrategy([strategyOptions?.list, strategyOptions?.overall]);
-    let l = list;
-    if (this.isFunction(stratOrFn)) {
-      const fn = stratOrFn as any;
-      l = fn(list);
-    }
-    const strategy = stratOrFn as any;
-    if (strategy === DataMaskingStrategy.Identity) {
-      // Do nothing
-    }
-    if (strategy === DataMaskingStrategy.Nullify) {
-      return [];
-    }
-    if (strategy === DataMaskingStrategy.Scramble) {
-      l = _.shuffle(l);
-    }
-    // if (strategy === DataMaskingStrategy.Md5) {
-    //   throw new Error('Md5 masking path not implemented for list');
-    // }
-    return l.map(element => {
+  maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
+    return list.map(element => {
       if (Array.isArray(element)) {
         return this.maskList(element, strategyOptions);
       } else if (jc.isJSON(element)) {
@@ -149,26 +61,7 @@ class JsonMasker {
     });
   }
 
-  private maskJson(json: any, strategyOptions?: StrategyOptions): any {
-    const stratOrFn = this.chooseStrategy([strategyOptions?.json, strategyOptions?.overall]);
-    if (this.isFunction(stratOrFn)) {
-      const fn = stratOrFn as any;
-      return fn(json);
-    }
-    const strategy = stratOrFn as any;
-    if (strategy === DataMaskingStrategy.Identity) {
-      return json;
-    }
-    if (strategy === DataMaskingStrategy.Nullify) {
-      // TODO: Should the value be passed through a nullify process for each data type?
-      return jr.fromKeyValArray(jr.toKeyValArray(json).map(kv => ({ key: kv.key, value: null })));
-    }
-    // if (strategy === DataMaskingStrategy.Scramble) {
-    //   throw new Error('Scramble masking path not implemented for json');
-    // }
-    // if (strategy === DataMaskingStrategy.Md5) {
-    //   throw new Error('Md5 masking path not implemented for json');
-    // }
+  maskJson(json: any, strategyOptions?: StrategyOptions): any {
     const jsonArray = jr.toKeyValArray(json);
     return jr.fromKeyValArray(
       jsonArray.map(element => {
@@ -187,45 +80,7 @@ class JsonMasker {
     );
   }
 
-  private maskThing<T>(
-    thing: T,
-    priorityOfStrategies: (DataMaskingStrategy | ((original: any) => any) | null)[],
-    strategies: Strategies,
-    dataType: string
-  ): T {
-    const stratOrFn = this.chooseStrategy(priorityOfStrategies);
-    if (this.isFunction(stratOrFn)) {
-      const fn = stratOrFn as any;
-      return fn(thing);
-    }
-    const strategy = stratOrFn as any;
-    const stratFn = strategies[DataMaskingStrategy[strategy]];
-    if (stratFn != null) {
-      return stratFn(thing);
-    } else {
-      this.StrategyNotSupported(strategy, dataType, strategies);
-    }
-  }
-
-  private maskNumber(num: number, strategyOptions?: StrategyOptions) {
-    return this.maskThing(num, [strategyOptions?.number, strategyOptions?.overall], this.numStrats, 'number');
-  }
-  private StrategyNotSupported(strategy: DataMaskingStrategy, dataType: string, strategies: Strategies) {
-    throw new Error(
-      dataType +
-        ' does not support the ' +
-        DataMaskingStrategy[strategy] +
-        ' strategy.\nThe following strategies are supported: [' +
-        jr
-          .toKeyValArray(strategies)
-          .filter(kv => kv.value != null)
-          .map(kv => kv.key)
-          .join(', ') +
-        ']'
-    );
-  }
-
-  private maskNumScramble(num: number) {
+  maskNumber(num: number, strategyOptions?: StrategyOptions) {
     const numStr = num.toString();
     const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
     const sign = matchList[1] ?? '';
@@ -265,7 +120,7 @@ class JsonMasker {
     return Number(sign + newWholeNumber);
   }
 
-  maskString(str: string): string {
+  maskString(str: string, strategyOptions?: StrategyOptions): string {
     let strObj = _.groupBy(
       'three'.split('').map((c, i) => ({ c, i })),
       j => j.c
