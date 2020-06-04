@@ -2,7 +2,46 @@ import * as _ from 'lodash';
 import { jsonRefactor as jr } from './JsonRefactor';
 import { jsonComparer as jc } from './JsonComparer';
 
+export enum DataMaskingStrategy {
+  Identity,
+  Scramble,
+  Md5,
+  Nullify,
+  // Deep,
+}
+
+export interface StrategyOptions {
+  overall?: DataMaskingStrategy | ((originalOverall: any) => any);
+  json?: DataMaskingStrategy | ((originalJson: any) => any);
+  string?: DataMaskingStrategy | ((originalString: string) => string);
+  number?: DataMaskingStrategy | ((originalNumber: number) => number);
+  boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
+  date?: DataMaskingStrategy | ((originalDate: string) => string);
+  html?: DataMaskingStrategy | ((originalHtml: string) => string);
+  list?: DataMaskingStrategy | ((originalList: any) => any);
+}
+
 class JsonMasker {
+  DataMaskingStrategyList: DataMaskingStrategy[];
+  DataMaskingStrategyNameList: string[];
+  constructor() {
+    const DataMaskingStrategyList = [
+      DataMaskingStrategy.Identity,
+      DataMaskingStrategy.Scramble,
+      DataMaskingStrategy.Md5,
+      DataMaskingStrategy.Nullify,
+      // DataMaskingStrategy.Deep // will be used to mask things inside lists and jsons even if json and list have a masking strategy of their own
+    ];
+    this.DataMaskingStrategyList = DataMaskingStrategyList;
+    const DataMaskingStrategyNameList = [];
+    for (var enumMember in DataMaskingStrategy) {
+      var isValueProperty = parseInt(enumMember, 10) >= 0;
+      if (isValueProperty) {
+        DataMaskingStrategyNameList.push(DataMaskingStrategy[enumMember]);
+      }
+    }
+    this.DataMaskingStrategyNameList = DataMaskingStrategyNameList;
+  }
   public maskData(json: any, strategyOptions?: StrategyOptions) {
     return this.maskDataHelper(json, strategyOptions);
   }
@@ -16,7 +55,7 @@ class JsonMasker {
   }
 
   private isDataMaskingStrategy(option: DataMaskingStrategy | ((originalThing: any) => any)) {
-    return DataMaskingStrategyList.some(s => s === option);
+    return this.DataMaskingStrategyList.some(s => s === option);
   }
 
   private isFunction(option: DataMaskingStrategy | ((originalThing: any) => any)) {
@@ -242,30 +281,3 @@ class JsonMasker {
 }
 
 export const jsonMasker = new JsonMasker();
-
-export enum DataMaskingStrategy {
-  Identity,
-  Scramble,
-  Md5,
-  Nullify,
-  // Deep,
-}
-
-const DataMaskingStrategyList = [
-  DataMaskingStrategy.Identity,
-  DataMaskingStrategy.Scramble,
-  DataMaskingStrategy.Md5,
-  DataMaskingStrategy.Nullify,
-  // DataMaskingStrategy.Deep // will be used to mask things inside lists and jsons even if json and list have a masking strategy of their own
-];
-
-export interface StrategyOptions {
-  overall?: DataMaskingStrategy | ((originalOverall: any) => any);
-  json?: DataMaskingStrategy | ((originalJson: any) => any);
-  string?: DataMaskingStrategy | ((originalString: string) => string);
-  number?: DataMaskingStrategy | ((originalNumber: number) => number);
-  boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
-  date?: DataMaskingStrategy | ((originalDate: string) => string);
-  html?: DataMaskingStrategy | ((originalHtml: string) => string);
-  list?: DataMaskingStrategy | ((originalList: any) => any);
-}

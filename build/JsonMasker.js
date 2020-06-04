@@ -1,11 +1,34 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DataMaskingStrategy = exports.jsonMasker = void 0;
+exports.jsonMasker = exports.DataMaskingStrategy = void 0;
 var _ = require("lodash");
 var JsonRefactor_1 = require("./JsonRefactor");
 var JsonComparer_1 = require("./JsonComparer");
+var DataMaskingStrategy;
+(function (DataMaskingStrategy) {
+    DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
+    DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
+    DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
+    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
+    // Deep,
+})(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
 var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
+        var DataMaskingStrategyList = [
+            DataMaskingStrategy.Identity,
+            DataMaskingStrategy.Scramble,
+            DataMaskingStrategy.Md5,
+            DataMaskingStrategy.Nullify,
+        ];
+        this.DataMaskingStrategyList = DataMaskingStrategyList;
+        var DataMaskingStrategyNameList = [];
+        for (var enumMember in DataMaskingStrategy) {
+            var isValueProperty = parseInt(enumMember, 10) >= 0;
+            if (isValueProperty) {
+                DataMaskingStrategyNameList.push(DataMaskingStrategy[enumMember]);
+            }
+        }
+        this.DataMaskingStrategyNameList = DataMaskingStrategyNameList;
     }
     JsonMasker.prototype.maskData = function (json, strategyOptions) {
         return this.maskDataHelper(json, strategyOptions);
@@ -19,7 +42,7 @@ var JsonMasker = /** @class */ (function () {
         }
     };
     JsonMasker.prototype.isDataMaskingStrategy = function (option) {
-        return DataMaskingStrategyList.some(function (s) { return s === option; });
+        return this.DataMaskingStrategyList.some(function (s) { return s === option; });
     };
     JsonMasker.prototype.isFunction = function (option) {
         return option && {}.toString.call(option) === '[object Function]';
@@ -237,18 +260,4 @@ var JsonMasker = /** @class */ (function () {
     return JsonMasker;
 }());
 exports.jsonMasker = new JsonMasker();
-var DataMaskingStrategy;
-(function (DataMaskingStrategy) {
-    DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
-    DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
-    DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
-    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
-    // Deep,
-})(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
-var DataMaskingStrategyList = [
-    DataMaskingStrategy.Identity,
-    DataMaskingStrategy.Scramble,
-    DataMaskingStrategy.Md5,
-    DataMaskingStrategy.Nullify,
-];
 //# sourceMappingURL=JsonMasker.js.map
