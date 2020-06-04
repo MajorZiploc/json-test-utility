@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DataMaskingStrategy = exports.jsonMasker = void 0;
+exports.jsonMasker = exports.DataMaskingStrategy = void 0;
 var _ = require("lodash");
 var JsonRefactor_1 = require("./JsonRefactor");
 var JsonComparer_1 = require("./JsonComparer");
@@ -8,20 +8,16 @@ var DataMaskingStrategy;
 (function (DataMaskingStrategy) {
     DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
     DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
-    // Md5,
-    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 2] = "Nullify";
+    DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
+    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
     // Deep,
 })(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
-var identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
-var scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
-// const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
-var nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
         var DataMaskingStrategyList = [
             DataMaskingStrategy.Identity,
             DataMaskingStrategy.Scramble,
-            // DataMaskingStrategy.Md5,
+            DataMaskingStrategy.Md5,
             DataMaskingStrategy.Nullify,
         ];
         this.DataMaskingStrategyList = DataMaskingStrategyList;
@@ -33,18 +29,6 @@ var JsonMasker = /** @class */ (function () {
             }
         }
         this.DataMaskingStrategyNameList = DataMaskingStrategyNameList;
-        this.numStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
-        this.numStrats[identity] = function (num) { return num; };
-        this.numStrats[scramble] = this.maskNumScramble.bind(this);
-        this.numStrats[nullify] = function (num) { return 0; };
-        this.strStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
-        this.strStrats[identity] = function (str) { return str; };
-        this.strStrats[scramble] = this.maskStrScramble.bind(this);
-        this.strStrats[nullify] = function (str) { return ''; };
-        this.boolStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
-        this.boolStrats[identity] = function (bool) { return bool; };
-        this.boolStrats[scramble] = this.maskBoolScramble.bind(this);
-        this.boolStrats[nullify] = function (bool) { return false; };
     }
     JsonMasker.prototype.maskData = function (json, strategyOptions) {
         return this.maskDataHelper(json, strategyOptions);
@@ -58,7 +42,7 @@ var JsonMasker = /** @class */ (function () {
         }
     };
     JsonMasker.prototype.isDataMaskingStrategy = function (option) {
-        return DataMaskingStrategyList.some(function (s) { return s === option; });
+        return this.DataMaskingStrategyList.some(function (s) { return s === option; });
     };
     JsonMasker.prototype.isFunction = function (option) {
         return option && {}.toString.call(option) === '[object Function]';
@@ -282,18 +266,4 @@ var JsonMasker = /** @class */ (function () {
     return JsonMasker;
 }());
 exports.jsonMasker = new JsonMasker();
-var DataMaskingStrategy;
-(function (DataMaskingStrategy) {
-    DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
-    DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
-    DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
-    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
-    // Deep,
-})(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
-var DataMaskingStrategyList = [
-    DataMaskingStrategy.Identity,
-    DataMaskingStrategy.Scramble,
-    DataMaskingStrategy.Md5,
-    DataMaskingStrategy.Nullify,
-];
 //# sourceMappingURL=JsonMasker.js.map
