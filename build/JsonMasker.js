@@ -37,6 +37,10 @@ var JsonMasker = /** @class */ (function () {
         this.numStrats[identity] = function (num) { return num; };
         this.numStrats[scramble] = this.maskNumScramble.bind(this);
         this.numStrats[nullify] = function (num) { return 0; };
+        this.strStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
+        this.strStrats[identity] = function (str) { return str; };
+        this.strStrats[scramble] = this.maskStrScramble.bind(this);
+        this.strStrats[nullify] = function (str) { return ''; };
     }
     JsonMasker.prototype.maskData = function (json, strategyOptions) {
         return this.maskDataHelper(json, strategyOptions);
@@ -167,7 +171,7 @@ var JsonMasker = /** @class */ (function () {
         }
     };
     JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
-        return this.maskThing(num, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.numStrats, 'num');
+        return this.maskThing(num, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.numStrats, 'number');
     };
     JsonMasker.prototype.StrategyNotSupported = function (strategy, dataType) {
         throw new Error(dataType + ' does not support the ' + strategy + 'strategy.');
@@ -215,25 +219,7 @@ var JsonMasker = /** @class */ (function () {
         return Number(sign + newWholeNumber);
     };
     JsonMasker.prototype.maskString = function (str, strategyOptions) {
-        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.string, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
-        if (this.isFunction(stratOrFn)) {
-            var fn = stratOrFn;
-            return fn(str);
-        }
-        var strategy = stratOrFn;
-        if (strategy === DataMaskingStrategy.Identity) {
-            return str;
-        }
-        if (strategy === DataMaskingStrategy.Nullify) {
-            return '';
-        }
-        if (strategy === DataMaskingStrategy.Scramble) {
-            return this.maskStrScramble(str);
-        }
-        if (strategy === DataMaskingStrategy.Md5) {
-            throw new Error('Md5 string path not implemented');
-        }
-        throw new Error('No valid strategy found for strings.\nStrategies given: ' + strategyOptions + '\nstring to mask: ' + str);
+        return this.maskThing(str, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.string, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.strStrats, 'string');
     };
     JsonMasker.prototype.maskStrScramble = function (str) {
         var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
