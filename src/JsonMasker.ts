@@ -3,7 +3,7 @@ import { jsonRefactor as jr } from './JsonRefactor';
 import { jsonComparer as jc } from './JsonComparer';
 
 class JsonMasker {
-  maskData(json: any, strategyOptions?: StrategyOptions) {
+  public maskData(json: any, strategyOptions?: StrategyOptions) {
     return this.maskDataHelper(json, strategyOptions);
   }
 
@@ -40,20 +40,13 @@ class JsonMasker {
   }
 
   private chooseStrategy(
-    strategyOptions: StrategyOptions | null,
-    subStrategy: DataMaskingStrategy | ((original: any) => any) | null
+    strategies: (DataMaskingStrategy | ((original: any) => any) | null)[]
   ): DataMaskingStrategy | ((original: any) => any) {
-    if (strategyOptions === null) {
-      return this.defaultMaskingStrategy();
-    }
-    if (subStrategy !== null) {
-      return subStrategy;
-    }
-    return strategyOptions?.overall ?? this.defaultMaskingStrategy;
+    return strategies.find(s => s != null) ?? this.defaultMaskingStrategy();
   }
 
-  maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
-    const stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions?.list);
+  private maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
+    const stratOrFn = this.chooseStrategy([strategyOptions?.list, strategyOptions?.overall]);
     if (this.isFunction(stratOrFn)) {
       const fn = stratOrFn as any;
       return fn(list);
@@ -78,8 +71,8 @@ class JsonMasker {
     });
   }
 
-  maskJson(json: any, strategyOptions?: StrategyOptions): any {
-    const stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions?.json);
+  private maskJson(json: any, strategyOptions?: StrategyOptions): any {
+    const stratOrFn = this.chooseStrategy([strategyOptions?.json, strategyOptions?.overall]);
     if (this.isFunction(stratOrFn)) {
       const fn = stratOrFn as any;
       return fn(json);
@@ -109,6 +102,30 @@ class JsonMasker {
   }
 
   maskNumber(num: number, strategyOptions?: StrategyOptions) {
+    const stratOrFn = this.chooseStrategy([strategyOptions?.number, strategyOptions?.json, strategyOptions?.overall]);
+    if (this.isFunction(stratOrFn)) {
+      const fn = stratOrFn as any;
+      return fn(num);
+    }
+    const strategy = stratOrFn as any;
+    if (strategy === DataMaskingStrategy.Identity) {
+      return num;
+    }
+    if (strategy === DataMaskingStrategy.Nullify) {
+      return 0;
+    }
+    if (strategy === DataMaskingStrategy.Scramble) {
+      return this.maskNumScramble(num);
+    }
+    if (strategy === DataMaskingStrategy.Md5) {
+      throw new Error('Md5 num path not implemented');
+    }
+    throw new Error(
+      'No valid strategy found for numbers.\nStrategies given: ' + strategyOptions + '\nnum to mask: ' + num
+    );
+  }
+
+  private maskNumScramble(num: number) {
     const numStr = num.toString();
     const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
     const sign = matchList[1] ?? '';
@@ -117,7 +134,6 @@ class JsonMasker {
     const decimalValue = matchList[4] ?? '';
     let newWholeNumber;
     let newDecimalValue;
-
     do {
       if (numStr.length === 1) {
         newWholeNumber = num * 11;
@@ -148,7 +164,7 @@ class JsonMasker {
     return Number(sign + newWholeNumber);
   }
 
-  maskString(str: string, strategyOptions?: StrategyOptions): string {
+  private maskString(str: string, strategyOptions?: StrategyOptions): string {
     let strObj = _.groupBy(
       'three'.split('').map((c, i) => ({ c, i })),
       j => j.c
@@ -168,7 +184,7 @@ class JsonMasker {
     return newString;
   }
 
-  allNumbersSame(num: string) {
+  private allNumbersSame(num: string) {
     let numArray = num.split('');
     for (let i = 0; i < numArray.length; i++) {
       if (numArray[i] !== numArray[i + 1]) {
@@ -178,7 +194,7 @@ class JsonMasker {
     return true;
   }
 
-  allCharsSame(str: string) {
+  private allCharsSame(str: string) {
     let strArray = str.split('');
     for (let i = 0; i < strArray.length; i++) {
       if (strArray[i] !== strArray[i + 1]) {

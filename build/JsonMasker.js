@@ -38,19 +38,13 @@ var JsonMasker = /** @class */ (function () {
     JsonMasker.prototype.defaultMaskingStrategy = function () {
         return DataMaskingStrategy.Scramble;
     };
-    JsonMasker.prototype.chooseStrategy = function (strategyOptions, subStrategy) {
+    JsonMasker.prototype.chooseStrategy = function (strategies) {
         var _a;
-        if (strategyOptions === null) {
-            return this.defaultMaskingStrategy();
-        }
-        if (subStrategy !== null) {
-            return subStrategy;
-        }
-        return (_a = strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall) !== null && _a !== void 0 ? _a : this.defaultMaskingStrategy;
+        return (_a = strategies.find(function (s) { return s != null; })) !== null && _a !== void 0 ? _a : this.defaultMaskingStrategy();
     };
     JsonMasker.prototype.maskList = function (list, strategyOptions) {
         var _this = this;
-        var stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.list);
+        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.list, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
         if (this.isFunction(stratOrFn)) {
             var fn = stratOrFn;
             return fn(list);
@@ -79,7 +73,7 @@ var JsonMasker = /** @class */ (function () {
     };
     JsonMasker.prototype.maskJson = function (json, strategyOptions) {
         var _this = this;
-        var stratOrFn = this.chooseStrategy(strategyOptions, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.json);
+        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.json, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
         if (this.isFunction(stratOrFn)) {
             var fn = stratOrFn;
             return fn(json);
@@ -109,6 +103,27 @@ var JsonMasker = /** @class */ (function () {
         }));
     };
     JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
+        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.json, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
+        if (this.isFunction(stratOrFn)) {
+            var fn = stratOrFn;
+            return fn(num);
+        }
+        var strategy = stratOrFn;
+        if (strategy === DataMaskingStrategy.Identity) {
+            return num;
+        }
+        if (strategy === DataMaskingStrategy.Nullify) {
+            return 0;
+        }
+        if (strategy === DataMaskingStrategy.Scramble) {
+            return this.maskNumScramble(num);
+        }
+        if (strategy === DataMaskingStrategy.Md5) {
+            throw new Error('Md5 num path not implemented');
+        }
+        throw new Error('No valid strategy found for numbers.\nStrategies given: ' + strategyOptions + '\nnum to mask: ' + num);
+    };
+    JsonMasker.prototype.maskNumScramble = function (num) {
         var _a, _b, _c, _d;
         var numStr = num.toString();
         var matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
