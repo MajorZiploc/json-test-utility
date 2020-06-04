@@ -21,9 +21,15 @@ export interface StrategyOptions {
   list?: DataMaskingStrategy | ((originalList: any) => any);
 }
 
+const identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
+const scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
+const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
+const nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
+
 class JsonMasker {
-  DataMaskingStrategyList: DataMaskingStrategy[];
-  DataMaskingStrategyNameList: string[];
+  private DataMaskingStrategyList: DataMaskingStrategy[];
+  private DataMaskingStrategyNameList: string[];
+  private numStrats: any;
   constructor() {
     const DataMaskingStrategyList = [
       DataMaskingStrategy.Identity,
@@ -41,6 +47,11 @@ class JsonMasker {
       }
     }
     this.DataMaskingStrategyNameList = DataMaskingStrategyNameList;
+
+    this.numStrats = jr.fromKeyValArray(this.DataMaskingStrategyNameList.map(n => ({ key: n, value: null })));
+    this.numStrats[identity] = num => num;
+    this.numStrats[scramble] = this.maskNumScramble.bind(this);
+    this.numStrats[nullify] = num => 0;
   }
   public maskData(json: any, strategyOptions?: StrategyOptions) {
     return this.maskDataHelper(json, strategyOptions);
@@ -159,21 +170,15 @@ class JsonMasker {
       return fn(num);
     }
     const strategy = stratOrFn as any;
-    if (strategy === DataMaskingStrategy.Identity) {
-      return num;
+    const stratFn = this.numStrats[DataMaskingStrategy[strategy]];
+    if (stratFn != null) {
+      return stratFn(num);
+    } else {
+      this.StrategyNotSupported(strategy, 'num');
     }
-    if (strategy === DataMaskingStrategy.Nullify) {
-      return 0;
-    }
-    if (strategy === DataMaskingStrategy.Scramble) {
-      return this.maskNumScramble(num);
-    }
-    if (strategy === DataMaskingStrategy.Md5) {
-      throw new Error('Md5 num path not implemented');
-    }
-    throw new Error(
-      'No valid strategy found for numbers.\nStrategies given: ' + strategyOptions + '\nnum to mask: ' + num
-    );
+  }
+  private StrategyNotSupported(strategy: DataMaskingStrategy, dataType: string) {
+    throw new Error(dataType + ' does not support the ' + strategy + 'strategy.');
   }
 
   private maskNumScramble(num: number) {

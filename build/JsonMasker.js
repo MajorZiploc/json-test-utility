@@ -12,6 +12,10 @@ var DataMaskingStrategy;
     DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
     // Deep,
 })(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
+var identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
+var scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
+var md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
+var nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
         var DataMaskingStrategyList = [
@@ -29,6 +33,10 @@ var JsonMasker = /** @class */ (function () {
             }
         }
         this.DataMaskingStrategyNameList = DataMaskingStrategyNameList;
+        this.numStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
+        this.numStrats[identity] = function (num) { return num; };
+        this.numStrats[scramble] = this.maskNumScramble.bind(this);
+        this.numStrats[nullify] = function (num) { return 0; };
     }
     JsonMasker.prototype.maskData = function (json, strategyOptions) {
         return this.maskDataHelper(json, strategyOptions);
@@ -150,19 +158,16 @@ var JsonMasker = /** @class */ (function () {
             return fn(num);
         }
         var strategy = stratOrFn;
-        if (strategy === DataMaskingStrategy.Identity) {
-            return num;
+        var stratFn = this.numStrats[DataMaskingStrategy[strategy]];
+        if (stratFn != null) {
+            return stratFn(num);
         }
-        if (strategy === DataMaskingStrategy.Nullify) {
-            return 0;
+        else {
+            this.StrategyNotSupported(strategy, 'num');
         }
-        if (strategy === DataMaskingStrategy.Scramble) {
-            return this.maskNumScramble(num);
-        }
-        if (strategy === DataMaskingStrategy.Md5) {
-            throw new Error('Md5 num path not implemented');
-        }
-        throw new Error('No valid strategy found for numbers.\nStrategies given: ' + strategyOptions + '\nnum to mask: ' + num);
+    };
+    JsonMasker.prototype.StrategyNotSupported = function (strategy, dataType) {
+        throw new Error(dataType + ' does not support the ' + strategy + 'strategy.');
     };
     JsonMasker.prototype.maskNumScramble = function (num) {
         var _a, _b, _c, _d;
