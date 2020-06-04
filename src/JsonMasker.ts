@@ -58,12 +58,12 @@ class JsonMasker {
     if (strategy === DataMaskingStrategy.Nullify) {
       return [];
     }
-    if (strategy === DataMaskingStrategy.Scramble) {
-      throw new Error('Scramble masking path not implemented for list');
-    }
-    if (strategy === DataMaskingStrategy.Md5) {
-      throw new Error('Md5 masking path not implemented for list');
-    }
+    // if (strategy === DataMaskingStrategy.Scramble) {
+    //   throw new Error('Scramble masking path not implemented for json');
+    // }
+    // if (strategy === DataMaskingStrategy.Md5) {
+    //   throw new Error('Md5 masking path not implemented for json');
+    // }
     return list.map(element => {
       if (Array.isArray(element)) {
         return this.maskList(element, strategyOptions);
@@ -91,12 +91,12 @@ class JsonMasker {
       // TODO: Should the value be passed through a nullify process for each data type?
       return jr.fromKeyValArray(jr.toKeyValArray(json).map(kv => ({ key: kv.key, value: null })));
     }
-    if (strategy === DataMaskingStrategy.Scramble) {
-      throw new Error('Scramble masking path not implemented for json');
-    }
-    if (strategy === DataMaskingStrategy.Md5) {
-      throw new Error('Md5 masking path not implemented for json');
-    }
+    // if (strategy === DataMaskingStrategy.Scramble) {
+    //   throw new Error('Scramble masking path not implemented for json');
+    // }
+    // if (strategy === DataMaskingStrategy.Md5) {
+    //   throw new Error('Md5 masking path not implemented for json');
+    // }
     const jsonArray = jr.toKeyValArray(json);
     return jr.fromKeyValArray(
       jsonArray.map(element => {

@@ -56,6 +56,12 @@ var JsonMasker = /** @class */ (function () {
         if (strategy === DataMaskingStrategy.Nullify) {
             return [];
         }
+        // if (strategy === DataMaskingStrategy.Scramble) {
+        //   throw new Error('Scramble masking path not implemented for json');
+        // }
+        // if (strategy === DataMaskingStrategy.Md5) {
+        //   throw new Error('Md5 masking path not implemented for json');
+        // }
         return list.map(function (element) {
             if (Array.isArray(element)) {
                 return _this.maskList(element, strategyOptions);
@@ -86,6 +92,12 @@ var JsonMasker = /** @class */ (function () {
             // TODO: Should the value be passed through a nullify process for each data type?
             return JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(json).map(function (kv) { return ({ key: kv.key, value: null }); }));
         }
+        // if (strategy === DataMaskingStrategy.Scramble) {
+        //   throw new Error('Scramble masking path not implemented for json');
+        // }
+        // if (strategy === DataMaskingStrategy.Md5) {
+        //   throw new Error('Md5 masking path not implemented for json');
+        // }
         var jsonArray = JsonRefactor_1.jsonRefactor.toKeyValArray(json);
         return JsonRefactor_1.jsonRefactor.fromKeyValArray(jsonArray.map(function (element) {
             if (Array.isArray(element.value)) {
@@ -103,7 +115,7 @@ var JsonMasker = /** @class */ (function () {
         }));
     };
     JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
-        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.json, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
+        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
         if (this.isFunction(stratOrFn)) {
             var fn = stratOrFn;
             return fn(num);
@@ -166,6 +178,27 @@ var JsonMasker = /** @class */ (function () {
         return Number(sign + newWholeNumber);
     };
     JsonMasker.prototype.maskString = function (str, strategyOptions) {
+        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.string, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
+        if (this.isFunction(stratOrFn)) {
+            var fn = stratOrFn;
+            return fn(str);
+        }
+        var strategy = stratOrFn;
+        if (strategy === DataMaskingStrategy.Identity) {
+            return str;
+        }
+        if (strategy === DataMaskingStrategy.Nullify) {
+            return '';
+        }
+        if (strategy === DataMaskingStrategy.Scramble) {
+            return this.maskStrScramble(str);
+        }
+        if (strategy === DataMaskingStrategy.Md5) {
+            throw new Error('Md5 string path not implemented');
+        }
+        throw new Error('No valid strategy found for strings.\nStrategies given: ' + strategyOptions + '\nstring to mask: ' + str);
+    };
+    JsonMasker.prototype.maskStrScramble = function (str) {
         var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
         var newString;
         var stringArray = str.split('');
@@ -210,6 +243,7 @@ var DataMaskingStrategy;
     DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
     DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
     DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
+    // Deep,
 })(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
 var DataMaskingStrategyList = [
     DataMaskingStrategy.Identity,
