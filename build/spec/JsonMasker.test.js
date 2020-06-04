@@ -61,7 +61,6 @@ var testData = [
         comparer: function (actual, expected, input) {
             var j = input.json;
             var a = actual;
-            console.log(a);
             return j.x[0] === a.x[0] && j.x[1] !== a.x[1] && j.x[2] === a.x[2] && _.isEqual(j.y, a.y) && j.sam !== a.sam;
         },
         testFn: function (input) {
