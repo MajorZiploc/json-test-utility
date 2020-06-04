@@ -163,19 +163,28 @@ class JsonMasker {
     );
   }
 
-  private maskNumber(num: number, strategyOptions?: StrategyOptions) {
-    const stratOrFn = this.chooseStrategy([strategyOptions?.number, strategyOptions?.overall]);
+  private maskThing<T>(
+    thing: T,
+    priorityOfStrategies: (DataMaskingStrategy | ((original: any) => any) | null)[],
+    strategies: any,
+    dataType: string
+  ) {
+    const stratOrFn = this.chooseStrategy(priorityOfStrategies);
     if (this.isFunction(stratOrFn)) {
       const fn = stratOrFn as any;
-      return fn(num);
+      return fn(thing);
     }
     const strategy = stratOrFn as any;
-    const stratFn = this.numStrats[DataMaskingStrategy[strategy]];
+    const stratFn = strategies[DataMaskingStrategy[strategy]];
     if (stratFn != null) {
-      return stratFn(num);
+      return stratFn(thing);
     } else {
-      this.StrategyNotSupported(strategy, 'num');
+      this.StrategyNotSupported(strategy, dataType);
     }
+  }
+
+  private maskNumber(num: number, strategyOptions?: StrategyOptions) {
+    return this.maskThing(num, [strategyOptions?.number, strategyOptions?.overall], this.numStrats, 'num');
   }
   private StrategyNotSupported(strategy: DataMaskingStrategy, dataType: string) {
     throw new Error(dataType + ' does not support the ' + strategy + 'strategy.');

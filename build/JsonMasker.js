@@ -145,20 +145,23 @@ var JsonMasker = /** @class */ (function () {
             }
         }));
     };
-    JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
-        var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
+    JsonMasker.prototype.maskThing = function (thing, priorityOfStrategies, strategies, dataType) {
+        var stratOrFn = this.chooseStrategy(priorityOfStrategies);
         if (this.isFunction(stratOrFn)) {
             var fn = stratOrFn;
-            return fn(num);
+            return fn(thing);
         }
         var strategy = stratOrFn;
-        var stratFn = this.numStrats[DataMaskingStrategy[strategy]];
+        var stratFn = strategies[DataMaskingStrategy[strategy]];
         if (stratFn != null) {
-            return stratFn(num);
+            return stratFn(thing);
         }
         else {
-            this.StrategyNotSupported(strategy, 'num');
+            this.StrategyNotSupported(strategy, dataType);
         }
+    };
+    JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
+        return this.maskThing(num, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.numStrats, 'num');
     };
     JsonMasker.prototype.StrategyNotSupported = function (strategy, dataType) {
         throw new Error(dataType + ' does not support the ' + strategy + 'strategy.');
