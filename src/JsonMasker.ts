@@ -38,6 +38,7 @@ class JsonMasker {
   private DataMaskingStrategyNameList: string[];
   private numStrats: Strategies;
   private strStrats: Strategies;
+  private boolStrats: Strategies;
   constructor() {
     const DataMaskingStrategyList = [
       DataMaskingStrategy.Identity,
@@ -65,6 +66,11 @@ class JsonMasker {
     this.strStrats[identity] = str => str;
     this.strStrats[scramble] = this.maskStrScramble.bind(this);
     this.strStrats[nullify] = str => '';
+
+    this.boolStrats = jr.fromKeyValArray(this.DataMaskingStrategyNameList.map(n => ({ key: n, value: null })));
+    this.boolStrats[identity] = bool => bool;
+    this.boolStrats[scramble] = this.maskBoolScramble.bind(this);
+    this.boolStrats[nullify] = bool => false;
   }
   public maskData(json: any, strategyOptions?: StrategyOptions) {
     return this.maskDataHelper(json, strategyOptions);
@@ -117,7 +123,7 @@ class JsonMasker {
     const strategy = stratOrFn as any;
     let l = list;
     if (strategy === DataMaskingStrategy.Identity) {
-      let l = list;
+      l = list;
     }
     if (strategy === DataMaskingStrategy.Nullify) {
       return [];
@@ -133,8 +139,10 @@ class JsonMasker {
         return this.maskList(element, strategyOptions);
       } else if (jc.isJSON(element)) {
         return this.maskJson(element, strategyOptions);
-      } else if (isNaN(element)) {
+      } else if (_.isEqual(typeof element, 'string')) {
         return this.maskString(element, strategyOptions);
+      } else if (_.isEqual(typeof element, 'boolean')) {
+        return this.maskBool(element, strategyOptions);
       } else {
         return this.maskNumber(element, strategyOptions);
       }
@@ -168,8 +176,10 @@ class JsonMasker {
           return { key: element.key, value: this.maskList(element.value, strategyOptions) };
         } else if (jc.isJSON(element.value)) {
           return { key: element.key, value: this.maskJson(element.value, strategyOptions) };
-        } else if (isNaN(element.value)) {
+        } else if (_.isEqual(typeof element.value, 'string')) {
           return { key: element.key, value: this.maskString(element.value, strategyOptions) };
+        } else if (_.isEqual(typeof element.value, 'boolean')) {
+          return { key: element.key, value: this.maskBool(element.value, strategyOptions) };
         } else {
           return { key: element.key, value: this.maskNumber(element.value, strategyOptions) };
         }
@@ -253,6 +263,17 @@ class JsonMasker {
 
   private maskString(str: string, strategyOptions?: StrategyOptions): string {
     return this.maskThing(str, [strategyOptions?.string, strategyOptions?.overall], this.strStrats, 'string');
+  }
+
+  private maskBool(bool: boolean, strategyOptions?: StrategyOptions): boolean {
+    return this.maskThing(bool, [strategyOptions?.boolean, strategyOptions?.overall], this.boolStrats, 'boolean');
+  }
+
+  private maskBoolScramble(bool: boolean) {
+    const max = 100;
+    const min = 0;
+    const num = Math.floor(Math.random() * (max - min) + min);
+    return num % 2 === 0;
   }
 
   private maskStrScramble(str: string) {

@@ -72,6 +72,16 @@ const testData: testTools.testInput[] = [
     label: 'maskData - Check that the masker returns different values but the same keys',
     shouldRun: true,
   },
+  {
+    expected: { x: true },
+    input: {
+      json: { x: false },
+    },
+    comparer: (actual: any, expected: any) => jc.sameKeys(actual, expected) && typeof actual.x === typeof expected.x,
+    testFn: input => jmk.maskData(input.json),
+    label: 'maskData - bool scramble check',
+    shouldRun: true,
+  },
 ];
 
 testTools.tester(testData);

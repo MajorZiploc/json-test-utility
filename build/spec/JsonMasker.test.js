@@ -61,6 +61,7 @@ var testData = [
         comparer: function (actual, expected, input) {
             var j = input.json;
             var a = actual;
+            console.log(a);
             return j.x[0] === a.x[0] && j.x[1] !== a.x[1] && j.x[2] === a.x[2] && _.isEqual(j.y, a.y) && j.sam !== a.sam;
         },
         testFn: function (input) {
@@ -71,6 +72,16 @@ var testData = [
             });
         },
         label: 'maskData - Check that the masker returns different values but the same keys',
+        shouldRun: true,
+    },
+    {
+        expected: { x: true },
+        input: {
+            json: { x: false },
+        },
+        comparer: function (actual, expected) { return JsonComparer_1.jsonComparer.sameKeys(actual, expected) && typeof actual.x === typeof expected.x; },
+        testFn: function (input) { return JsonMasker_1.jsonMasker.maskData(input.json); },
+        label: 'maskData - bool scramble check',
         shouldRun: true,
     },
 ];
