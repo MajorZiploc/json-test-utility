@@ -18,7 +18,7 @@ export interface StrategyOptions {
   boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
   date?: DataMaskingStrategy | ((originalDate: string) => string);
   html?: DataMaskingStrategy | ((originalHtml: string) => string);
-  list?: DataMaskingStrategy | ((originalList: any) => any);
+  list?: DataMaskingStrategy | ((originalList: any[]) => any[]);
 }
 
 const identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
