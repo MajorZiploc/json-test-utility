@@ -89,6 +89,12 @@ class JsonMasker {
     if (strategy === DataMaskingStrategy.Nullify) {
       return [];
     }
+    if (strategy === DataMaskingStrategy.Scramble) {
+      throw new Error('Scramble masking path not implemented for list');
+    }
+    if (strategy === DataMaskingStrategy.Md5) {
+      throw new Error('Md5 masking path not implemented for list');
+    }
     return list.map(element => {
       if (Array.isArray(element)) {
         return this.maskList(element, strategyOptions);
@@ -116,6 +122,12 @@ class JsonMasker {
       // TODO: Should the value be passed through a nullify process for each data type?
       return jr.fromKeyValArray(jr.toKeyValArray(json).map(kv => ({ key: kv.key, value: null })));
     }
+    if (strategy === DataMaskingStrategy.Scramble) {
+      throw new Error('Scramble masking path not implemented for json');
+    }
+    if (strategy === DataMaskingStrategy.Md5) {
+      throw new Error('Md5 masking path not implemented for json');
+    }
     const jsonArray = jr.toKeyValArray(json);
     return jr.fromKeyValArray(
       jsonArray.map(element => {
@@ -132,8 +144,8 @@ class JsonMasker {
     );
   }
 
-  maskNumber(num: number, strategyOptions?: StrategyOptions) {
-    const stratOrFn = this.chooseStrategy([strategyOptions?.number, strategyOptions?.json, strategyOptions?.overall]);
+  private maskNumber(num: number, strategyOptions?: StrategyOptions) {
+    const stratOrFn = this.chooseStrategy([strategyOptions?.number, strategyOptions?.overall]);
     if (this.isFunction(stratOrFn)) {
       const fn = stratOrFn as any;
       return fn(num);
@@ -196,6 +208,30 @@ class JsonMasker {
   }
 
   private maskString(str: string, strategyOptions?: StrategyOptions): string {
+    const stratOrFn = this.chooseStrategy([strategyOptions?.string, strategyOptions?.overall]);
+    if (this.isFunction(stratOrFn)) {
+      const fn = stratOrFn as any;
+      return fn(str);
+    }
+    const strategy = stratOrFn as any;
+    if (strategy === DataMaskingStrategy.Identity) {
+      return str;
+    }
+    if (strategy === DataMaskingStrategy.Nullify) {
+      return '';
+    }
+    if (strategy === DataMaskingStrategy.Scramble) {
+      return this.maskStrScramble(str);
+    }
+    if (strategy === DataMaskingStrategy.Md5) {
+      throw new Error('Md5 string path not implemented');
+    }
+    throw new Error(
+      'No valid strategy found for strings.\nStrategies given: ' + strategyOptions + '\nstring to mask: ' + str
+    );
+  }
+
+  private maskStrScramble(str: string) {
     let strObj = _.groupBy(
       'three'.split('').map((c, i) => ({ c, i })),
       j => j.c
@@ -243,6 +279,7 @@ export enum DataMaskingStrategy {
   Scramble,
   Md5,
   Nullify,
+  // Deep,
 }
 
 const DataMaskingStrategyList = [
@@ -250,6 +287,7 @@ const DataMaskingStrategyList = [
   DataMaskingStrategy.Scramble,
   DataMaskingStrategy.Md5,
   DataMaskingStrategy.Nullify,
+  // DataMaskingStrategy.Deep // will be used to mask things inside lists and jsons even if json and list have a masking strategy of their own
 ];
 
 export interface StrategyOptions {
