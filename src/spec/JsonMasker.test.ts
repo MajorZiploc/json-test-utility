@@ -64,7 +64,11 @@ const testData: testTools.testInput[] = [
       return j.x[0] === a.x[0] && j.x[1] !== a.x[1] && j.x[2] === a.x[2] && _.isEqual(j.y, a.y) && j.sam !== a.sam;
     },
     testFn: input =>
-      jmk.maskData(input.json, { overall: DataMaskingStrategy.Scramble, number: DataMaskingStrategy.Identity }),
+      jmk.maskData(input.json, {
+        overall: DataMaskingStrategy.Scramble,
+        number: DataMaskingStrategy.Identity,
+        list: DataMaskingStrategy.Identity,
+      }),
     label: 'maskData - Check that the masker returns different values but the same keys',
     shouldRun: true,
   },

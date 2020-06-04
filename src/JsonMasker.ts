@@ -115,19 +115,20 @@ class JsonMasker {
       return fn(list);
     }
     const strategy = stratOrFn as any;
+    let l = list;
     if (strategy === DataMaskingStrategy.Identity) {
-      return list;
+      let l = list;
     }
     if (strategy === DataMaskingStrategy.Nullify) {
       return [];
     }
-    // if (strategy === DataMaskingStrategy.Scramble) {
-    //   throw new Error('Scramble masking path not implemented for json');
-    // }
+    if (strategy === DataMaskingStrategy.Scramble) {
+      l = _.shuffle(l);
+    }
     // if (strategy === DataMaskingStrategy.Md5) {
-    //   throw new Error('Md5 masking path not implemented for json');
+    //   throw new Error('Md5 masking path not implemented for list');
     // }
-    return list.map(element => {
+    return l.map(element => {
       if (Array.isArray(element)) {
         return this.maskList(element, strategyOptions);
       } else if (jc.isJSON(element)) {
@@ -242,10 +243,7 @@ class JsonMasker {
         if (this.allNumbersSame(decimalValue)) {
           newDecimalValue = '0' + decimalValue;
         } else {
-          newDecimalValue = wholeNumber
-            .split('')
-            .sort(() => Math.random() - 0.5)
-            .join('');
+          newDecimalValue = this.shuffle(wholeNumber.split('')).join('');
         }
       } while (decimalValue === newDecimalValue);
       return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
@@ -272,9 +270,13 @@ class JsonMasker {
       return Math.random().toString(36).slice(-str.length);
     }
     do {
-      newString = stringArray.sort(() => Math.random() - 0.5).join('');
+      newString = this.shuffle(stringArray).join('');
     } while (newString === str);
     return newString;
+  }
+
+  private shuffle(thing: any[]): any[] {
+    return thing.sort(() => Math.random() - 0.5);
   }
 
   private allNumbersSame(num: string) {
