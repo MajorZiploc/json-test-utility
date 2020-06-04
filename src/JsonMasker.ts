@@ -5,7 +5,7 @@ import { jsonComparer as jc } from './JsonComparer';
 export enum DataMaskingStrategy {
   Identity,
   Scramble,
-  Md5,
+  // Md5,
   Nullify,
   // Deep,
 }
@@ -23,13 +23,13 @@ export interface StrategyOptions {
 
 const identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
 const scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
-const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
+// const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
 const nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 
 interface Strategies {
   Identity: ((thing: any) => any) | null;
   Scramble: ((thing: any) => any) | null;
-  Md5: ((thing: any) => any) | null;
+  // Md5: ((thing: any) => any) | null;
   Nullify: ((thing: any) => any) | null;
 }
 
@@ -42,7 +42,7 @@ class JsonMasker {
     const DataMaskingStrategyList = [
       DataMaskingStrategy.Identity,
       DataMaskingStrategy.Scramble,
-      DataMaskingStrategy.Md5,
+      // DataMaskingStrategy.Md5,
       DataMaskingStrategy.Nullify,
       // DataMaskingStrategy.Deep // will be used to mask things inside lists and jsons even if json and list have a masking strategy of their own
     ];
