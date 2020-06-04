@@ -41,6 +41,10 @@ var JsonMasker = /** @class */ (function () {
         this.strStrats[identity] = function (str) { return str; };
         this.strStrats[scramble] = this.maskStrScramble.bind(this);
         this.strStrats[nullify] = function (str) { return ''; };
+        this.boolStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
+        this.boolStrats[identity] = function (bool) { return bool; };
+        this.boolStrats[scramble] = this.maskBoolScramble.bind(this);
+        this.boolStrats[nullify] = function (bool) { return false; };
     }
     JsonMasker.prototype.maskData = function (json, strategyOptions) {
         return this.maskDataHelper(json, strategyOptions);
@@ -87,7 +91,7 @@ var JsonMasker = /** @class */ (function () {
         var strategy = stratOrFn;
         var l = list;
         if (strategy === DataMaskingStrategy.Identity) {
-            var l_1 = list;
+            l = list;
         }
         if (strategy === DataMaskingStrategy.Nullify) {
             return [];
@@ -105,8 +109,11 @@ var JsonMasker = /** @class */ (function () {
             else if (JsonComparer_1.jsonComparer.isJSON(element)) {
                 return _this.maskJson(element, strategyOptions);
             }
-            else if (isNaN(element)) {
+            else if (_.isEqual(typeof element, 'string')) {
                 return _this.maskString(element, strategyOptions);
+            }
+            else if (_.isEqual(typeof element, 'boolean')) {
+                return _this.maskBool(element, strategyOptions);
             }
             else {
                 return _this.maskNumber(element, strategyOptions);
@@ -142,8 +149,11 @@ var JsonMasker = /** @class */ (function () {
             else if (JsonComparer_1.jsonComparer.isJSON(element.value)) {
                 return { key: element.key, value: _this.maskJson(element.value, strategyOptions) };
             }
-            else if (isNaN(element.value)) {
+            else if (_.isEqual(typeof element.value, 'string')) {
                 return { key: element.key, value: _this.maskString(element.value, strategyOptions) };
+            }
+            else if (_.isEqual(typeof element.value, 'boolean')) {
+                return { key: element.key, value: _this.maskBool(element.value, strategyOptions) };
             }
             else {
                 return { key: element.key, value: _this.maskNumber(element.value, strategyOptions) };
@@ -221,6 +231,15 @@ var JsonMasker = /** @class */ (function () {
     };
     JsonMasker.prototype.maskString = function (str, strategyOptions) {
         return this.maskThing(str, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.string, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.strStrats, 'string');
+    };
+    JsonMasker.prototype.maskBool = function (bool, strategyOptions) {
+        return this.maskThing(bool, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.boolean, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.boolStrats, 'boolean');
+    };
+    JsonMasker.prototype.maskBoolScramble = function (bool) {
+        var max = 100;
+        var min = 0;
+        var num = Math.floor(Math.random() * (max - min) + min);
+        return num % 2 === 0;
     };
     JsonMasker.prototype.maskStrScramble = function (str) {
         var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
