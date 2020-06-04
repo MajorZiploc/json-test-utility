@@ -25,7 +25,7 @@ var testData = [
             var bool = zl.every(function (o) { return !_.isEqual(o.a, o.e) && JsonComparer_1.jsonComparer.sameKeys(o.a, o.e); });
             return bool;
         },
-        testFn: function (input) { return JsonMasker_1.jsonMasker.maskData(input.json); },
+        testFn: function (input) { return JsonMasker_1.jsonMasker.maskData(input.json, { list: JsonMasker_1.DataMaskingStrategy.Identity }); },
         label: 'maskData - Check that the masker returns different values but the same keys',
         shouldRun: true,
     },
@@ -64,7 +64,11 @@ var testData = [
             return j.x[0] === a.x[0] && j.x[1] !== a.x[1] && j.x[2] === a.x[2] && _.isEqual(j.y, a.y) && j.sam !== a.sam;
         },
         testFn: function (input) {
-            return JsonMasker_1.jsonMasker.maskData(input.json, { overall: JsonMasker_1.DataMaskingStrategy.Scramble, number: JsonMasker_1.DataMaskingStrategy.Identity });
+            return JsonMasker_1.jsonMasker.maskData(input.json, {
+                overall: JsonMasker_1.DataMaskingStrategy.Scramble,
+                number: JsonMasker_1.DataMaskingStrategy.Identity,
+                list: JsonMasker_1.DataMaskingStrategy.Identity,
+            });
         },
         label: 'maskData - Check that the masker returns different values but the same keys',
         shouldRun: true,

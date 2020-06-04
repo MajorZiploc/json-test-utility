@@ -85,19 +85,20 @@ var JsonMasker = /** @class */ (function () {
             return fn(list);
         }
         var strategy = stratOrFn;
+        var l = list;
         if (strategy === DataMaskingStrategy.Identity) {
-            return list;
+            var l_1 = list;
         }
         if (strategy === DataMaskingStrategy.Nullify) {
             return [];
         }
-        // if (strategy === DataMaskingStrategy.Scramble) {
-        //   throw new Error('Scramble masking path not implemented for json');
-        // }
+        if (strategy === DataMaskingStrategy.Scramble) {
+            l = _.shuffle(l);
+        }
         // if (strategy === DataMaskingStrategy.Md5) {
-        //   throw new Error('Md5 masking path not implemented for json');
+        //   throw new Error('Md5 masking path not implemented for list');
         // }
-        return list.map(function (element) {
+        return l.map(function (element) {
             if (Array.isArray(element)) {
                 return _this.maskList(element, strategyOptions);
             }
@@ -211,10 +212,7 @@ var JsonMasker = /** @class */ (function () {
                     newDecimalValue = '0' + decimalValue;
                 }
                 else {
-                    newDecimalValue = wholeNumber
-                        .split('')
-                        .sort(function () { return Math.random() - 0.5; })
-                        .join('');
+                    newDecimalValue = this.shuffle(wholeNumber.split('')).join('');
                 }
             } while (decimalValue === newDecimalValue);
             return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
@@ -238,9 +236,12 @@ var JsonMasker = /** @class */ (function () {
             return Math.random().toString(36).slice(-str.length);
         }
         do {
-            newString = stringArray.sort(function () { return Math.random() - 0.5; }).join('');
+            newString = this.shuffle(stringArray).join('');
         } while (newString === str);
         return newString;
+    };
+    JsonMasker.prototype.shuffle = function (thing) {
+        return thing.sort(function () { return Math.random() - 0.5; });
     };
     JsonMasker.prototype.allNumbersSame = function (num) {
         var numArray = num.split('');
