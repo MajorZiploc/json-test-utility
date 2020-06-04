@@ -8,20 +8,20 @@ var DataMaskingStrategy;
 (function (DataMaskingStrategy) {
     DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
     DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
-    DataMaskingStrategy[DataMaskingStrategy["Md5"] = 2] = "Md5";
-    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 3] = "Nullify";
+    // Md5,
+    DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 2] = "Nullify";
     // Deep,
 })(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
 var identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
 var scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
-var md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
+// const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
 var nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
         var DataMaskingStrategyList = [
             DataMaskingStrategy.Identity,
             DataMaskingStrategy.Scramble,
-            DataMaskingStrategy.Md5,
+            // DataMaskingStrategy.Md5,
             DataMaskingStrategy.Nullify,
         ];
         this.DataMaskingStrategyList = DataMaskingStrategyList;
