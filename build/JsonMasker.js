@@ -167,14 +167,23 @@ var JsonMasker = /** @class */ (function () {
             return stratFn(thing);
         }
         else {
-            this.StrategyNotSupported(strategy, dataType);
+            this.StrategyNotSupported(strategy, dataType, strategies);
         }
     };
     JsonMasker.prototype.maskNumber = function (num, strategyOptions) {
         return this.maskThing(num, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.number, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.numStrats, 'number');
     };
-    JsonMasker.prototype.StrategyNotSupported = function (strategy, dataType) {
-        throw new Error(dataType + ' does not support the ' + strategy + 'strategy.');
+    JsonMasker.prototype.StrategyNotSupported = function (strategy, dataType, strategies) {
+        throw new Error(dataType +
+            ' does not support the ' +
+            DataMaskingStrategy[strategy] +
+            ' strategy.\nThe following strategies are supported: [' +
+            JsonRefactor_1.jsonRefactor
+                .toKeyValArray(strategies)
+                .filter(function (kv) { return kv.value != null; })
+                .map(function (kv) { return kv.key; })
+                .join(', ') +
+            ']');
     };
     JsonMasker.prototype.maskNumScramble = function (num) {
         var _a, _b, _c, _d;

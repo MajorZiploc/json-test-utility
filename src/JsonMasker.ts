@@ -192,15 +192,26 @@ class JsonMasker {
     if (stratFn != null) {
       return stratFn(thing);
     } else {
-      this.StrategyNotSupported(strategy, dataType);
+      this.StrategyNotSupported(strategy, dataType, strategies);
     }
   }
 
   private maskNumber(num: number, strategyOptions?: StrategyOptions) {
     return this.maskThing(num, [strategyOptions?.number, strategyOptions?.overall], this.numStrats, 'number');
   }
-  private StrategyNotSupported(strategy: DataMaskingStrategy, dataType: string) {
-    throw new Error(dataType + ' does not support the ' + strategy + 'strategy.');
+  private StrategyNotSupported(strategy: DataMaskingStrategy, dataType: string, strategies: Strategies) {
+    throw new Error(
+      dataType +
+        ' does not support the ' +
+        DataMaskingStrategy[strategy] +
+        ' strategy.\nThe following strategies are supported: [' +
+        jr
+          .toKeyValArray(strategies)
+          .filter(kv => kv.value != null)
+          .map(kv => kv.key)
+          .join(', ') +
+        ']'
+    );
   }
 
   private maskNumScramble(num: number) {
