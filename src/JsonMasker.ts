@@ -26,10 +26,17 @@ const scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
 const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
 const nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 
+interface Strategies {
+  Identity: ((thing: any) => any) | null;
+  Scramble: ((thing: any) => any) | null;
+  Md5: ((thing: any) => any) | null;
+  Nullify: ((thing: any) => any) | null;
+}
+
 class JsonMasker {
   private DataMaskingStrategyList: DataMaskingStrategy[];
   private DataMaskingStrategyNameList: string[];
-  private numStrats: any;
+  private numStrats: Strategies;
   constructor() {
     const DataMaskingStrategyList = [
       DataMaskingStrategy.Identity,
@@ -166,7 +173,7 @@ class JsonMasker {
   private maskThing<T>(
     thing: T,
     priorityOfStrategies: (DataMaskingStrategy | ((original: any) => any) | null)[],
-    strategies: any,
+    strategies: Strategies,
     dataType: string
   ) {
     const stratOrFn = this.chooseStrategy(priorityOfStrategies);
