@@ -11,7 +11,7 @@ export enum DataMaskingStrategy {
 }
 
 export interface StrategyOptions {
-  overall?: DataMaskingStrategy | ((originalOverall: any) => any);
+  overall?: DataMaskingStrategy;
   json?: DataMaskingStrategy | ((originalJson: any) => any);
   string?: DataMaskingStrategy | ((originalString: string) => string);
   number?: DataMaskingStrategy | ((originalNumber: number) => number);
