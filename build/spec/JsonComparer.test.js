@@ -226,16 +226,6 @@ var testData = [
         shouldRun: true,
     },
     {
-        expected: true,
-        input: {
-            list1: [{ x: 'pie', y: [1, 2, 3] }, 3, '', [1, 2, 3], {}, 3],
-            list2: [{ x: 'apple between the skys', y: [2, 3, 1] }, 34, 'hi', [23, 2, 3], {}, 2345],
-        },
-        testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.list1, input.list2, {}); },
-        label: 'sameTypes - 2 complex lists with an empty options given',
-        shouldRun: true,
-    },
-    {
         expected: false,
         input: {
             list1: [{ x: 'pie', y: [1, '', 3] }, 3, '', [1, 2, 3], {}, 3],
@@ -282,94 +272,7 @@ var testData = [
             json2: { a: 1, b: 2, c: 3 },
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2); },
-        label: 'sameTypes - 2 jsons with same keys but created in different order',
-    },
-    {
-        expected: true,
-        input: {
-            json1: { b: null, c: 434, a: 234 },
-            json2: { a: 1, b: 2, c: 3 },
-        },
-        testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, { nullableKeys: ['b'] }); },
-        label: 'sameTypes - 2 jsons with same keys but with 1 nullable root key',
-        shouldRun: true,
-    },
-    {
-        expected: true,
-        input: {
-            json1: { b: null, c: { x: { j: 1 } }, a: 234 },
-            json2: { a: 1, b: 2, c: { x: { j: null } } },
-        },
-        testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, { nullableKeys: ['b', 'c.x.j'] }); },
-        label: 'sameTypes - 2 jsons with same keys but with 1 nullable root key and 1 nullable nested key',
-        shouldRun: true,
-    },
-    {
-        expected: true,
-        input: {
-            json1: { b: null, c: { x: { j: 1 } }, a: [1, 3] },
-            json2: { a: [1, 2, 3], b: 2, c: { x: { j: null } } },
-        },
-        testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, { nullableKeys: ['b', 'c.x.j'], subsetListCheck: true }); },
-        label: 'sameTypes - 2 jsons with same keys but with subset list check 1 nullable root key and 1 nullable nested key',
-        shouldRun: true,
-    },
-    {
-        expected: true,
-        input: {
-            json1: { a: [1, 'asdf'] },
-            json2: { a: [1, 2, 3] },
-        },
-        testFn: function (input) {
-            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, {
-                checkFirstInList: true,
-            });
-        },
-        label: 'sameTypes - 2 jsons with same keys but with check first in list flag true',
-        shouldRun: true,
-    },
-    {
-        expected: true,
-        input: {
-            json1: { a: [] },
-            json2: { a: [1, 2, 3] },
-        },
-        testFn: function (input) {
-            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, {
-                emptyListIsAcceptable: true,
-            });
-        },
-        label: 'sameTypes - 2 jsons with same keys but with empty lists marked as acceptable',
-        shouldRun: false,
-    },
-    {
-        expected: true,
-        input: {
-            json1: [
-                {
-                    id: 1522292,
-                    name: 'Bug',
-                    sequence: null,
-                    priority: 0,
-                    color: '#D9534F',
-                    textColor: '#FFFFFF',
-                },
-                {
-                    id: 1522293,
-                    name: 'Enhancement',
-                    sequence: null,
-                    priority: 1,
-                    color: '#428BCA',
-                    textColor: '#FFFFFF',
-                },
-            ],
-        },
-        testFn: function (input) {
-            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json1, {
-                emptyListIsAcceptable: true,
-            });
-        },
-        label: 'sameTypes - 1 json with api like data',
+        label: 'sameTypes - 2 jsons with different keys but the same types',
         shouldRun: true,
     },
 ];
