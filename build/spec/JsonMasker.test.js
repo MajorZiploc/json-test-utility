@@ -83,6 +83,27 @@ var testData = [
         label: 'maskData - bool scramble check',
         shouldRun: true,
     },
+    {
+        expected: { x: true, l: [2, 3, 4, 5] },
+        input: {
+            json: { x: false, l: [1, 2, 3] },
+        },
+        comparer: function (actual, expected) {
+            return JsonComparer_1.jsonComparer.sameKeys(actual, expected) && JsonComparer_1.jsonComparer.sameTypes(actual, expected) && _.isEqual(actual, expected);
+        },
+        testFn: function (input) {
+            return JsonMasker_1.jsonMasker.maskData(input.json, {
+                list: function (l) {
+                    l.push(4);
+                    return l;
+                },
+                number: function (n) { return n + 1; },
+                boolean: function (b) { return !b; },
+            });
+        },
+        label: 'maskData - given user strategies',
+        shouldRun: true,
+    },
 ];
 testTools.tester(testData);
 //# sourceMappingURL=JsonMasker.test.js.map
