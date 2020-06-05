@@ -109,9 +109,7 @@ var testDataAsync = [
                     case 1:
                         _a.sent();
                         return [4 /*yield*/, fs.writeFile(__dirname + '/MigrationTestData/dev2.json', JSON.stringify(dev2, null, 2))];
-                    case 2:
-                        _a.sent();
-                        return [2 /*return*/];
+                    case 2: return [2 /*return*/, _a.sent()];
                 }
             });
         }); },
@@ -122,9 +120,7 @@ var testDataAsync = [
                     case 1:
                         _a.sent();
                         return [4 /*yield*/, fs.remove(__dirname + '/MigrationTestData/dev2.json')];
-                    case 2:
-                        _a.sent();
-                        return [2 /*return*/];
+                    case 2: return [2 /*return*/, _a.sent()];
                 }
             });
         }); },
@@ -163,5 +159,5 @@ var testDataAsync = [
         ],
     },
 ];
-testTools.testerAsync(testDataAsync);
+// testTools.testerAsync(testDataAsync);
 //# sourceMappingURL=JsonMigration.test.js.map

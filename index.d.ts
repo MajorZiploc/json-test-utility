@@ -169,7 +169,7 @@ declare class JsonComparer {
    * @param superJson
    * @param compareFn How to compare the values from each json
    */
-  public isSubsetWith(subJson: any, superJson: any, compareFn: (f: any, s: any) => boolean);
+  isSubsetWith(subJson: any, superJson: any, compareFn: (f: any, s: any) => boolean);
 
   /**
    * Check if a json is a subset of another json through strict equivalence
@@ -177,7 +177,7 @@ declare class JsonComparer {
    * @param subJson
    * @param superJson
    */
-  public isSubset(subJson: any, superJson: any): boolean;
+  isSubset(subJson: any, superJson: any): boolean;
 
   /**
    * Check if a json is a subset of another json based on keys
@@ -185,7 +185,7 @@ declare class JsonComparer {
    * @param subJson
    * @param superJson
    */
-  public isSubsetKeys(subJson: any, superJson: any): boolean;
+  isSubsetKeys(subJson: any, superJson: any): boolean;
 
   /**
    *
@@ -202,7 +202,7 @@ declare class JsonComparer {
    * @param compareRest
    *  A flag that states if the rest (non special) of the values in the json should be compared based on strict equalivence
    */
-  public isSubsetSpecialCases(
+  isSubsetSpecialCases(
     subJson: any,
     superJson: any,
     specialSubKeys: string[],
@@ -219,7 +219,7 @@ declare class JsonComparer {
    * @param subArray
    * @param superArray
    */
-  public isSubsetArray(subArray: any[], superArray: any[]): boolean;
+  isSubsetArray(subArray: any[], superArray: any[]): boolean;
 
   /**
    *
@@ -234,7 +234,7 @@ declare class JsonComparer {
    * @param array2
    * @param comparer how each element is compared
    */
-  public containSameElementsWith(array1: any[], array2: any[], comparer: (f: any, s: any) => boolean);
+  containSameElementsWith(array1: any[], array2: any[], comparer: (f: any, s: any) => boolean);
 
   /**
    * Ignores order.
@@ -245,7 +245,7 @@ declare class JsonComparer {
    * @param array1
    * @param array2
    */
-  public containSameElements(array1: any[], array2: any[]): boolean;
+  containSameElements(array1: any[], array2: any[]): boolean;
 
   /**
    * Check if something is a json.
@@ -253,7 +253,7 @@ declare class JsonComparer {
    * @param thing to be checked
    * @returns true if is a json, else false
    */
-  public isJSON(thing: any): boolean;
+  isJSON(thing: any): boolean;
 
   /**
    * Recursive by default
@@ -264,7 +264,16 @@ declare class JsonComparer {
    * @param regexOptions standard regex options like, g and i
    * @param deepCheck defaults to true
    */
-  public findAllKeyPaths(json: any, regexKeyPattern: string, regexOptions?: string, deepCheck?: boolean);
+  findAllKeyPaths(json: any, regexKeyPattern: string, regexOptions?: string, deepCheck?: boolean);
+
+  /**
+   * Checks if both things have the same type.
+   * Recursively checks the whole structure based on if they are lists or jsons.
+   *
+   * @param thing1
+   * @param thing2
+   */
+  sameTypes(thing1: any, thing2: any): boolean;
 }
 
 export const jsonComparer: JsonComparer;

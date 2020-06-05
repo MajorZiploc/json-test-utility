@@ -179,6 +179,86 @@ const testData: testTools.testInput[] = [
     label: 'findAllKeyPaths - that contain power with case insensitive and global flags',
     shouldRun: true,
   },
+  {
+    expected: true,
+    input: {
+      json1: {},
+      json2: {},
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2),
+    label: 'sameTypes - 2 empty jsons',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      list1: [],
+      list2: [],
+    },
+    testFn: input => jc.sameTypes(input.list1, input.list2),
+    label: 'sameTypes - 2 empty lists',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      list1: [{ x: 'pie', y: [1, 2, 3] }, 3, '', [1, 2, 3], {}, 3],
+      list2: [{ x: 'apple between the skys', y: [2, 3, 1] }, 34, 'hi', [23, 2, 3], {}, 2345],
+    },
+    testFn: input => jc.sameTypes(input.list1, input.list2),
+    label: 'sameTypes - 2 complex lists',
+    shouldRun: true,
+  },
+  {
+    expected: false,
+    input: {
+      list1: [{ x: 'pie', y: [1, '', 3] }, 3, '', [1, 2, 3], {}, 3],
+      list2: [{ x: 'pie', y: [1, 2, 3] }, 3, '', [1, 2, 3], {}, 3],
+    },
+    testFn: input => jc.sameTypes(input.list1, input.list2),
+    label: 'sameTypes - 2 complex lists with slightly different types',
+    shouldRun: true,
+  },
+  {
+    expected: false,
+    input: {
+      json1: { x: [22, 2, 44], ghost: { jame: [[[]]], kay: 'jay' } },
+      json2: { x: [1, 2, 3], ghost: { jame: [[[]]], kay: 1 } },
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2),
+    label: 'sameTypes - 2 complex jsons with slightly different types',
+    shouldRun: true,
+  },
+  {
+    expected: false,
+    input: {
+      json1: { a: 1, b: 2, c: 3 },
+      json2: { aa: 1, bb: 2, cc: 3 },
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2),
+    label: 'sameTypes - 2 jsons with different keys but the same types',
+    shouldRun: true,
+  },
+  {
+    expected: false,
+    input: {
+      json1: { a: 1, b: 2, c: 3 },
+      json2: { a: 33, b: 66, c: 3, d: 4 },
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2),
+    label: 'sameTypes - 2 jsons where one json has more keys',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      json1: { b: 3453453, c: 434, a: 234 },
+      json2: { a: 1, b: 2, c: 3 },
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2),
+    label: 'sameTypes - 2 jsons with different keys but the same types',
+    shouldRun: true,
+  },
 ];
 
 testTools.tester(testData);

@@ -71,11 +71,11 @@ const testDataAsync: testTools.testInputAsync[] = [
     label: 'Checks full migration lifecycle',
     setup: async () => {
       await fs.writeFile(__dirname + '/MigrationTestData/dev.json', JSON.stringify(dev, null, 2));
-      await fs.writeFile(__dirname + '/MigrationTestData/dev2.json', JSON.stringify(dev2, null, 2));
+      return await fs.writeFile(__dirname + '/MigrationTestData/dev2.json', JSON.stringify(dev2, null, 2));
     },
     cleanup: async () => {
       await fs.remove(__dirname + '/MigrationTestData/dev.json');
-      await fs.remove(__dirname + '/MigrationTestData/dev2.json');
+      return await fs.remove(__dirname + '/MigrationTestData/dev2.json');
     },
     asyncTestFn: async input => {
       await migrationHandler.migrateFolder(
@@ -107,4 +107,4 @@ const testDataAsync: testTools.testInputAsync[] = [
     ],
   },
 ];
-testTools.testerAsync(testDataAsync);
+// testTools.testerAsync(testDataAsync);
