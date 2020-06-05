@@ -116,14 +116,14 @@ class JsonMasker {
 
   private maskList(list: any[], strategyOptions?: StrategyOptions): any[] {
     const stratOrFn = this.chooseStrategy([strategyOptions?.list, strategyOptions?.overall]);
+    let l = list;
     if (this.isFunction(stratOrFn)) {
       const fn = stratOrFn as any;
-      return fn(list);
+      l = fn(list);
     }
     const strategy = stratOrFn as any;
-    let l = list;
     if (strategy === DataMaskingStrategy.Identity) {
-      l = list;
+      // Do nothing
     }
     if (strategy === DataMaskingStrategy.Nullify) {
       return [];

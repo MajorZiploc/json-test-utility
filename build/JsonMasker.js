@@ -84,14 +84,14 @@ var JsonMasker = /** @class */ (function () {
     JsonMasker.prototype.maskList = function (list, strategyOptions) {
         var _this = this;
         var stratOrFn = this.chooseStrategy([strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.list, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall]);
+        var l = list;
         if (this.isFunction(stratOrFn)) {
             var fn = stratOrFn;
-            return fn(list);
+            l = fn(list);
         }
         var strategy = stratOrFn;
-        var l = list;
         if (strategy === DataMaskingStrategy.Identity) {
-            l = list;
+            // Do nothing
         }
         if (strategy === DataMaskingStrategy.Nullify) {
             return [];

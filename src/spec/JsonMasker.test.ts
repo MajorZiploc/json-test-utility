@@ -82,6 +82,25 @@ const testData: testTools.testInput[] = [
     label: 'maskData - bool scramble check',
     shouldRun: true,
   },
+  {
+    expected: { x: true, l: [2, 3, 4, 5] },
+    input: {
+      json: { x: false, l: [1, 2, 3] },
+    },
+    comparer: (actual: any, expected: any) =>
+      jc.sameKeys(actual, expected) && jc.sameTypes(actual, expected) && _.isEqual(actual, expected),
+    testFn: input =>
+      jmk.maskData(input.json, {
+        list: l => {
+          l.push(4);
+          return l;
+        },
+        number: n => n + 1,
+        boolean: b => !b,
+      }),
+    label: 'maskData - given user strategies',
+    shouldRun: true,
+  },
 ];
 
 testTools.tester(testData);
