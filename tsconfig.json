@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["ES2015", "dom"],
+    "lib": ["es5", "dom"],
     "target": "es5",
     "module": "commonjs",
     "outDir": "./build",
