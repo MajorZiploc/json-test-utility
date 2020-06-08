@@ -20,10 +20,24 @@ var testData = [
         shouldRun: true,
     },
     {
+        expected: null,
+        input: null,
+        testFn: function (input) { return JsonRefactor_1.jsonRefactor.setField(input, 'e', 300); },
+        label: 'SetField on null json',
+        shouldRun: true,
+    },
+    {
         expected: { status: 200, e: 'jones', j: { i: {} } },
         input: { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } } },
         testFn: function (input) { return JsonRefactor_1.jsonRefactor.removeField(input, 'j.i.k'); },
         label: 'RemoveField',
+        shouldRun: true,
+    },
+    {
+        expected: null,
+        input: null,
+        testFn: function (input) { return JsonRefactor_1.jsonRefactor.removeField(input, 'j.i.k'); },
+        label: 'RemoveField on null json',
         shouldRun: true,
     },
     {
@@ -49,6 +63,13 @@ var testData = [
         shouldRun: true,
     },
     {
+        expected: null,
+        input: null,
+        testFn: function (input) { return JsonRefactor_1.jsonRefactor.toKeyValArray(input); },
+        label: 'toKeyValArray on a null json',
+        shouldRun: true,
+    },
+    {
         expected: true,
         input: [
             { key: 'x', value: 12 },
@@ -61,6 +82,13 @@ var testData = [
             return _.isEqual(actual, expected);
         },
         label: 'fromKeyValArray',
+        shouldRun: true,
+    },
+    {
+        expected: null,
+        input: null,
+        testFn: function (input) { return JsonRefactor_1.jsonRefactor.fromKeyValArray(input); },
+        label: 'fromKeyValArray on a null json',
         shouldRun: true,
     },
     {

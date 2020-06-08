@@ -1,6 +1,11 @@
 import * as _ from 'lodash';
 import { jsonRefactor as jr } from './JsonRefactor';
 
+interface TypeCheckerOptions {
+  nullableKeys?: string[];
+  checkFirstInList?: boolean;
+}
+
 class JsonComparer {
   public isSubsetWith(subJson: any, superJson: any, compareFn: (f: any, s: any) => boolean) {
     const subKVA = jr.toKeyValArray(subJson);
@@ -83,22 +88,50 @@ class JsonComparer {
     return true;
   }
 
-  public sameTypes(thing1: any, thing2: any): boolean {
+  public sameTypes(thing1: any, thing2: any, options?: TypeCheckerOptions): boolean {
     if (Array.isArray(thing1) && Array.isArray(thing2)) {
-      return this.sameTypesList(thing1, thing2);
+      return this.sameTypesList(thing1, thing2, options);
     }
     if (Array.isArray(thing1) || Array.isArray(thing2)) {
       return false;
     }
     if (this.isJSON(thing1) && this.isJSON(thing2)) {
       if (this.sameKeys(thing1, thing2)) {
-        const j1kva = jr.toKeyValArray(thing1).sort((kv1, kv2) => kv1.key.localeCompare(kv2.key));
-        const j2kva = jr.toKeyValArray(thing2).sort((kv1, kv2) => kv1.key.localeCompare(kv2.key));
+        // Check key paths that have no dots.
+        const rootKeyPaths = options?.nullableKeys?.filter(k => k.split('.').length <= 1) ?? [];
+        // Removes 1 layer of key paths.
+        const nullKeys = options?.nullableKeys
+          ?.map(k => k.split('.').splice(1).join('.'))
+          .filter(k => !_.isEqual(k, ''));
+        const opts = jr.setField(options, 'nullableKeys', nullKeys);
+        const doesNullableRootKeysTypeCheck = rootKeyPaths.every(k => {
+          const v1 = thing1[k];
+          const v2 = thing2[k];
+          if (v1 === null && v2 === null) {
+            return true;
+          }
+          if (v1 === null || v2 === null) {
+            return true;
+          } else {
+            return this.sameTypes(v1, v2, opts);
+          }
+        });
+        if (doesNullableRootKeysTypeCheck === false) {
+          return false;
+        }
+        const j1kva = jr
+          .toKeyValArray(thing1)
+          .sort((kv1, kv2) => kv1.key.localeCompare(kv2.key))
+          .filter(kv => !rootKeyPaths.some(rk => rk === kv.key));
+        const j2kva = jr
+          .toKeyValArray(thing2)
+          .sort((kv1, kv2) => kv1.key.localeCompare(kv2.key))
+          .filter(kv => !rootKeyPaths.some(rk => rk === kv.key));
         if (j1kva.length != j2kva.length) {
           return false;
         }
         const j1kvAndj2kv_s = _.zipWith(j1kva, j2kva, (j1kv, j2kv) => ({ j1kv, j2kv }));
-        return j1kvAndj2kv_s.every(j1kvAndj2kv => this.sameTypes(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value));
+        return j1kvAndj2kv_s.every(j1kvAndj2kv => this.sameTypes(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value, opts));
       }
       return false;
     }
@@ -108,12 +141,12 @@ class JsonComparer {
     return typeof thing1 === typeof thing2;
   }
 
-  private sameTypesList(list1: any[], list2: any[]): boolean {
+  private sameTypesList(list1: any[], list2: any[], options?: TypeCheckerOptions): boolean {
     if (list1.length != list2.length) {
       return false;
     }
     const lsz = _.zipWith(list1, list2, (e1, e2) => ({ e1, e2 }));
-    return lsz.every(lz => this.sameTypes(lz.e1, lz.e2));
+    return lsz.every(lz => this.sameTypes(lz.e1, lz.e2, options));
   }
 
   public findAllKeyPaths(json: any, regexKeyPattern: string, regexOptions?: string, deepCheck?: boolean) {

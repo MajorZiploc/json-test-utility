@@ -256,7 +256,26 @@ const testData: testTools.testInput[] = [
       json2: { a: 1, b: 2, c: 3 },
     },
     testFn: input => jc.sameTypes(input.json1, input.json2),
-    label: 'sameTypes - 2 jsons with different keys but the same types',
+    label: 'sameTypes - 2 jsons with same keys but created in different order',
+  },
+  {
+    expected: true,
+    input: {
+      json1: { b: null, c: 434, a: 234 },
+      json2: { a: 1, b: 2, c: 3 },
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2, { nullableKeys: ['b'] }),
+    label: 'sameTypes - 2 jsons with same keys but with 1 nullable root key',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      json1: { b: null, c: { x: { j: 1 } }, a: 234 },
+      json2: { a: 1, b: 2, c: { x: { j: null } } },
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2, { nullableKeys: ['b', 'c.x.j'] }),
+    label: 'sameTypes - 2 jsons with same keys but with 1 nullable root key and 1 nullable nested key',
     shouldRun: true,
   },
 ];

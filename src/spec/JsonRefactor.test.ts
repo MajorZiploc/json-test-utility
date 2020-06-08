@@ -19,10 +19,24 @@ const testData: testTools.testInput[] = [
     shouldRun: true,
   },
   {
+    expected: null,
+    input: null,
+    testFn: input => jr.setField(input, 'e', 300),
+    label: 'SetField on null json',
+    shouldRun: true,
+  },
+  {
     expected: { status: 200, e: 'jones', j: { i: {} } },
     input: { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } } },
     testFn: input => jr.removeField(input, 'j.i.k'),
     label: 'RemoveField',
+    shouldRun: true,
+  },
+  {
+    expected: null,
+    input: null,
+    testFn: input => jr.removeField(input, 'j.i.k'),
+    label: 'RemoveField on null json',
     shouldRun: true,
   },
   {
@@ -48,6 +62,13 @@ const testData: testTools.testInput[] = [
     shouldRun: true,
   },
   {
+    expected: null,
+    input: null,
+    testFn: input => jr.toKeyValArray(input),
+    label: 'toKeyValArray on a null json',
+    shouldRun: true,
+  },
+  {
     expected: true,
     input: [
       { key: 'x', value: 12 },
@@ -60,6 +81,13 @@ const testData: testTools.testInput[] = [
       return _.isEqual(actual, expected);
     },
     label: 'fromKeyValArray',
+    shouldRun: true,
+  },
+  {
+    expected: null,
+    input: null,
+    testFn: input => jr.fromKeyValArray(input),
+    label: 'fromKeyValArray on a null json',
     shouldRun: true,
   },
   {

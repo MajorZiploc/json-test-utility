@@ -7,6 +7,15 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Json Comparer tool test",
+      "protocol": "inspector",
+      "program": "${workspaceRoot}\\node_modules\\tape\\bin\\tape",
+      "args": ["-r", "ts-node/register", "${workspaceRoot}\\src\\spec\\JsonComparer.test.ts"],
+      "cwd": "${workspaceRoot}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Json Refactor tool test",
       "protocol": "inspector",
       "program": "${workspaceRoot}\\node_modules\\tape\\bin\\tape",

@@ -27,10 +27,16 @@ var JsonRefactor = /** @class */ (function () {
         return this.fromKeyValArray(this.toKeyValArray(json).filter(function (kv) { return !keys.some(function (k) { return _.isEqual(k, kv.key); }); }));
     };
     JsonRefactor.prototype.toKeyValArray = function (json) {
+        if (json === null || json === undefined) {
+            return null;
+        }
         return Object.keys(json).map(function (key) { return ({ key: key, value: json[key] }); });
     };
     JsonRefactor.prototype.fromKeyValArray = function (keyValueArray) {
         var _this = this;
+        if (keyValueArray === null || keyValueArray === undefined) {
+            return null;
+        }
         return keyValueArray.reduce(function (acc, ele) { return _this.addField(acc, ele.key, ele.value); }, {});
     };
     JsonRefactor.prototype.concatJsons = function (json1, json2) {
