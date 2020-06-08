@@ -3,6 +3,6 @@ import { ListOfJsonMigratorOf } from './ListOfJsonMigrator';
 import { jsonRefactor } from './JsonRefactor';
 import { jsonComparer } from './JsonComparer';
 import { jsonMasker } from './JsonMasker';
-import { migrationHandler } from './MigrationHandler';
+import { jsonMigration } from './JsonMigration';
 
-export { IJsonMigrator, jsonRefactor, jsonComparer, migrationHandler, ListOfJsonMigratorOf, jsonMasker };
+export { IJsonMigrator, jsonRefactor, jsonComparer, jsonMigration, ListOfJsonMigratorOf, jsonMasker };
