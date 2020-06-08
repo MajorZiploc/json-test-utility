@@ -4,6 +4,8 @@ import { jsonRefactor as jr } from './JsonRefactor';
 interface TypeCheckerOptions {
   nullableKeys?: string[];
   checkFirstInList?: boolean;
+  subsetListCheck?: boolean;
+  emptyListIsAcceptable?: boolean;
 }
 
 class JsonComparer {
@@ -101,7 +103,7 @@ class JsonComparer {
         const rootKeyPaths = options?.nullableKeys?.filter(k => k.split('.').length <= 1) ?? [];
         // Removes 1 layer of key paths.
         const nullKeys = options?.nullableKeys
-          ?.map(k => k.split('.').splice(1).join('.'))
+          ?.map(k => k.split('.').slice(1).join('.'))
           .filter(k => !_.isEqual(k, ''));
         const opts = jr.setField(options, 'nullableKeys', nullKeys);
         const doesNullableRootKeysTypeCheck = rootKeyPaths.every(k => {
@@ -142,6 +144,28 @@ class JsonComparer {
   }
 
   private sameTypesList(list1: any[], list2: any[], options?: TypeCheckerOptions): boolean {
+    if (options?.subsetListCheck ?? false) {
+      const trimedList2 = list2.slice(0, list1.length);
+      const lsz = _.zipWith(list1, trimedList2, (e1, e2) => ({ e1, e2 }));
+      return lsz.every(lz => this.sameTypes(lz.e1, lz.e2, options));
+    }
+    // Should only check first in list
+    if (options?.checkFirstInList ?? false) {
+      if (list1.length === 0 || list1.length === 0) {
+        return options?.emptyListIsAcceptable ?? false;
+      }
+      if (list1.length === 0 && list1.length === 0) {
+        return options?.emptyListIsAcceptable ?? false;
+      }
+      const first1 = list1[0];
+      const first2 = list2[0];
+      return this.sameTypes(first1, first2, options);
+    }
+    if (options?.emptyListIsAcceptable ?? false) {
+      if (list1.length === 0 || list2.length === 0) {
+        return true;
+      }
+    }
     if (list1.length != list2.length) {
       return false;
     }

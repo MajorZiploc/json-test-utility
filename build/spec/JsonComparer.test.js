@@ -182,7 +182,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2); },
         label: 'sameTypes - 2 empty jsons',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: true,
@@ -192,7 +192,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.list1, input.list2); },
         label: 'sameTypes - 2 empty lists',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: true,
@@ -202,7 +202,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.list1, input.list2); },
         label: 'sameTypes - 2 complex lists',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: false,
@@ -212,7 +212,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.list1, input.list2); },
         label: 'sameTypes - 2 complex lists with slightly different types',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: false,
@@ -222,7 +222,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2); },
         label: 'sameTypes - 2 complex jsons with slightly different types',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: false,
@@ -232,7 +232,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2); },
         label: 'sameTypes - 2 jsons with different keys but the same types',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: false,
@@ -242,7 +242,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2); },
         label: 'sameTypes - 2 jsons where one json has more keys',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: true,
@@ -271,6 +271,44 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, { nullableKeys: ['b', 'c.x.j'] }); },
         label: 'sameTypes - 2 jsons with same keys but with 1 nullable root key and 1 nullable nested key',
+        shouldRun: true,
+    },
+    {
+        expected: true,
+        input: {
+            json1: { b: null, c: { x: { j: 1 } }, a: [1, 3] },
+            json2: { a: [1, 2, 3], b: 2, c: { x: { j: null } } },
+        },
+        testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, { nullableKeys: ['b', 'c.x.j'], subsetListCheck: true }); },
+        label: 'sameTypes - 2 jsons with same keys but with subset list check 1 nullable root key and 1 nullable nested key',
+        shouldRun: true,
+    },
+    {
+        expected: true,
+        input: {
+            json1: { a: [1, 'asdf'] },
+            json2: { a: [1, 2, 3] },
+        },
+        testFn: function (input) {
+            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, {
+                checkFirstInList: true,
+            });
+        },
+        label: 'sameTypes - 2 jsons with same keys but with check first in list flag true',
+        shouldRun: true,
+    },
+    {
+        expected: true,
+        input: {
+            json1: { a: [] },
+            json2: { a: [1, 2, 3] },
+        },
+        testFn: function (input) {
+            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, {
+                emptyListIsAcceptable: true,
+            });
+        },
+        label: 'sameTypes - 2 jsons with same keys but with empty lists marked as acceptable',
         shouldRun: true,
     },
 ];

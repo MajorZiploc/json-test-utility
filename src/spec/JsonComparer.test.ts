@@ -278,6 +278,43 @@ const testData: testTools.testInput[] = [
     label: 'sameTypes - 2 jsons with same keys but with 1 nullable root key and 1 nullable nested key',
     shouldRun: true,
   },
+  {
+    expected: true,
+    input: {
+      json1: { b: null, c: { x: { j: 1 } }, a: [1, 3] },
+      json2: { a: [1, 2, 3], b: 2, c: { x: { j: null } } },
+    },
+    testFn: input => jc.sameTypes(input.json1, input.json2, { nullableKeys: ['b', 'c.x.j'], subsetListCheck: true }),
+    label:
+      'sameTypes - 2 jsons with same keys but with subset list check 1 nullable root key and 1 nullable nested key',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      json1: { a: [1, 'asdf'] },
+      json2: { a: [1, 2, 3] },
+    },
+    testFn: input =>
+      jc.sameTypes(input.json1, input.json2, {
+        checkFirstInList: true,
+      }),
+    label: 'sameTypes - 2 jsons with same keys but with check first in list flag true',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      json1: { a: [] },
+      json2: { a: [1, 2, 3] },
+    },
+    testFn: input =>
+      jc.sameTypes(input.json1, input.json2, {
+        emptyListIsAcceptable: true,
+      }),
+    label: 'sameTypes - 2 jsons with same keys but with empty lists marked as acceptable',
+    shouldRun: true,
+  },
 ];
 
 testTools.tester(testData);
