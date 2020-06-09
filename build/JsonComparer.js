@@ -49,6 +49,9 @@ var JsonComparer = /** @class */ (function () {
     };
     JsonComparer.prototype.isJSON = function (thing) {
         var m = thing;
+        if (m === null || undefined) {
+            return false;
+        }
         if (typeof m == 'object') {
             try {
                 m = JSON.stringify(m);

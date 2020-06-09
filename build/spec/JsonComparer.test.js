@@ -126,6 +126,20 @@ var testData = [
     },
     {
         expected: false,
+        input: null,
+        testFn: function (input) { return JsonComparer_1.jsonComparer.isJSON(input); },
+        label: 'isJson() - null',
+        shouldRun: true,
+    },
+    {
+        expected: false,
+        input: undefined,
+        testFn: function (input) { return JsonComparer_1.jsonComparer.isJSON(input); },
+        label: 'isJson() - undefined',
+        shouldRun: true,
+    },
+    {
+        expected: false,
         input: {
             json1: { x: 123, y: { z: 1 } },
             json2: { x: 'asdffd', y: { fdsa: 1 }, s: 1 },
@@ -309,6 +323,36 @@ var testData = [
             });
         },
         label: 'sameTypes - 2 jsons with same keys but with empty lists marked as acceptable',
+        shouldRun: false,
+    },
+    {
+        expected: true,
+        input: {
+            json1: [
+                {
+                    id: 1522292,
+                    name: 'Bug',
+                    sequence: null,
+                    priority: 0,
+                    color: '#D9534F',
+                    textColor: '#FFFFFF',
+                },
+                {
+                    id: 1522293,
+                    name: 'Enhancement',
+                    sequence: null,
+                    priority: 1,
+                    color: '#428BCA',
+                    textColor: '#FFFFFF',
+                },
+            ],
+        },
+        testFn: function (input) {
+            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json1, {
+                emptyListIsAcceptable: true,
+            });
+        },
+        label: 'sameTypes - 1 json with api like data',
         shouldRun: true,
     },
 ];

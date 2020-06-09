@@ -70,6 +70,9 @@ class JsonComparer {
 
   public isJSON(thing: any): boolean {
     let m = thing;
+    if (m === null || undefined) {
+      return false;
+    }
     if (typeof m == 'object') {
       try {
         m = JSON.stringify(m);
