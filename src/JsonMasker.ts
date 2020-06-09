@@ -276,44 +276,63 @@ class JsonMasker {
     return num % 2 === 0;
   }
 
-  private maskStrScramble(str: string) {
-    let strObj = _.groupBy(
-      'three'.split('').map((c, i) => ({ c, i })),
-      j => j.c
-    );
-    let newString;
-    let stringArray = str.split('');
-    if (str === '' || !/\S/.test(str)) {
-      return Math.random().toString(36).slice(-5);
-    } else if (str.length === 1) {
-      return str + str;
-    } else if (this.allCharsSame(str)) {
-      return Math.random().toString(36).slice(-str.length);
-    }
-    do {
-      newString = this.shuffle(stringArray).join('');
-    } while (newString === str);
-    return newString;
+  private shuffle(item: any[]) {
+    return item.sort(() => Math.random() - 0.5)
   }
 
-  private shuffle(thing: any[]): any[] {
-    return thing.sort(() => Math.random() - 0.5);
+  private maskStrScramble(str: string) {
+    let strKeyValArray = jr.toKeyValArray(
+      _.groupBy(
+          str.split('').map((c, i) => ({ c, i })),
+            j => j.c
+      )
+    )
+    .map(kv =>  ({ key: kv.key, value: kv.value.map(j => j.i) }))
+    .map(kv => [kv.key, kv.value]);
+
+    const [keys, values] = _.unzip(strKeyValArray);
+    let v = values
+
+    if (keys.length === 1){
+      const charCode = keys[0].charCodeAt(0);
+      if(charCode === 126){
+          keys[0] = String.fromCharCode(33);
+      } else if(charCode === 32){
+          keys[0] = String.fromCharCode(32)
+      } else {
+          keys[0] = String.fromCharCode(charCode + 1);
+      }
+    } else if(keys.length <= 3) {
+      let newValArr = [];
+      v.forEach(ve => {
+          if (v.indexOf(ve) === v.length - 1){
+            newValArr[0] = ve;
+          } else {
+            newValArr[v.indexOf(ve) + 1] = ve;
+          }
+      });
+      v = newValArr
+    } else {
+      do {
+        v = _.sortBy(v, () => Math.random() - 0.5);
+      } while (_.isEqual(values, v))
+    }
+    
+    const newKVWord = _.zipWith(keys, v, (key, value) => ({ key, value }));
+    return newKVWord
+      .reduce((chars, kv) => {
+          kv.value.forEach(index => {
+          chars[index] = kv.key;
+      });
+      return chars;
+      }, [])
+    .join('');
   }
 
   private allNumbersSame(num: string) {
     let numArray = num.split('');
     for (let i = 0; i < numArray.length; i++) {
       if (numArray[i] !== numArray[i + 1]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private allCharsSame(str: string) {
-    let strArray = str.split('');
-    for (let i = 0; i < strArray.length; i++) {
-      if (strArray[i] !== strArray[i + 1]) {
         return false;
       }
     }

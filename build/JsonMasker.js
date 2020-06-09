@@ -241,40 +241,58 @@ var JsonMasker = /** @class */ (function () {
         var num = Math.floor(Math.random() * (max - min) + min);
         return num % 2 === 0;
     };
-    JsonMasker.prototype.maskStrScramble = function (str) {
-        var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
-        var newString;
-        var stringArray = str.split('');
-        if (str === '' || !/\S/.test(str)) {
-            return Math.random().toString(36).slice(-5);
-        }
-        else if (str.length === 1) {
-            return str + str;
-        }
-        else if (this.allCharsSame(str)) {
-            return Math.random().toString(36).slice(-str.length);
-        }
-        do {
-            newString = this.shuffle(stringArray).join('');
-        } while (newString === str);
-        return newString;
+    JsonMasker.prototype.shuffle = function (item) {
+        return item.sort(function () { return Math.random() - 0.5; });
     };
-    JsonMasker.prototype.shuffle = function (thing) {
-        return thing.sort(function () { return Math.random() - 0.5; });
+    JsonMasker.prototype.maskStrScramble = function (str) {
+        var strKeyValArray = JsonRefactor_1.jsonRefactor.toKeyValArray(_.groupBy(str.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; }))
+            .map(function (kv) { return ({ key: kv.key, value: kv.value.map(function (j) { return j.i; }) }); })
+            .map(function (kv) { return [kv.key, kv.value]; });
+        var _a = _.unzip(strKeyValArray), keys = _a[0], values = _a[1];
+        var v = values;
+        if (keys.length === 1) {
+            var charCode = keys[0].charCodeAt(0);
+            if (charCode === 126) {
+                keys[0] = String.fromCharCode(33);
+            }
+            else if (charCode === 32) {
+                keys[0] = String.fromCharCode(32);
+            }
+            else {
+                keys[0] = String.fromCharCode(charCode + 1);
+            }
+        }
+        else if (keys.length <= 3) {
+            var newValArr_1 = [];
+            v.forEach(function (ve) {
+                if (v.indexOf(ve) === v.length - 1) {
+                    newValArr_1[0] = ve;
+                }
+                else {
+                    newValArr_1[v.indexOf(ve) + 1] = ve;
+                }
+            });
+            v = newValArr_1;
+        }
+        else {
+            do {
+                v = _.sortBy(v, function () { return Math.random() - 0.5; });
+            } while (_.isEqual(values, v));
+        }
+        var newKVWord = _.zipWith(keys, v, function (key, value) { return ({ key: key, value: value }); });
+        return newKVWord
+            .reduce(function (chars, kv) {
+            kv.value.forEach(function (index) {
+                chars[index] = kv.key;
+            });
+            return chars;
+        }, [])
+            .join('');
     };
     JsonMasker.prototype.allNumbersSame = function (num) {
         var numArray = num.split('');
         for (var i = 0; i < numArray.length; i++) {
             if (numArray[i] !== numArray[i + 1]) {
-                return false;
-            }
-        }
-        return true;
-    };
-    JsonMasker.prototype.allCharsSame = function (str) {
-        var strArray = str.split('');
-        for (var i = 0; i < strArray.length; i++) {
-            if (strArray[i] !== strArray[i + 1]) {
                 return false;
             }
         }
