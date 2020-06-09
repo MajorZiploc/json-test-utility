@@ -13,6 +13,6 @@ class ListOfJsonMigrator implements IJsonMigrator {
   }
 }
 
-export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator) {
+export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator): IJsonMigrator {
   return new ListOfJsonMigrator(eleMigrator);
 }

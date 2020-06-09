@@ -27,7 +27,7 @@ export class IJsonMigrator {
  * @returns
  *  A jsonMigrator that operates on a list of jsons.
  */
-export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator);
+export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator): IJsonMigrator;
 
 declare class JsonMigration {
   /**
@@ -157,7 +157,7 @@ declare class JsonComparer {
    * @param superJson
    * @param compareFn How to compare the values from each json
    */
-  isSubsetWith(subJson: any, superJson: any, compareFn: (f: any, s: any) => boolean);
+  isSubsetWith(subJson: any, superJson: any, compareFn: (f: any, s: any) => boolean): boolean;
 
   /**
    * Check if a json is a subset of another json through strict equivalence
@@ -222,7 +222,7 @@ declare class JsonComparer {
    * @param array2
    * @param comparer how each element is compared
    */
-  containSameElementsWith(array1: any[], array2: any[], comparer: (f: any, s: any) => boolean);
+  containSameElementsWith(array1: any[], array2: any[], comparer: (f: any, s: any) => boolean): boolean;
 
   /**
    * Ignores order.
@@ -251,8 +251,9 @@ declare class JsonComparer {
    * @param regexKeyPattern standard regex pattern. ex: ^.{1,}z*a?[\\w\\d]$
    * @param regexOptions standard regex options like, g and i
    * @param deepCheck defaults to true
+   * @returns list of key paths where the pattern was found in the json
    */
-  findAllKeyPaths(json: any, regexKeyPattern: string, regexOptions?: string, deepCheck?: boolean);
+  findAllKeyPaths(json: any, regexKeyPattern: string, regexOptions?: string, deepCheck?: boolean): string[];
 
   /**
    * Checks if both things have the same type.

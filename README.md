@@ -15,3 +15,4 @@ TODO
 <h2>Change Log<h2>
 <ul>0.1.7<li>Fixes isJson function for null case. isJson(null) is now false</li></ul>
 <ul>0.1.8<li>Fixes type information for sameType and JsonMigration</li></ul>
+<ul>0.1.9<li>Fixes type information for functions with implicit any returns</li></ul>

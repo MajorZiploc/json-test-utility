@@ -152,7 +152,14 @@ var testData = [
         expected: true,
         input: { array1: [1, 2, { qq: ';-;' }], array2: [{ qq: ';-;' }, 2, 1] },
         testFn: function (input) { return JsonComparer_1.jsonComparer.containSameElements(input.array1, input.array2); },
-        label: 'Check if the arrays have the same elements.',
+        label: 'containSameElements - Check if the arrays have the same elements.',
+        shouldRun: true,
+    },
+    {
+        expected: true,
+        input: { array1: [1, 2, { qq: ';-;' }], array2: [{ qq: ';-;' }, 2, 1] },
+        testFn: function (input) { return JsonComparer_1.jsonComparer.containSameElementsWith(input.array1, input.array2, _.isEqual); },
+        label: 'containSameElementsWith - Check if the arrays have the same elements.',
         shouldRun: true,
     },
     {
@@ -216,6 +223,16 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.list1, input.list2); },
         label: 'sameTypes - 2 complex lists',
+        shouldRun: true,
+    },
+    {
+        expected: true,
+        input: {
+            list1: [{ x: 'pie', y: [1, 2, 3] }, 3, '', [1, 2, 3], {}, 3],
+            list2: [{ x: 'apple between the skys', y: [2, 3, 1] }, 34, 'hi', [23, 2, 3], {}, 2345],
+        },
+        testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.list1, input.list2, {}); },
+        label: 'sameTypes - 2 complex lists with an empty options given',
         shouldRun: true,
     },
     {
