@@ -1,3 +1,9 @@
+export interface TypeCheckerOptions {
+  nullableKeys?: string[];
+  checkFirstInList?: boolean;
+  subsetListCheck?: boolean;
+  emptyListIsAcceptable?: boolean;
+}
 /**
  * Implement in order to use the MigrationHandler
  */
@@ -23,7 +29,7 @@ export class IJsonMigrator {
  */
 export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator);
 
-declare class MigrationHandler {
+declare class JsonMigration {
   /**
    *
    * This operation in immutable
@@ -35,24 +41,6 @@ declare class MigrationHandler {
    *  its an order list where the created json of one migrator becomes the old json/input of the next
    */
   migrateJsons(jsons: any[], migrators: IJsonMigrator[]): any[];
-
-  /**
-   * Create a log file of all alterations to be made to the jsons.
-   *
-   * @param migrators
-   */
-  logMigration(migrators: IJsonMigrator[]): Promise<void>;
-
-  /**
-   * 1. Reads a folder and grabs ALL files in that folder and expects them to be jsons.
-   * 2. Performs the migration
-   * 3. logs the migration if wanted
-   *
-   * @param folderPath
-   * @param migrators
-   * @param shouldLog
-   */
-  migrateFolder(folderPath: string, migrators: IJsonMigrator[], shouldLog?: boolean): Promise<void>;
 }
 
 /**
@@ -273,11 +261,11 @@ declare class JsonComparer {
    * @param thing1
    * @param thing2
    */
-  sameTypes(thing1: any, thing2: any): boolean;
+  sameTypes(thing1: any, thing2: any, options?: TypeCheckerOptions): boolean;
 }
 
 export const jsonComparer: JsonComparer;
 
 export const jsonRefactor: JsonRefactor;
 
-export const migrationHandler: MigrationHandler;
+export const jsonMigration: JsonMigration;
