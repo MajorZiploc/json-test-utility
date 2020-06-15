@@ -5,7 +5,6 @@ import { jsonComparer as jc } from './JsonComparer';
 export enum DataMaskingStrategy {
   Identity,
   Scramble,
-  // Md5,
   Nullify,
   // Deep,
 }
@@ -16,20 +15,18 @@ export interface StrategyOptions {
   string?: DataMaskingStrategy | ((originalString: string) => string);
   number?: DataMaskingStrategy | ((originalNumber: number) => number);
   boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
-  date?: DataMaskingStrategy | ((originalDate: string) => string);
-  html?: DataMaskingStrategy | ((originalHtml: string) => string);
   list?: DataMaskingStrategy | ((originalList: any[]) => any[]);
+  // date?: DataMaskingStrategy | ((originalDate: string) => string);
+  // html?: DataMaskingStrategy | ((originalHtml: string) => string);
 }
 
 const identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
 const scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
-// const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
 const nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 
 interface Strategies {
   Identity: ((thing: any) => any) | null;
   Scramble: ((thing: any) => any) | null;
-  // Md5: ((thing: any) => any) | null;
   Nullify: ((thing: any) => any) | null;
 }
 

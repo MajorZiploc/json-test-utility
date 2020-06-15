@@ -8,13 +8,11 @@ var DataMaskingStrategy;
 (function (DataMaskingStrategy) {
     DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
     DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
-    // Md5,
     DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 2] = "Nullify";
     // Deep,
 })(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
 var identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
 var scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
-// const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
 var nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
