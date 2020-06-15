@@ -11,6 +11,8 @@ TODO
 TODO
 <h3>Json Migration</h3>
 TODO
+<h3>Json Masker</h3>
+TODO
 
 <h2>Change Log<h2>
 <ul>0.1.7<li>Fixes isJson function for null case. isJson(null) is now false</li></ul>
