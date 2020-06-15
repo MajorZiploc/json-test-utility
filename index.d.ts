@@ -29,6 +29,28 @@ export class IJsonMigrator {
  */
 export function ListOfJsonMigratorOf(eleMigrator: IJsonMigrator): IJsonMigrator;
 
+export enum DataMaskingStrategy {
+  Identity,
+  Scramble,
+  Nullify,
+  // Deep,
+}
+
+export interface StrategyOptions {
+  overall?: DataMaskingStrategy;
+  json?: DataMaskingStrategy | ((originalJson: any) => any);
+  string?: DataMaskingStrategy | ((originalString: string) => string);
+  number?: DataMaskingStrategy | ((originalNumber: number) => number);
+  boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
+  list?: DataMaskingStrategy | ((originalList: any[]) => any[]);
+  // date?: DataMaskingStrategy | ((originalDate: string) => string);
+  // html?: DataMaskingStrategy | ((originalHtml: string) => string);
+}
+
+declare class JsonMasker {
+  maskData(json: any, strategyOptions?: StrategyOptions);
+}
+
 declare class JsonMigration {
   /**
    *
@@ -270,3 +292,5 @@ export const jsonComparer: JsonComparer;
 export const jsonRefactor: JsonRefactor;
 
 export const jsonMigration: JsonMigration;
+
+export const jsonMasker: JsonMasker;
