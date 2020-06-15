@@ -73,23 +73,51 @@ var JsonComparer = /** @class */ (function () {
         }
         return true;
     };
-    JsonComparer.prototype.sameTypes = function (thing1, thing2) {
+    JsonComparer.prototype.sameTypes = function (thing1, thing2, options) {
         var _this = this;
+        var _a, _b, _c;
         if (Array.isArray(thing1) && Array.isArray(thing2)) {
-            return this.sameTypesList(thing1, thing2);
+            return this.sameTypesList(thing1, thing2, options);
         }
         if (Array.isArray(thing1) || Array.isArray(thing2)) {
             return false;
         }
         if (this.isJSON(thing1) && this.isJSON(thing2)) {
             if (this.sameKeys(thing1, thing2)) {
-                var j1kva = JsonRefactor_1.jsonRefactor.toKeyValArray(thing1).sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); });
-                var j2kva = JsonRefactor_1.jsonRefactor.toKeyValArray(thing2).sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); });
+                // Check key paths that have no dots.
+                var rootKeyPaths_1 = (_b = (_a = options === null || options === void 0 ? void 0 : options.nullableKeys) === null || _a === void 0 ? void 0 : _a.filter(function (k) { return k.split('.').length <= 1; })) !== null && _b !== void 0 ? _b : [];
+                // Removes 1 layer of key paths.
+                var nullKeys = (_c = options === null || options === void 0 ? void 0 : options.nullableKeys) === null || _c === void 0 ? void 0 : _c.map(function (k) { return k.split('.').slice(1).join('.'); }).filter(function (k) { return !_.isEqual(k, ''); });
+                var opts_1 = JsonRefactor_1.jsonRefactor.setField(options, 'nullableKeys', nullKeys);
+                var doesNullableRootKeysTypeCheck = rootKeyPaths_1.every(function (k) {
+                    var v1 = thing1[k];
+                    var v2 = thing2[k];
+                    if (v1 === null && v2 === null) {
+                        return true;
+                    }
+                    if (v1 === null || v2 === null) {
+                        return true;
+                    }
+                    else {
+                        return _this.sameTypes(v1, v2, opts_1);
+                    }
+                });
+                if (doesNullableRootKeysTypeCheck === false) {
+                    return false;
+                }
+                var j1kva = JsonRefactor_1.jsonRefactor
+                    .toKeyValArray(thing1)
+                    .sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); })
+                    .filter(function (kv) { return !rootKeyPaths_1.some(function (rk) { return rk === kv.key; }); });
+                var j2kva = JsonRefactor_1.jsonRefactor
+                    .toKeyValArray(thing2)
+                    .sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); })
+                    .filter(function (kv) { return !rootKeyPaths_1.some(function (rk) { return rk === kv.key; }); });
                 if (j1kva.length != j2kva.length) {
                     return false;
                 }
                 var j1kvAndj2kv_s = _.zipWith(j1kva, j2kva, function (j1kv, j2kv) { return ({ j1kv: j1kv, j2kv: j2kv }); });
-                return j1kvAndj2kv_s.every(function (j1kvAndj2kv) { return _this.sameTypes(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value); });
+                return j1kvAndj2kv_s.every(function (j1kvAndj2kv) { return _this.sameTypes(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value, opts_1); });
             }
             return false;
         }
@@ -98,13 +126,36 @@ var JsonComparer = /** @class */ (function () {
         }
         return typeof thing1 === typeof thing2;
     };
-    JsonComparer.prototype.sameTypesList = function (list1, list2) {
+    JsonComparer.prototype.sameTypesList = function (list1, list2, options) {
         var _this = this;
+        var _a, _b, _c, _d, _e;
+        if ((_a = options === null || options === void 0 ? void 0 : options.subsetListCheck) !== null && _a !== void 0 ? _a : false) {
+            var trimedList2 = list2.slice(0, list1.length);
+            var lsz_1 = _.zipWith(list1, trimedList2, function (e1, e2) { return ({ e1: e1, e2: e2 }); });
+            return lsz_1.every(function (lz) { return _this.sameTypes(lz.e1, lz.e2, options); });
+        }
+        // Should only check first in list
+        if ((_b = options === null || options === void 0 ? void 0 : options.checkFirstInList) !== null && _b !== void 0 ? _b : false) {
+            if (list1.length === 0 || list1.length === 0) {
+                return (_c = options === null || options === void 0 ? void 0 : options.emptyListIsAcceptable) !== null && _c !== void 0 ? _c : false;
+            }
+            if (list1.length === 0 && list1.length === 0) {
+                return (_d = options === null || options === void 0 ? void 0 : options.emptyListIsAcceptable) !== null && _d !== void 0 ? _d : false;
+            }
+            var first1 = list1[0];
+            var first2 = list2[0];
+            return this.sameTypes(first1, first2, options);
+        }
+        if ((_e = options === null || options === void 0 ? void 0 : options.emptyListIsAcceptable) !== null && _e !== void 0 ? _e : false) {
+            if (list1.length === 0 || list2.length === 0) {
+                return true;
+            }
+        }
         if (list1.length != list2.length) {
             return false;
         }
         var lsz = _.zipWith(list1, list2, function (e1, e2) { return ({ e1: e1, e2: e2 }); });
-        return lsz.every(function (lz) { return _this.sameTypes(lz.e1, lz.e2); });
+        return lsz.every(function (lz) { return _this.sameTypes(lz.e1, lz.e2, options); });
     };
     JsonComparer.prototype.findAllKeyPaths = function (json, regexKeyPattern, regexOptions, deepCheck) {
         var isJson = this.isJSON.bind(this);
