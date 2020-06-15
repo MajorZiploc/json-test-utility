@@ -5,7 +5,6 @@ import { jsonComparer as jc } from './JsonComparer';
 export enum DataMaskingStrategy {
   Identity,
   Scramble,
-  // Md5,
   Nullify,
   // Deep,
 }
@@ -16,20 +15,18 @@ export interface StrategyOptions {
   string?: DataMaskingStrategy | ((originalString: string) => string);
   number?: DataMaskingStrategy | ((originalNumber: number) => number);
   boolean?: DataMaskingStrategy | ((originalBoolean: boolean) => boolean);
-  date?: DataMaskingStrategy | ((originalDate: string) => string);
-  html?: DataMaskingStrategy | ((originalHtml: string) => string);
   list?: DataMaskingStrategy | ((originalList: any[]) => any[]);
+  // date?: DataMaskingStrategy | ((originalDate: string) => string);
+  // html?: DataMaskingStrategy | ((originalHtml: string) => string);
 }
 
 const identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
 const scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
-// const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
 const nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 
 interface Strategies {
   Identity: ((thing: any) => any) | null;
   Scramble: ((thing: any) => any) | null;
-  // Md5: ((thing: any) => any) | null;
   Nullify: ((thing: any) => any) | null;
 }
 
@@ -59,7 +56,7 @@ class JsonMasker {
 
     this.numStrats = jr.fromKeyValArray(this.DataMaskingStrategyNameList.map(n => ({ key: n, value: null })));
     this.numStrats[identity] = num => num;
-    this.numStrats[scramble] = this.maskNumScramble.bind(this);
+    this.numStrats[scramble] = this.maskNum.bind(this);
     this.numStrats[nullify] = num => 0;
 
     this.strStrats = jr.fromKeyValArray(this.DataMaskingStrategyNameList.map(n => ({ key: n, value: null })));
@@ -225,40 +222,8 @@ class JsonMasker {
     );
   }
 
-  private maskNumScramble(num: number) {
-    const numStr = num.toString();
-    const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
-    const sign = matchList[1] ?? '';
-    const wholeNumber = matchList[2] ?? '0';
-    const decimalPoint = matchList[3] ?? '';
-    const decimalValue = matchList[4] ?? '';
-    let newWholeNumber;
-    let newDecimalValue;
-    do {
-      if (numStr.length === 1) {
-        newWholeNumber = num * 11;
-      } else {
-        if (this.allNumbersSame(wholeNumber)) {
-          newWholeNumber = wholeNumber + '0';
-        } else {
-          newWholeNumber = wholeNumber
-            .split('')
-            .sort(() => Math.random() - 0.5)
-            .join('');
-        }
-      }
-    } while (newWholeNumber === wholeNumber);
-    if (decimalValue !== '') {
-      do {
-        if (this.allNumbersSame(decimalValue)) {
-          newDecimalValue = '0' + decimalValue;
-        } else {
-          newDecimalValue = this.shuffle(wholeNumber.split('')).join('');
-        }
-      } while (decimalValue === newDecimalValue);
-      return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
-    }
-    return Number(sign + newWholeNumber);
+  private maskNum(num: number) {
+    return this.maskNumScrambler(num);
   }
 
   private maskString(str: string, strategyOptions?: StrategyOptions): string {
@@ -276,48 +241,77 @@ class JsonMasker {
     return num % 2 === 0;
   }
 
-  private maskStrScramble(str: string) {
-    let strObj = _.groupBy(
-      'three'.split('').map((c, i) => ({ c, i })),
-      j => j.c
-    );
-    let newString;
-    let stringArray = str.split('');
-    if (str === '' || !/\S/.test(str)) {
-      return Math.random().toString(36).slice(-5);
-    } else if (str.length === 1) {
-      return str + str;
-    } else if (this.allCharsSame(str)) {
-      return Math.random().toString(36).slice(-str.length);
-    }
-    do {
-      newString = this.shuffle(stringArray).join('');
-    } while (newString === str);
-    return newString;
+  private shuffle(item: any[]) {
+    return item.sort(() => Math.random() - 0.5);
   }
 
-  private shuffle(thing: any[]): any[] {
-    return thing.sort(() => Math.random() - 0.5);
+  private maskStrScramble(str: string, min: number = 33, max: number = 126) {
+    let strKeyValArray = jr
+      .toKeyValArray(
+        _.groupBy(
+          str.split('').map((c, i) => ({ c, i })),
+          j => j.c
+        )
+      )
+      .map(kv => ({ key: kv.key, value: kv.value.map(j => j.i) }))
+      .map(kv => [kv.key, kv.value]);
+    const [keys, values] = _.unzip(strKeyValArray);
+    let v = values;
+
+    if (keys.length === 1) {
+      const charCode = keys[0].charCodeAt(0);
+      keys[0] = String.fromCharCode(this.getRandomNumber(min, max, [charCode]));
+    } else if (keys.length <= 3) {
+      let newValArr = [];
+      v.forEach(ve => {
+        if (v.indexOf(ve) === v.length - 1) {
+          newValArr[0] = ve;
+        } else {
+          newValArr[v.indexOf(ve) + 1] = ve;
+        }
+      });
+      v = newValArr;
+    } else {
+      do {
+        v = _.sortBy(v, () => Math.random() - 0.5);
+      } while (_.isEqual(values, v));
+    }
+
+    const newKVWord = _.zipWith(keys, v, (key, value) => ({ key, value }));
+    return newKVWord
+      .reduce((chars, kv) => {
+        kv.value.forEach(index => {
+          chars[index] = kv.key;
+        });
+        return chars;
+      }, [])
+      .join('');
   }
 
-  private allNumbersSame(num: string) {
-    let numArray = num.split('');
-    for (let i = 0; i < numArray.length; i++) {
-      if (numArray[i] !== numArray[i + 1]) {
-        return false;
-      }
+  getRandomNumber(min: number, max: number, valuesToExclude: number[] = []) {
+    var rand = null; //an integer
+    const valuesToExcludeSet = new Set(valuesToExclude);
+    const maximum = max + 1; // Doing this makes max inclusive
+    while (rand === null || valuesToExcludeSet.has(rand)) {
+      rand = Math.floor(Math.random() * (max - min) + min);
     }
-    return true;
+    return rand;
   }
 
-  private allCharsSame(str: string) {
-    let strArray = str.split('');
-    for (let i = 0; i < strArray.length; i++) {
-      if (strArray[i] !== strArray[i + 1]) {
-        return false;
-      }
+  private maskNumScrambler(num: number) {
+    const numStr = num.toString();
+    const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
+    const sign = matchList[1] ?? '';
+    const wholeNumber = matchList[2] ?? '0';
+    const decimalPoint = matchList[3] ?? '';
+    const decimalValue = matchList[4] ?? '';
+
+    const wNum = this.maskStrScramble(wholeNumber, 48, 57); // limits range to numbers
+    let decVal = '';
+    if (decimalValue) {
+      decVal = this.maskStrScramble(decimalValue, 48, 57);
     }
-    return true;
+    return JSON.parse(sign + wNum + decimalPoint + decVal);
   }
 }
 

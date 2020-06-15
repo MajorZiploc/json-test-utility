@@ -8,13 +8,11 @@ var DataMaskingStrategy;
 (function (DataMaskingStrategy) {
     DataMaskingStrategy[DataMaskingStrategy["Identity"] = 0] = "Identity";
     DataMaskingStrategy[DataMaskingStrategy["Scramble"] = 1] = "Scramble";
-    // Md5,
     DataMaskingStrategy[DataMaskingStrategy["Nullify"] = 2] = "Nullify";
     // Deep,
 })(DataMaskingStrategy = exports.DataMaskingStrategy || (exports.DataMaskingStrategy = {}));
 var identity = DataMaskingStrategy[DataMaskingStrategy.Identity];
 var scramble = DataMaskingStrategy[DataMaskingStrategy.Scramble];
-// const md5 = DataMaskingStrategy[DataMaskingStrategy.Md5];
 var nullify = DataMaskingStrategy[DataMaskingStrategy.Nullify];
 var JsonMasker = /** @class */ (function () {
     function JsonMasker() {
@@ -35,7 +33,7 @@ var JsonMasker = /** @class */ (function () {
         this.DataMaskingStrategyNameList = DataMaskingStrategyNameList;
         this.numStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
         this.numStrats[identity] = function (num) { return num; };
-        this.numStrats[scramble] = this.maskNumScramble.bind(this);
+        this.numStrats[scramble] = this.maskNum.bind(this);
         this.numStrats[nullify] = function (num) { return 0; };
         this.strStrats = JsonRefactor_1.jsonRefactor.fromKeyValArray(this.DataMaskingStrategyNameList.map(function (n) { return ({ key: n, value: null }); }));
         this.strStrats[identity] = function (str) { return str; };
@@ -190,44 +188,8 @@ var JsonMasker = /** @class */ (function () {
                 .join(', ') +
             ']');
     };
-    JsonMasker.prototype.maskNumScramble = function (num) {
-        var _a, _b, _c, _d;
-        var numStr = num.toString();
-        var matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
-        var sign = (_a = matchList[1]) !== null && _a !== void 0 ? _a : '';
-        var wholeNumber = (_b = matchList[2]) !== null && _b !== void 0 ? _b : '0';
-        var decimalPoint = (_c = matchList[3]) !== null && _c !== void 0 ? _c : '';
-        var decimalValue = (_d = matchList[4]) !== null && _d !== void 0 ? _d : '';
-        var newWholeNumber;
-        var newDecimalValue;
-        do {
-            if (numStr.length === 1) {
-                newWholeNumber = num * 11;
-            }
-            else {
-                if (this.allNumbersSame(wholeNumber)) {
-                    newWholeNumber = wholeNumber + '0';
-                }
-                else {
-                    newWholeNumber = wholeNumber
-                        .split('')
-                        .sort(function () { return Math.random() - 0.5; })
-                        .join('');
-                }
-            }
-        } while (newWholeNumber === wholeNumber);
-        if (decimalValue !== '') {
-            do {
-                if (this.allNumbersSame(decimalValue)) {
-                    newDecimalValue = '0' + decimalValue;
-                }
-                else {
-                    newDecimalValue = this.shuffle(wholeNumber.split('')).join('');
-                }
-            } while (decimalValue === newDecimalValue);
-            return Number(sign + newWholeNumber + decimalPoint + newDecimalValue);
-        }
-        return Number(sign + newWholeNumber);
+    JsonMasker.prototype.maskNum = function (num) {
+        return this.maskNumScrambler(num);
     };
     JsonMasker.prototype.maskString = function (str, strategyOptions) {
         return this.maskThing(str, [strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.string, strategyOptions === null || strategyOptions === void 0 ? void 0 : strategyOptions.overall], this.strStrats, 'string');
@@ -241,44 +203,73 @@ var JsonMasker = /** @class */ (function () {
         var num = Math.floor(Math.random() * (max - min) + min);
         return num % 2 === 0;
     };
-    JsonMasker.prototype.maskStrScramble = function (str) {
-        var strObj = _.groupBy('three'.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; });
-        var newString;
-        var stringArray = str.split('');
-        if (str === '' || !/\S/.test(str)) {
-            return Math.random().toString(36).slice(-5);
-        }
-        else if (str.length === 1) {
-            return str + str;
-        }
-        else if (this.allCharsSame(str)) {
-            return Math.random().toString(36).slice(-str.length);
-        }
-        do {
-            newString = this.shuffle(stringArray).join('');
-        } while (newString === str);
-        return newString;
+    JsonMasker.prototype.shuffle = function (item) {
+        return item.sort(function () { return Math.random() - 0.5; });
     };
-    JsonMasker.prototype.shuffle = function (thing) {
-        return thing.sort(function () { return Math.random() - 0.5; });
-    };
-    JsonMasker.prototype.allNumbersSame = function (num) {
-        var numArray = num.split('');
-        for (var i = 0; i < numArray.length; i++) {
-            if (numArray[i] !== numArray[i + 1]) {
-                return false;
-            }
+    JsonMasker.prototype.maskStrScramble = function (str, min, max) {
+        if (min === void 0) { min = 33; }
+        if (max === void 0) { max = 126; }
+        var strKeyValArray = JsonRefactor_1.jsonRefactor
+            .toKeyValArray(_.groupBy(str.split('').map(function (c, i) { return ({ c: c, i: i }); }), function (j) { return j.c; }))
+            .map(function (kv) { return ({ key: kv.key, value: kv.value.map(function (j) { return j.i; }) }); })
+            .map(function (kv) { return [kv.key, kv.value]; });
+        var _a = _.unzip(strKeyValArray), keys = _a[0], values = _a[1];
+        var v = values;
+        if (keys.length === 1) {
+            var charCode = keys[0].charCodeAt(0);
+            keys[0] = String.fromCharCode(this.getRandomNumber(min, max, [charCode]));
         }
-        return true;
-    };
-    JsonMasker.prototype.allCharsSame = function (str) {
-        var strArray = str.split('');
-        for (var i = 0; i < strArray.length; i++) {
-            if (strArray[i] !== strArray[i + 1]) {
-                return false;
-            }
+        else if (keys.length <= 3) {
+            var newValArr_1 = [];
+            v.forEach(function (ve) {
+                if (v.indexOf(ve) === v.length - 1) {
+                    newValArr_1[0] = ve;
+                }
+                else {
+                    newValArr_1[v.indexOf(ve) + 1] = ve;
+                }
+            });
+            v = newValArr_1;
         }
-        return true;
+        else {
+            do {
+                v = _.sortBy(v, function () { return Math.random() - 0.5; });
+            } while (_.isEqual(values, v));
+        }
+        var newKVWord = _.zipWith(keys, v, function (key, value) { return ({ key: key, value: value }); });
+        return newKVWord
+            .reduce(function (chars, kv) {
+            kv.value.forEach(function (index) {
+                chars[index] = kv.key;
+            });
+            return chars;
+        }, [])
+            .join('');
+    };
+    JsonMasker.prototype.getRandomNumber = function (min, max, valuesToExclude) {
+        if (valuesToExclude === void 0) { valuesToExclude = []; }
+        var rand = null; //an integer
+        var valuesToExcludeSet = new Set(valuesToExclude);
+        var maximum = max + 1; // Doing this makes max inclusive
+        while (rand === null || valuesToExcludeSet.has(rand)) {
+            rand = Math.floor(Math.random() * (max - min) + min);
+        }
+        return rand;
+    };
+    JsonMasker.prototype.maskNumScrambler = function (num) {
+        var _a, _b, _c, _d;
+        var numStr = num.toString();
+        var matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
+        var sign = (_a = matchList[1]) !== null && _a !== void 0 ? _a : '';
+        var wholeNumber = (_b = matchList[2]) !== null && _b !== void 0 ? _b : '0';
+        var decimalPoint = (_c = matchList[3]) !== null && _c !== void 0 ? _c : '';
+        var decimalValue = (_d = matchList[4]) !== null && _d !== void 0 ? _d : '';
+        var wNum = this.maskStrScramble(wholeNumber, 48, 57); // limits range to numbers
+        var decVal = '';
+        if (decimalValue) {
+            decVal = this.maskStrScramble(decimalValue, 48, 57);
+        }
+        return JSON.parse(sign + wNum + decimalPoint + decVal);
     };
     return JsonMasker;
 }());
