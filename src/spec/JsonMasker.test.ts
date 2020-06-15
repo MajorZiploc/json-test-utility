@@ -16,9 +16,9 @@ const testData: testTools.testInput[] = [
     shouldRun: true,
   },
   {
-    expected: [{ name: 'James123 asd f', l: [{ x: 'lol' }, 1, 3], jj: { cotton: 'candy' } }, { x: 56 }],
+    expected: [{ name: 'James123 asd f', l: [{ x: 'lol' }, 1, 3, 9, 0], jj: { cotton: 'candy' } }, { x: 56 }],
     input: {
-      json: [{ name: 'James123 asd f', l: [{ x: 'lol' }, 1, 3], jj: { cotton: 'candy' } }, { x: 56 }],
+      json: [{ name: 'James123 asd f', l: [{ x: 'lol' }, 1, 3, 9, 0], jj: { cotton: 'candy' } }, { x: 56 }],
     },
     comparer: (actual: any, expected: any) => {
       const zl = _.zipWith(actual, expected, (a, e) => ({ a, e }));

@@ -245,59 +245,63 @@ class JsonMasker {
   }
 
   private shuffle(item: any[]) {
-    return item.sort(() => Math.random() - 0.5)
+    return item.sort(() => Math.random() - 0.5);
   }
 
-  private maskStrScramble(str: string) {
-    let strKeyValArray = jr.toKeyValArray(
-      _.groupBy(
+  private maskStrScramble(str: string, min: number = 33, max: number = 126) {
+    let strKeyValArray = jr
+      .toKeyValArray(
+        _.groupBy(
           str.split('').map((c, i) => ({ c, i })),
-            j => j.c
+          j => j.c
+        )
       )
-    )
-    .map(kv =>  ({ key: kv.key, value: kv.value.map(j => j.i) }))
-    .map(kv => [kv.key, kv.value]);
-
+      .map(kv => ({ key: kv.key, value: kv.value.map(j => j.i) }))
+      .map(kv => [kv.key, kv.value]);
     const [keys, values] = _.unzip(strKeyValArray);
-    let v = values
+    let v = values;
 
-    if (keys.length === 1){
+    if (keys.length === 1) {
       const charCode = keys[0].charCodeAt(0);
-      if(charCode === 126){
-          keys[0] = String.fromCharCode(33);
-      } else if(charCode === 32){
-          keys[0] = String.fromCharCode(32)
-      } else {
-          keys[0] = String.fromCharCode(charCode + 1);
-      }
-    } else if(keys.length <= 3) {
+      keys[0] = String.fromCharCode(this.getRandomNumber(min, max, [charCode]));
+    } else if (keys.length <= 3) {
       let newValArr = [];
       v.forEach(ve => {
-          if (v.indexOf(ve) === v.length - 1){
-            newValArr[0] = ve;
-          } else {
-            newValArr[v.indexOf(ve) + 1] = ve;
-          }
+        if (v.indexOf(ve) === v.length - 1) {
+          newValArr[0] = ve;
+        } else {
+          newValArr[v.indexOf(ve) + 1] = ve;
+        }
       });
-      v = newValArr
+      v = newValArr;
     } else {
       do {
         v = _.sortBy(v, () => Math.random() - 0.5);
-      } while (_.isEqual(values, v))
+      } while (_.isEqual(values, v));
     }
-    
+
     const newKVWord = _.zipWith(keys, v, (key, value) => ({ key, value }));
     return newKVWord
       .reduce((chars, kv) => {
-          kv.value.forEach(index => {
+        kv.value.forEach(index => {
           chars[index] = kv.key;
-      });
-      return chars;
+        });
+        return chars;
       }, [])
-    .join('');
+      .join('');
   }
 
-  private maskNumScrambler(num: number){
+  getRandomNumber(min: number, max: number, valuesToExclude: number[] = []) {
+    var rand = null; //an integer
+    const valuesToExcludeSet = new Set(valuesToExclude);
+    const maximum = max + 1; // Doing this makes max inclusive
+    while (rand === null || valuesToExcludeSet.has(rand)) {
+      rand = Math.floor(Math.random() * (max - min) + min);
+    }
+    return rand;
+  }
+
+  private maskNumScrambler(num: number) {
     const numStr = num.toString();
     const matchList = numStr.match(/(-)?(\d+)(\.)?(\d*)/);
     const sign = matchList[1] ?? '';
@@ -305,29 +309,12 @@ class JsonMasker {
     const decimalPoint = matchList[3] ?? '';
     const decimalValue = matchList[4] ?? '';
 
-    let wholeKeyValueArray = jr.toKeyValArray(
-      _.groupBy(
-          wholeNumber.split('').map((c, i) => ({ c, i })),
-            j => j.c
-      )
-    )
-    .map(kv =>  ({ key: kv.key, value: kv.value.map(j => j.i) }))
-    .map(kv => [kv.key, kv.value]);
-
-    if(decimalValue){
-      let decimalKeyValueArray = jr.toKeyValArray(
-        _.groupBy(
-            decimalValue.split('').map((c, i) => ({ c, i })),
-              j => j.c
-        )
-      )
-      .map(kv =>  ({ key: kv.key, value: kv.value.map(j => j.i) }))
-      .map(kv => [kv.key, kv.value]);
+    const wNum = this.maskStrScramble(wholeNumber, 48, 57); // limits range to numbers
+    let decVal = '';
+    if (decimalValue) {
+      decVal = this.maskStrScramble(decimalValue, 48, 57);
     }
-
-    
-
-
+    return JSON.parse(sign + wNum + decimalPoint + decVal);
   }
 }
 
