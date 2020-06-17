@@ -136,10 +136,10 @@ var JsonComparer = /** @class */ (function () {
         }
         // Should only check first in list
         if ((_b = options === null || options === void 0 ? void 0 : options.checkFirstInList) !== null && _b !== void 0 ? _b : false) {
-            if (list1.length === 0 || list1.length === 0) {
+            if (list1.length === 0 || list2.length === 0) {
                 return (_c = options === null || options === void 0 ? void 0 : options.emptyListIsAcceptable) !== null && _c !== void 0 ? _c : false;
             }
-            if (list1.length === 0 && list1.length === 0) {
+            if (list1.length === 0 && list2.length === 0) {
                 return (_d = options === null || options === void 0 ? void 0 : options.emptyListIsAcceptable) !== null && _d !== void 0 ? _d : false;
             }
             var first1 = list1[0];

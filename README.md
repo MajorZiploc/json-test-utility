@@ -19,3 +19,4 @@ TODO
 <ul>0.1.8<li>Fixes type information for sameType and JsonMigration</li></ul>
 <ul>0.1.9<li>Fixes type information for functions with implicit any returns</li></ul>
 <ul>0.2.0<li>Adds JSON masker v1</li></ul>
+<ul>0.2.1<li>Patches JsonComparer.sameType check for lists</li></ul>

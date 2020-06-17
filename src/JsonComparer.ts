@@ -154,10 +154,10 @@ class JsonComparer {
     }
     // Should only check first in list
     if (options?.checkFirstInList ?? false) {
-      if (list1.length === 0 || list1.length === 0) {
+      if (list1.length === 0 || list2.length === 0) {
         return options?.emptyListIsAcceptable ?? false;
       }
-      if (list1.length === 0 && list1.length === 0) {
+      if (list1.length === 0 && list2.length === 0) {
         return options?.emptyListIsAcceptable ?? false;
       }
       const first1 = list1[0];

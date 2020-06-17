@@ -283,6 +283,7 @@ var testData = [
         },
         testFn: function (input) { return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2); },
         label: 'sameTypes - 2 jsons with same keys but created in different order',
+        shouldRun: true,
     },
     {
         expected: true,
@@ -340,7 +341,7 @@ var testData = [
             });
         },
         label: 'sameTypes - 2 jsons with same keys but with empty lists marked as acceptable',
-        shouldRun: false,
+        shouldRun: true,
     },
     {
         expected: true,
@@ -370,6 +371,69 @@ var testData = [
             });
         },
         label: 'sameTypes - 1 json with api like data',
+        shouldRun: true,
+    },
+    {
+        expected: true,
+        input: {
+            json1: {
+                issues: [
+                    {
+                        id: 1,
+                        title: 'string',
+                        url: 'string',
+                        createdTime: 'string',
+                        updatedTime: 'string',
+                        closedTime: 'string',
+                        assignedUsername: 'string',
+                        labels: [1],
+                    },
+                ],
+                tag: 'string',
+            },
+            json2: {
+                issues: [
+                    {
+                        id: 44552,
+                        title: 'yaeeee',
+                        url: 'www.asdfasdf.com',
+                        createdTime: '2019-02-12T15:46:54.467Z',
+                        updatedTime: '2020-04-21T15:33:43.89Z',
+                        closedTime: null,
+                        assignedUsername: null,
+                        labels: [8845435, 687435],
+                    },
+                    {
+                        id: 44552,
+                        title: 'yaeeee',
+                        url: 'www.asdfasdf.com',
+                        createdTime: '2019-02-12T15:46:54.467Z',
+                        updatedTime: '2020-04-21T15:33:43.89Z',
+                        closedTime: null,
+                        assignedUsername: null,
+                        labels: [8845435, 687435],
+                    },
+                    {
+                        id: 44552,
+                        title: 'yaeeee',
+                        url: 'www.asdfasdf.com',
+                        createdTime: '2019-02-12T15:46:54.467Z',
+                        updatedTime: '2020-04-21T15:33:43.89Z',
+                        closedTime: '',
+                        assignedUsername: 'asdfs',
+                        labels: [8845435, 687435],
+                    },
+                ],
+                tag: 'boy',
+            },
+        },
+        testFn: function (input) {
+            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, {
+                nullableKeys: ['issues.closedTime', 'issues.assignedUsername'],
+                subsetListCheck: true,
+            });
+        },
+        label: 'sameTypes - a json contract with a json as some type check flags',
         shouldRun: true,
     },
 ];
