@@ -6,6 +6,7 @@ interface TypeCheckerOptions {
   checkFirstInList?: boolean;
   subsetListCheck?: boolean;
   emptyListIsAcceptable?: boolean;
+  dateKeys?: string[];
 }
 
 class JsonComparer {
@@ -103,13 +104,13 @@ class JsonComparer {
     if (this.isJSON(thing1) && this.isJSON(thing2)) {
       if (this.sameKeys(thing1, thing2)) {
         // Check key paths that have no dots.
-        const rootKeyPaths = options?.nullableKeys?.filter(k => k.split('.').length <= 1) ?? [];
+        const rootNullKeyPaths = options?.nullableKeys?.filter(k => k.split('.').length <= 1) ?? [];
         // Removes 1 layer of key paths.
         const nullKeys = options?.nullableKeys
           ?.map(k => k.split('.').slice(1).join('.'))
           .filter(k => !_.isEqual(k, ''));
         const opts = jr.setField(options, 'nullableKeys', nullKeys);
-        const doesNullableRootKeysTypeCheck = rootKeyPaths.every(k => {
+        const doesNullableRootKeysTypeCheck = rootNullKeyPaths.every(k => {
           const v1 = thing1[k];
           const v2 = thing2[k];
           if (v1 === null && v2 === null) {
@@ -124,19 +125,34 @@ class JsonComparer {
         if (doesNullableRootKeysTypeCheck === false) {
           return false;
         }
+        // Check key paths that have no dots.
+        const rootDateKeyPaths = options?.dateKeys?.filter(k => k.split('.').length <= 1) ?? [];
+        // Removes 1 layer of key paths.
+        const dateKeys = options?.dateKeys?.map(k => k.split('.').slice(1).join('.')).filter(k => !_.isEqual(k, ''));
+        const optsDate = jr.setField(opts, 'dateKeys', dateKeys);
+        const doesDateRootKeysTypeCheck = rootDateKeyPaths.every(k => {
+          const v1 = thing1[k];
+          const v2 = thing2[k];
+          return new Date(v1).toString() !== 'Invalid Date' && new Date(v2).toString() !== 'Invalid Date';
+        });
+        if (doesDateRootKeysTypeCheck === false) {
+          return false;
+        }
         const j1kva = jr
           .toKeyValArray(thing1)
           .sort((kv1, kv2) => kv1.key.localeCompare(kv2.key))
-          .filter(kv => !rootKeyPaths.some(rk => rk === kv.key));
+          .filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key));
         const j2kva = jr
           .toKeyValArray(thing2)
           .sort((kv1, kv2) => kv1.key.localeCompare(kv2.key))
-          .filter(kv => !rootKeyPaths.some(rk => rk === kv.key));
+          .filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key));
         if (j1kva.length != j2kva.length) {
           return false;
         }
         const j1kvAndj2kv_s = _.zipWith(j1kva, j2kva, (j1kv, j2kv) => ({ j1kv, j2kv }));
-        return j1kvAndj2kv_s.every(j1kvAndj2kv => this.sameTypes(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value, opts));
+        return j1kvAndj2kv_s.every(j1kvAndj2kv =>
+          this.sameTypes(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value, optsDate)
+        );
       }
       return false;
     }

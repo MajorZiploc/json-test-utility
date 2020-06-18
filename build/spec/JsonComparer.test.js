@@ -436,6 +436,34 @@ var testData = [
         label: 'sameTypes - a json contract with a json as some type check flags',
         shouldRun: true,
     },
+    {
+        expected: true,
+        input: {
+            json1: { a: { j: [{ d: '2222-12-29' }, { d: '03/13/2019' }] }, date: '05/06/1997', u: 1000 },
+            json2: { a: { j: [{ d: '2000-01-19' }, { d: '05/23/2018' }] }, date: '07/26/2007', u: 8 },
+        },
+        testFn: function (input) {
+            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, {
+                dateKeys: ['a.j.d', 'date'],
+            });
+        },
+        label: 'sameTypes - true. 2 jsons with same keys with date checks',
+        shouldRun: true,
+    },
+    {
+        expected: false,
+        input: {
+            json1: { a: { j: [{ d: 's2222-12-29' }, { d: '03/13/2019' }] }, date: '05/06/1997', u: 1000 },
+            json2: { a: { j: [{ d: '2000-01-19' }, { d: '05/23/2018' }] }, date: '07/26/2007', u: 8 },
+        },
+        testFn: function (input) {
+            return JsonComparer_1.jsonComparer.sameTypes(input.json1, input.json2, {
+                dateKeys: ['a.j.d', 'date'],
+            });
+        },
+        label: 'sameTypes - false 2 jsons with same keys with date checks, with an invalid date string',
+        shouldRun: true,
+    },
 ];
 testTools.tester(testData);
 //# sourceMappingURL=JsonComparer.test.js.map

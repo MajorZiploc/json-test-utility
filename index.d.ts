@@ -3,6 +3,7 @@ export interface TypeCheckerOptions {
   checkFirstInList?: boolean;
   subsetListCheck?: boolean;
   emptyListIsAcceptable?: boolean;
+  dateKeys?: string[];
 }
 /**
  * Implement in order to use the MigrationHandler
