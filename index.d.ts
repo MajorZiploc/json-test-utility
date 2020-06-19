@@ -5,6 +5,11 @@ export interface TypeCheckerOptions {
   emptyListIsAcceptable?: boolean;
   dateKeys?: string[];
 }
+
+export class Variable {
+  toString(varInJson: any): string;
+}
+
 /**
  * Implement in order to use the MigrationHandler
  */
@@ -295,3 +300,5 @@ export const jsonRefactor: JsonRefactor;
 export const jsonMigration: JsonMigration;
 
 export const jsonMasker: JsonMasker;
+
+export const variable: Variable;
