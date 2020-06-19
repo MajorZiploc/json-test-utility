@@ -21,4 +21,5 @@ TODO
 <ul>0.2.0<li>Adds JSON masker v1</li></ul>
 <ul>0.2.1<li>Patches JsonComparer.sameType check for lists</li></ul>
 <ul>0.2.2<li>Adds date type checkable keys to JsonComparer.sameType</li></ul>
-<ul>0.2.3<li>Adds variable.toString function to convert a variable name wraped in a json to a string</li></ul>
+<ul>0.2.3<li>Adds variable.toString function to convert a variable name wrapped in a json to a string</li></ul>
+<ul>0.2.3<li>Adds variable.splitCamelCase function to convert a variable name wrapped in a json to a string space separated based on camel casing.</li></ul>

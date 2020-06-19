@@ -8,6 +8,8 @@ export interface TypeCheckerOptions {
 
 export class Variable {
   toString(varInJson: any): string;
+
+  splitCamelCase(varInJson: any, separator?: string): string;
 }
 
 /**
