@@ -12,6 +12,20 @@ export class Variable {
   splitCamelCase(varInJson: any, separator?: string): string | null;
 }
 
+export class List {
+  /**
+   * Sorts by ascending order be default using <= operator
+   *
+   * @param arr
+   * @param comparer
+   */
+  isSorted(arr: any[], comparer?: (f: any, s: any) => boolean): boolean;
+
+  isSortedAsc(arr: any[]): boolean;
+
+  isSortedDesc(arr: any[]): boolean;
+}
+
 export class String {
   titleCase(str: string): string | null;
 
