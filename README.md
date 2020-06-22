@@ -29,3 +29,4 @@ TODO
 <ul>0.2.4<li>Adds variable.splitCamelCase function to convert a variable name wrapped in a json to a string space separated based on camel casing.</li></ul>
 <ul>0.2.5<li>Adds String utility class with titleCase and splitCamelCase functions</li></ul>
 <ul>0.2.6<li>Adds List utility class with sorting functions</li></ul>
+<ul>0.2.7<li>Fixes type information for List utility class</li></ul>

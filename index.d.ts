@@ -326,3 +326,5 @@ export const jsonMasker: JsonMasker;
 export const variable: Variable;
 
 export const string: String;
+
+export const list: List;
