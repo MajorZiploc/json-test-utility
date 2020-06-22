@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.variable = exports.jsonMasker = exports.ListOfJsonMigratorOf = exports.jsonMigration = exports.jsonComparer = exports.jsonRefactor = void 0;
+exports.string = exports.variable = exports.jsonMasker = exports.ListOfJsonMigratorOf = exports.jsonMigration = exports.jsonComparer = exports.jsonRefactor = void 0;
 var ListOfJsonMigrator_1 = require("./ListOfJsonMigrator");
 Object.defineProperty(exports, "ListOfJsonMigratorOf", { enumerable: true, get: function () { return ListOfJsonMigrator_1.ListOfJsonMigratorOf; } });
 var JsonRefactor_1 = require("./JsonRefactor");
@@ -13,4 +13,6 @@ var JsonMigration_1 = require("./JsonMigration");
 Object.defineProperty(exports, "jsonMigration", { enumerable: true, get: function () { return JsonMigration_1.jsonMigration; } });
 var Variable_1 = require("./Variable");
 Object.defineProperty(exports, "variable", { enumerable: true, get: function () { return Variable_1.variable; } });
+var String_1 = require("./String");
+Object.defineProperty(exports, "string", { enumerable: true, get: function () { return String_1.string; } });
 //# sourceMappingURL=index.js.map

@@ -1,6 +1,6 @@
 {
   "name": "json-test-utility",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "JSON utility for refactoring, comparing, and migrating json test data.",
   "main": "./build/index.js",
   "types": "./index.d.ts",
@@ -13,6 +13,7 @@
     "specs-jmk": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonMasker.test.ts | tap-spec",
     "specs-jm": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/JsonMigration.test.ts | tap-spec",
     "specs-v": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/Variable.test.ts | tap-spec",
+    "specs-s": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/String.test.ts | tap-spec",
     "specs": "yarn run toJS && node -r ts-node/register node_modules/tape/bin/tape src/spec/*.test.ts | tap-spec",
     "toJS": "tsc"
   },

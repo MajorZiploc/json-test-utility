@@ -1,10 +1,15 @@
+import { string } from './String';
+
 class Variable {
-  toString(varInJson: any): string {
+  toString(varInJson: any): string | null {
+    if (varInJson === null) {
+      return varInJson;
+    }
     return Object.keys(varInJson)[0];
   }
 
-  splitCamelCase(varInJson: any, separator: string = ' '): string {
-    return this.toString(varInJson).replace(/([a-z0-9])([A-Z])/g, '$1' + separator + '$2');
+  splitCamelCase(varInJson: any, separator: string = ' '): string | null {
+    return string.splitCamelCase(this.toString(varInJson), separator);
   }
 }
 

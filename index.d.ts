@@ -7,9 +7,15 @@ export interface TypeCheckerOptions {
 }
 
 export class Variable {
-  toString(varInJson: any): string;
+  toString(varInJson: any): string | null;
 
-  splitCamelCase(varInJson: any, separator?: string): string;
+  splitCamelCase(varInJson: any, separator?: string): string | null;
+}
+
+export class String {
+  titleCase(str: string): string | null;
+
+  splitCamelCase(varInJson: any, separator?: string): string | null;
 }
 
 /**
@@ -304,3 +310,5 @@ export const jsonMigration: JsonMigration;
 export const jsonMasker: JsonMasker;
 
 export const variable: Variable;
+
+export const string: String;

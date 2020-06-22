@@ -32,13 +32,13 @@ var testData = [
         shouldRun: true,
     },
     {
-        expected: 'extr3m3 Camel Casist4 You Swe3tie',
+        expected: 'extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie',
         input: { dsf: [], food: 'truck' },
         testFn: function (input) {
             var extr3m3CamelCasist4YouSwe3tie = 1;
-            return Variable_1.variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie: extr3m3CamelCasist4YouSwe3tie });
+            return Variable_1.variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie: extr3m3CamelCasist4YouSwe3tie }, '<:>');
         },
-        label: 'splitCamelCase: variable input should yield "input"',
+        label: 'splitCamelCase: variable extr3m3CamelCasist4YouSwe3tie with separator <:>, should yield "extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie"',
         shouldRun: true,
     },
 ];

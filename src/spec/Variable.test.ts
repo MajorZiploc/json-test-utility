@@ -1,9 +1,5 @@
 import * as testTools from '../testTools';
-import { jsonMigration } from '../JsonMigration';
 import * as _ from 'lodash';
-import * as m from './JsonMigrators';
-import { ListOfJsonMigratorOf } from './../ListOfJsonMigrator';
-import * as test from 'tape-catch';
 import { variable } from './../Variable';
 
 const testData: testTools.testInput[] = [
@@ -36,13 +32,14 @@ const testData: testTools.testInput[] = [
     shouldRun: true,
   },
   {
-    expected: 'extr3m3 Camel Casist4 You Swe3tie',
+    expected: 'extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie',
     input: { dsf: [], food: 'truck' },
     testFn: input => {
       const extr3m3CamelCasist4YouSwe3tie = 1;
-      return variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie });
+      return variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie }, '<:>');
     },
-    label: 'splitCamelCase: variable input should yield "input"',
+    label:
+      'splitCamelCase: variable extr3m3CamelCasist4YouSwe3tie with separator <:>, should yield "extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie"',
     shouldRun: true,
   },
 ];
