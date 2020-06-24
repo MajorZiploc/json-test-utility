@@ -1,9 +1,16 @@
-export interface TypeCheckerOptions {
+export interface sameTypeOptions {
   nullableKeys?: string[];
   checkFirstInList?: boolean;
   subsetListCheck?: boolean;
   emptyListIsAcceptable?: boolean;
   dateKeys?: string[];
+}
+
+export interface typeCheckerOptions {
+  nullableKeys?: string[];
+  dateKeys?: string[];
+  emptyRootListAcceptable?: boolean;
+  emptyListKeys?: string[];
 }
 
 export class Variable {
@@ -312,7 +319,18 @@ declare class JsonComparer {
    * @param thing1
    * @param thing2
    */
-  sameTypes(thing1: any, thing2: any, options?: TypeCheckerOptions): boolean;
+  sameTypes(thing1: any, thing2: any, options?: sameTypeOptions): boolean;
+
+  /**
+   * Used to type check api contracts.
+   *
+   * @param json json to type check
+   * @param contractJson contract to use for type checking against json
+   * @param options type checking options
+   *
+   * @returns true if the json type checks, else false
+   */
+  typecheck(json: any, contractJson: any, options?: typeCheckerOptions): boolean;
 }
 
 export const jsonComparer: JsonComparer;

@@ -106,11 +106,11 @@ var JsonComparer = /** @class */ (function () {
                     return false;
                 }
                 // Check key paths that have no dots.
-                var rootDateKeyPaths = (_e = (_d = options === null || options === void 0 ? void 0 : options.dateKeys) === null || _d === void 0 ? void 0 : _d.filter(function (k) { return k.split('.').length <= 1; })) !== null && _e !== void 0 ? _e : [];
+                var rootDateKeyPaths_1 = (_e = (_d = options === null || options === void 0 ? void 0 : options.dateKeys) === null || _d === void 0 ? void 0 : _d.filter(function (k) { return k.split('.').length <= 1; })) !== null && _e !== void 0 ? _e : [];
                 // Removes 1 layer of key paths.
                 var dateKeys = (_f = options === null || options === void 0 ? void 0 : options.dateKeys) === null || _f === void 0 ? void 0 : _f.map(function (k) { return k.split('.').slice(1).join('.'); }).filter(function (k) { return !_.isEqual(k, ''); });
                 var optsDate_1 = JsonRefactor_1.jsonRefactor.setField(opts_1, 'dateKeys', dateKeys);
-                var doesDateRootKeysTypeCheck = rootDateKeyPaths.every(function (k) {
+                var doesDateRootKeysTypeCheck = rootDateKeyPaths_1.every(function (k) {
                     var v1 = thing1[k];
                     var v2 = thing2[k];
                     return new Date(v1).toString() !== 'Invalid Date' && new Date(v2).toString() !== 'Invalid Date';
@@ -121,11 +121,13 @@ var JsonComparer = /** @class */ (function () {
                 var j1kva = JsonRefactor_1.jsonRefactor
                     .toKeyValArray(thing1)
                     .sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); })
-                    .filter(function (kv) { return !rootNullKeyPaths_1.some(function (rk) { return rk === kv.key; }); });
+                    .filter(function (kv) { return !rootNullKeyPaths_1.some(function (rk) { return rk === kv.key; }); })
+                    .filter(function (kv) { return !rootDateKeyPaths_1.some(function (rk) { return rk === kv.key; }); });
                 var j2kva = JsonRefactor_1.jsonRefactor
                     .toKeyValArray(thing2)
                     .sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); })
-                    .filter(function (kv) { return !rootNullKeyPaths_1.some(function (rk) { return rk === kv.key; }); });
+                    .filter(function (kv) { return !rootNullKeyPaths_1.some(function (rk) { return rk === kv.key; }); })
+                    .filter(function (kv) { return !rootDateKeyPaths_1.some(function (rk) { return rk === kv.key; }); });
                 if (j1kva.length != j2kva.length) {
                     return false;
                 }
@@ -190,6 +192,121 @@ var JsonComparer = /** @class */ (function () {
         return _.flatten(JsonRefactor_1.jsonRefactor
             .toKeyValArray(_.groupBy(findAllHelper(json, null, isJson), function (s) { return s.split('.').length; }))
             .map(function (kv) { return kv.value.sort(); }));
+    };
+    JsonComparer.prototype.typecheckPrecheck = function (json, contractJson, options) {
+        var _a;
+        if (Array.isArray(json) && Array.isArray(contractJson)) {
+            if ((_a = options === null || options === void 0 ? void 0 : options.emptyRootListAcceptable) !== null && _a !== void 0 ? _a : false) {
+                return json.length === 0;
+            }
+        }
+        return false;
+    };
+    JsonComparer.prototype.typecheck = function (json, contractJson, options) {
+        if (this.typecheckPrecheck(json, contractJson, options)) {
+            return true;
+        }
+        return this.typecheckRecur(json, contractJson, options);
+    };
+    JsonComparer.prototype.typecheckRecur = function (json, contractJson, options) {
+        var _this = this;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        if (Array.isArray(json) && Array.isArray(contractJson)) {
+            return this.typecheckList(json, contractJson, options);
+        }
+        if (Array.isArray(json) || Array.isArray(contractJson)) {
+            return false;
+        }
+        if (this.isJSON(json) && this.isJSON(contractJson)) {
+            if (this.sameKeys(json, contractJson)) {
+                // Check key paths that have no dots.
+                var rootNullKeyPaths_2 = (_b = (_a = options === null || options === void 0 ? void 0 : options.nullableKeys) === null || _a === void 0 ? void 0 : _a.filter(function (k) { return k.split('.').length <= 1; })) !== null && _b !== void 0 ? _b : [];
+                // Removes 1 layer of key paths.
+                var nullKeys = (_c = options === null || options === void 0 ? void 0 : options.nullableKeys) === null || _c === void 0 ? void 0 : _c.map(function (k) { return k.split('.').slice(1).join('.'); }).filter(function (k) { return !_.isEqual(k, ''); });
+                var opts_2 = JsonRefactor_1.jsonRefactor.setField(options, 'nullableKeys', nullKeys);
+                var doesNullableRootKeysTypeCheck = rootNullKeyPaths_2.every(function (k) {
+                    var v1 = json[k];
+                    var v2 = contractJson[k];
+                    if (v1 === undefined && v2 === undefined) {
+                        return true;
+                    }
+                    if (v1 === null && v2 === null) {
+                        return true;
+                    }
+                    if (v1 === null || v2 === null) {
+                        return true;
+                    }
+                    else {
+                        return _this.typecheckRecur(v1, v2, opts_2);
+                    }
+                });
+                if (doesNullableRootKeysTypeCheck === false) {
+                    return false;
+                }
+                var jNoNull_1 = JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(json).filter(function (kv) { return !rootNullKeyPaths_2.some(function (rk) { return rk === kv.key; }); }));
+                var cjNoNull_1 = JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(contractJson).filter(function (kv) { return !rootNullKeyPaths_2.some(function (rk) { return rk === kv.key; }); }));
+                // Check key paths that have no dots.
+                var rootDateKeyPaths_2 = (_e = (_d = options === null || options === void 0 ? void 0 : options.dateKeys) === null || _d === void 0 ? void 0 : _d.filter(function (k) { return k.split('.').length <= 1; })) !== null && _e !== void 0 ? _e : [];
+                // Removes 1 layer of key paths.
+                var dateKeys = (_f = options === null || options === void 0 ? void 0 : options.dateKeys) === null || _f === void 0 ? void 0 : _f.map(function (k) { return k.split('.').slice(1).join('.'); }).filter(function (k) { return !_.isEqual(k, ''); });
+                var optsDate = JsonRefactor_1.jsonRefactor.setField(opts_2, 'dateKeys', dateKeys);
+                var doesDateRootKeysTypeCheck = rootDateKeyPaths_2.every(function (k) {
+                    var v1 = jNoNull_1[k];
+                    var v2 = cjNoNull_1[k];
+                    if (v1 === undefined && v2 === undefined) {
+                        return true;
+                    }
+                    return new Date(v1).toString() !== 'Invalid Date' && new Date(v2).toString() !== 'Invalid Date';
+                });
+                if (doesDateRootKeysTypeCheck === false) {
+                    return false;
+                }
+                var jNoDate_1 = JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(jNoNull_1).filter(function (kv) { return !rootDateKeyPaths_2.some(function (rk) { return rk === kv.key; }); }));
+                var cjNoDate_1 = JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(cjNoNull_1).filter(function (kv) { return !rootDateKeyPaths_2.some(function (rk) { return rk === kv.key; }); }));
+                // Check key paths that have no dots.
+                var rootMTListKeyPaths_1 = (_h = (_g = options === null || options === void 0 ? void 0 : options.emptyListKeys) === null || _g === void 0 ? void 0 : _g.filter(function (k) { return k.split('.').length <= 1; })) !== null && _h !== void 0 ? _h : [];
+                // Removes 1 layer of key paths.
+                var mtListKeys = (_j = options === null || options === void 0 ? void 0 : options.emptyListKeys) === null || _j === void 0 ? void 0 : _j.map(function (k) { return k.split('.').slice(1).join('.'); }).filter(function (k) { return !_.isEqual(k, ''); });
+                var optsMTList_1 = JsonRefactor_1.jsonRefactor.setField(optsDate, 'emptyListKeys', mtListKeys);
+                var doesMTListRootKeysTypeCheck = rootMTListKeyPaths_1.every(function (k) {
+                    var v1 = jNoDate_1[k];
+                    var v2 = cjNoDate_1[k];
+                    if (v1 === undefined && v2 === undefined) {
+                        return true;
+                    }
+                    if (v1.length === 0) {
+                        return true;
+                    }
+                    return _this.typecheckList(v1, v2, optsMTList_1);
+                });
+                if (doesMTListRootKeysTypeCheck === false) {
+                    return false;
+                }
+                var jNoMTList = JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(jNoDate_1).filter(function (kv) { return !rootMTListKeyPaths_1.some(function (rk) { return rk === kv.key; }); }));
+                var cjNoMTList = JsonRefactor_1.jsonRefactor.fromKeyValArray(JsonRefactor_1.jsonRefactor.toKeyValArray(cjNoDate_1).filter(function (kv) { return !rootMTListKeyPaths_1.some(function (rk) { return rk === kv.key; }); }));
+                var j1kva = JsonRefactor_1.jsonRefactor.toKeyValArray(jNoMTList).sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); });
+                var j2kva = JsonRefactor_1.jsonRefactor.toKeyValArray(cjNoMTList).sort(function (kv1, kv2) { return kv1.key.localeCompare(kv2.key); });
+                if (j1kva.length != j2kva.length) {
+                    return false;
+                }
+                var j1kvAndj2kv_s = _.zipWith(j1kva, j2kva, function (j1kv, j2kv) { return ({ j1kv: j1kv, j2kv: j2kv }); });
+                return j1kvAndj2kv_s.every(function (j1kvAndj2kv) {
+                    return _this.typecheckRecur(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value, optsMTList_1);
+                });
+            }
+            return false;
+        }
+        if (this.isJSON(json) || this.isJSON(contractJson)) {
+            return false;
+        }
+        return typeof json === typeof contractJson;
+    };
+    JsonComparer.prototype.typecheckList = function (list, contractList, options) {
+        var _this = this;
+        if (contractList.length === 0) {
+            throw new Error('All lists in the contract need to have 1 element for comparison.');
+        }
+        return list.every(function (e) { return _this.typecheckRecur(e, contractList[0], options); });
     };
     return JsonComparer;
 }());

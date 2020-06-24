@@ -2,7 +2,7 @@
 <p>A utility library for refactoring, comparing, and migrating jsons.
 Useful for writing api test suites.
 Migration and json refactor tools can be used to automate test data jsons as if they are a database.
-Comparison tool allows you to compare jsons and arrays in more flexiable ways.
+Comparison tool allows you to compare jsons and arrays in more flexible ways.
 </p>
 <h2>Examples</h2>
 <h3>Json Comparison</h3>
@@ -30,3 +30,4 @@ TODO
 <ul>0.2.5<li>Adds String utility class with titleCase and splitCamelCase functions</li></ul>
 <ul>0.2.6<li>Adds List utility class with sorting functions</li></ul>
 <ul>0.2.7<li>Fixes type information for List utility class</li></ul>
+<ul>0.2.8<li>Adds JsonComparer.typecheck for type checking api contracts</li></ul>

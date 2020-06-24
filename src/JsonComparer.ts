@@ -1,12 +1,19 @@
 import * as _ from 'lodash';
 import { jsonRefactor as jr } from './JsonRefactor';
 
-interface TypeCheckerOptions {
+interface sameTypeOptions {
   nullableKeys?: string[];
   checkFirstInList?: boolean;
   subsetListCheck?: boolean;
   emptyListIsAcceptable?: boolean;
   dateKeys?: string[];
+}
+
+interface typeCheckerOptions {
+  nullableKeys?: string[];
+  dateKeys?: string[];
+  emptyRootListAcceptable?: boolean;
+  emptyListKeys?: string[];
 }
 
 class JsonComparer {
@@ -94,7 +101,7 @@ class JsonComparer {
     return true;
   }
 
-  public sameTypes(thing1: any, thing2: any, options?: TypeCheckerOptions): boolean {
+  public sameTypes(thing1: any, thing2: any, options?: sameTypeOptions): boolean {
     if (Array.isArray(thing1) && Array.isArray(thing2)) {
       return this.sameTypesList(thing1, thing2, options);
     }
@@ -141,11 +148,13 @@ class JsonComparer {
         const j1kva = jr
           .toKeyValArray(thing1)
           .sort((kv1, kv2) => kv1.key.localeCompare(kv2.key))
-          .filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key));
+          .filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key))
+          .filter(kv => !rootDateKeyPaths.some(rk => rk === kv.key));
         const j2kva = jr
           .toKeyValArray(thing2)
           .sort((kv1, kv2) => kv1.key.localeCompare(kv2.key))
-          .filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key));
+          .filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key))
+          .filter(kv => !rootDateKeyPaths.some(rk => rk === kv.key));
         if (j1kva.length != j2kva.length) {
           return false;
         }
@@ -162,7 +171,7 @@ class JsonComparer {
     return typeof thing1 === typeof thing2;
   }
 
-  private sameTypesList(list1: any[], list2: any[], options?: TypeCheckerOptions): boolean {
+  private sameTypesList(list1: any[], list2: any[], options?: sameTypeOptions): boolean {
     if (options?.subsetListCheck ?? false) {
       const trimedList2 = list2.slice(0, list1.length);
       const lsz = _.zipWith(list1, trimedList2, (e1, e2) => ({ e1, e2 }));
@@ -214,6 +223,136 @@ class JsonComparer {
         .toKeyValArray(_.groupBy(findAllHelper(json, null, isJson), s => s.split('.').length))
         .map(kv => kv.value.sort())
     );
+  }
+
+  private typecheckPrecheck(json: any, contractJson: any, options?: typeCheckerOptions): boolean {
+    if (Array.isArray(json) && Array.isArray(contractJson)) {
+      if (options?.emptyRootListAcceptable ?? false) {
+        return json.length === 0;
+      }
+    }
+    return false;
+  }
+
+  public typecheck(json: any, contractJson: any, options?: typeCheckerOptions): boolean {
+    if (this.typecheckPrecheck(json, contractJson, options)) {
+      return true;
+    }
+    return this.typecheckRecur(json, contractJson, options);
+  }
+
+  private typecheckRecur(json: any, contractJson: any, options?: typeCheckerOptions): boolean {
+    if (Array.isArray(json) && Array.isArray(contractJson)) {
+      return this.typecheckList(json, contractJson, options);
+    }
+    if (Array.isArray(json) || Array.isArray(contractJson)) {
+      return false;
+    }
+    if (this.isJSON(json) && this.isJSON(contractJson)) {
+      if (this.sameKeys(json, contractJson)) {
+        // Check key paths that have no dots.
+        const rootNullKeyPaths = options?.nullableKeys?.filter(k => k.split('.').length <= 1) ?? [];
+        // Removes 1 layer of key paths.
+        const nullKeys = options?.nullableKeys
+          ?.map(k => k.split('.').slice(1).join('.'))
+          .filter(k => !_.isEqual(k, ''));
+        const opts = jr.setField(options, 'nullableKeys', nullKeys);
+        const doesNullableRootKeysTypeCheck = rootNullKeyPaths.every(k => {
+          const v1 = json[k];
+          const v2 = contractJson[k];
+          if (v1 === undefined && v2 === undefined) {
+            return true;
+          }
+          if (v1 === null && v2 === null) {
+            return true;
+          }
+          if (v1 === null || v2 === null) {
+            return true;
+          } else {
+            return this.typecheckRecur(v1, v2, opts);
+          }
+        });
+        if (doesNullableRootKeysTypeCheck === false) {
+          return false;
+        }
+        const jNoNull = jr.fromKeyValArray(
+          jr.toKeyValArray(json).filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key))
+        );
+        const cjNoNull = jr.fromKeyValArray(
+          jr.toKeyValArray(contractJson).filter(kv => !rootNullKeyPaths.some(rk => rk === kv.key))
+        );
+        // Check key paths that have no dots.
+        const rootDateKeyPaths = options?.dateKeys?.filter(k => k.split('.').length <= 1) ?? [];
+        // Removes 1 layer of key paths.
+        const dateKeys = options?.dateKeys?.map(k => k.split('.').slice(1).join('.')).filter(k => !_.isEqual(k, ''));
+        const optsDate = jr.setField(opts, 'dateKeys', dateKeys);
+        const doesDateRootKeysTypeCheck = rootDateKeyPaths.every(k => {
+          const v1 = jNoNull[k];
+          const v2 = cjNoNull[k];
+          if (v1 === undefined && v2 === undefined) {
+            return true;
+          }
+          return new Date(v1).toString() !== 'Invalid Date' && new Date(v2).toString() !== 'Invalid Date';
+        });
+        if (doesDateRootKeysTypeCheck === false) {
+          return false;
+        }
+        const jNoDate = jr.fromKeyValArray(
+          jr.toKeyValArray(jNoNull).filter(kv => !rootDateKeyPaths.some(rk => rk === kv.key))
+        );
+        const cjNoDate = jr.fromKeyValArray(
+          jr.toKeyValArray(cjNoNull).filter(kv => !rootDateKeyPaths.some(rk => rk === kv.key))
+        );
+        // Check key paths that have no dots.
+        const rootMTListKeyPaths = options?.emptyListKeys?.filter(k => k.split('.').length <= 1) ?? [];
+        // Removes 1 layer of key paths.
+        const mtListKeys = options?.emptyListKeys
+          ?.map(k => k.split('.').slice(1).join('.'))
+          .filter(k => !_.isEqual(k, ''));
+        const optsMTList = jr.setField(optsDate, 'emptyListKeys', mtListKeys);
+        const doesMTListRootKeysTypeCheck = rootMTListKeyPaths.every(k => {
+          const v1 = jNoDate[k];
+          const v2 = cjNoDate[k];
+          if (v1 === undefined && v2 === undefined) {
+            return true;
+          }
+          if (v1.length === 0) {
+            return true;
+          }
+          return this.typecheckList(v1, v2, optsMTList);
+        });
+        if (doesMTListRootKeysTypeCheck === false) {
+          return false;
+        }
+        const jNoMTList = jr.fromKeyValArray(
+          jr.toKeyValArray(jNoDate).filter(kv => !rootMTListKeyPaths.some(rk => rk === kv.key))
+        );
+        const cjNoMTList = jr.fromKeyValArray(
+          jr.toKeyValArray(cjNoDate).filter(kv => !rootMTListKeyPaths.some(rk => rk === kv.key))
+        );
+        const j1kva = jr.toKeyValArray(jNoMTList).sort((kv1, kv2) => kv1.key.localeCompare(kv2.key));
+        const j2kva = jr.toKeyValArray(cjNoMTList).sort((kv1, kv2) => kv1.key.localeCompare(kv2.key));
+        if (j1kva.length != j2kva.length) {
+          return false;
+        }
+        const j1kvAndj2kv_s = _.zipWith(j1kva, j2kva, (j1kv, j2kv) => ({ j1kv, j2kv }));
+        return j1kvAndj2kv_s.every(j1kvAndj2kv =>
+          this.typecheckRecur(j1kvAndj2kv.j1kv.value, j1kvAndj2kv.j2kv.value, optsMTList)
+        );
+      }
+      return false;
+    }
+    if (this.isJSON(json) || this.isJSON(contractJson)) {
+      return false;
+    }
+    return typeof json === typeof contractJson;
+  }
+
+  private typecheckList(list: any[], contractList: any[], options?: typeCheckerOptions): boolean {
+    if (contractList.length === 0) {
+      throw new Error('All lists in the contract need to have 1 element for comparison.');
+    }
+    return list.every(e => this.typecheckRecur(e, contractList[0], options));
   }
 }
 

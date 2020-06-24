@@ -464,6 +464,80 @@ const testData: testTools.testInput[] = [
     label: 'sameTypes - false 2 jsons with same keys with date checks, with an invalid date string',
     shouldRun: true,
   },
+  {
+    expected: false,
+    input: {
+      contractJson: { a: { j: [{ d: '2222-12-29' }] }, date: '05/06/1997', u: 1000 },
+      json: { a: { j: [{ d: '2000-01-19' }, { d: '05s/23/2018' }] }, date: '07/26/2007', u: 8 },
+    },
+    testFn: input =>
+      jc.typecheck(input.json, input.contractJson, {
+        dateKeys: ['a.j.d', 'date'],
+      }),
+    label: 'typecheck - false json with date checks, with an invalid date string',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      contractJson: { a: { j: [{ d: '2222-12-29' }] }, date: '05/06/1997', u: 1000, z: { h: [{ y: '2000-11-11' }] } },
+      json: {
+        a: { j: [{ d: '2000-01-19' }, { d: '05/23/2018' }] },
+        date: '07/26/2007',
+        u: 8,
+        z: { h: [{ y: '2000-11-11' }] },
+      },
+    },
+    testFn: input =>
+      jc.typecheck(input.json, input.contractJson, {
+        dateKeys: ['a.j.d', 'date', 'z.h.y'],
+      }),
+    label: 'typecheck - true json with date checks',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      contractJson: { a: { j: [{ d: '2222-12-29' }] }, z: { k: [1] }, l: [''], u: 1000, qq: [1], bb: [''] },
+      json: { a: { j: [] }, z: { k: [1, 2, 3] }, l: [], u: 8, qq: [44, 33, 21], bb: null },
+    },
+    testFn: input =>
+      jc.typecheck(input.json, input.contractJson, {
+        dateKeys: ['a.j.d'],
+        emptyListKeys: ['a.j', 'z.k', 'l', 'bb'],
+        nullableKeys: ['bb'],
+      }),
+    label: 'typecheck - true json with empty list checks',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      contractJson: [{ a: { j: [{ d: '2222-12-29' }] }, z: { k: [1] }, l: [''], u: 1000, qq: [1] }],
+      json: [],
+    },
+    testFn: input =>
+      jc.typecheck(input.json, input.contractJson, {
+        emptyRootListAcceptable: true,
+      }),
+    label: 'typecheck - true list with empty root list acceptable',
+    shouldRun: true,
+  },
+  {
+    expected: true,
+    input: {
+      contractJson: [{ a: { j: [{ d: '2222-12-29' }] }, z: { k: [1] }, l: [''], u: 1000, qq: [1] }],
+      json: [{ a: { j: [] }, z: { k: [1, 2, 3] }, l: [], u: 8, qq: null }],
+    },
+    testFn: input =>
+      jc.typecheck(input.json, input.contractJson, {
+        dateKeys: ['a.j.d'],
+        emptyListKeys: ['a.j', 'z.k', 'l'],
+        nullableKeys: ['qq'],
+      }),
+    label: 'typecheck - true json with null check',
+    shouldRun: true,
+  },
 ];
 
 testTools.tester(testData);
