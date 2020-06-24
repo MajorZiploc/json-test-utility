@@ -532,7 +532,7 @@ const testData: testTools.testInput[] = [
     testFn: input =>
       jc.typecheck(input.json, input.contractJson, {
         dateKeys: ['a.j.d'],
-        emptyListKeys: ['a.j', 'z.k', 'l'],
+        emptyListKeys: ['a.j', 'z.k', 'l', 'qq'],
         nullableKeys: ['qq'],
       }),
     label: 'typecheck - true json with null check',

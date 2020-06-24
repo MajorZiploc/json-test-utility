@@ -536,7 +536,7 @@ var testData = [
         testFn: function (input) {
             return JsonComparer_1.jsonComparer.typecheck(input.json, input.contractJson, {
                 dateKeys: ['a.j.d'],
-                emptyListKeys: ['a.j', 'z.k', 'l'],
+                emptyListKeys: ['a.j', 'z.k', 'l', 'qq'],
                 nullableKeys: ['qq'],
             });
         },

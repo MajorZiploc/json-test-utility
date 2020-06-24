@@ -132,7 +132,6 @@ const testData: testTools.testInput[] = [
     label: 'minusJsons',
     shouldRun: true,
   },
-  ,
 ];
 
 testTools.tester(testData);

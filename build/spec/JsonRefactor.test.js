@@ -134,7 +134,6 @@ var testData = [
         label: 'minusJsons',
         shouldRun: true,
     },
-    ,
 ];
 testTools.tester(testData);
 //# sourceMappingURL=JsonRefactor.test.js.map
