@@ -50,3 +50,10 @@ import { string as s } from "json-test-utility";
 - 0.2.6 - Adds List utility class with sorting functions
 - 0.2.7 - Fixes type information for List utility class
 - 0.2.8 - Adds JsonComparer.typecheck for type checking api contracts
+
+## Publishing a new version
+Make sure the version in the package.json is unique / bumped up
+```
+> npm login
+> npm publish
+```
