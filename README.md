@@ -1,33 +1,52 @@
-<h1>json-test-utility</h1>
-<p>A utility library for refactoring, comparing, and migrating jsons.
+# json-test-utility
+
+A utility library for refactoring, comparing, and migrating jsons.
 Useful for writing api test suites.
 Migration and json refactor tools can be used to automate test data jsons as if they are a database.
 Comparison tool allows you to compare jsons and arrays in more flexible ways.
-</p>
-<h2>Examples</h2>
-<h3>Json Comparison</h3>
-TODO
-<h3>Json Refactoring</h3>
-TODO
-<h3>Json Migration</h3>
-TODO
-<h3>Json Masker</h3>
-TODO
-<h3>Variable</h3>
-TODO
-<h3>String</h3>
-TODO
 
-<h2>Change Log<h2>
-<ul>0.1.7<li>Fixes isJson function for null case. isJson(null) is now false</li></ul>
-<ul>0.1.8<li>Fixes type information for sameType and JsonMigration</li></ul>
-<ul>0.1.9<li>Fixes type information for functions with implicit any returns</li></ul>
-<ul>0.2.0<li>Adds JSON masker v1</li></ul>
-<ul>0.2.1<li>Patches JsonComparer.sameType check for lists</li></ul>
-<ul>0.2.2<li>Adds date type checkable keys to JsonComparer.sameType</li></ul>
-<ul>0.2.3<li>Adds variable.toString function to convert a variable name wrapped in a json to a string</li></ul>
-<ul>0.2.4<li>Adds variable.splitCamelCase function to convert a variable name wrapped in a json to a string space separated based on camel casing.</li></ul>
-<ul>0.2.5<li>Adds String utility class with titleCase and splitCamelCase functions</li></ul>
-<ul>0.2.6<li>Adds List utility class with sorting functions</li></ul>
-<ul>0.2.7<li>Fixes type information for List utility class</li></ul>
-<ul>0.2.8<li>Adds JsonComparer.typecheck for type checking api contracts</li></ul>
+## Examples
+### Json Comparison
+Look at ./src/spec/JsonComparer.test.ts for test cases / examples
+```
+import { jsonComparer as jc } from "json-test-utility";
+```
+### Json Refactoring
+Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
+```
+import { jsonRefactor as jr } from "json-test-utility";
+```
+### Json Migration
+Look at ./src/spec/JsonMigration.test.ts for test cases / examples
+```
+import { jsonMigration, ListOfJsonMigratorOf } from "json-test-utility";
+```
+### Json Masker
+Look at ./src/spec/JsonMasker.test.ts for test cases / examples
+```
+import { jsonMasker } from "json-test-utility";
+```
+### Variable
+Look at ./src/spec/Variable.test.ts for test cases / examples
+```
+import { variable } from "json-test-utility";
+```
+### String
+Look at ./src/spec/String.test.ts for test cases / examples
+```
+import { string as s } from "json-test-utility";
+```
+
+## Change Log
+- 0.1.7 - Fixes isJson function for null case. isJson(null) is now false
+- 0.1.8 - Fixes type information for sameType and JsonMigration
+- 0.1.9 - Fixes type information for functions with implicit any returns
+- 0.2.0 - Adds JSON masker v1
+- 0.2.1 - Patches JsonComparer.sameType check for lists
+- 0.2.2 - Adds date type checkable keys to JsonComparer.sameType
+- 0.2.3 - Adds variable.toString function to convert a variable name wrapped in a json to a string
+- 0.2.4 - Adds variable.splitCamelCase function to convert a variable name wrapped in a json to a string space separated based on camel casing.
+- 0.2.5 - Adds String utility class with titleCase and splitCamelCase functions
+- 0.2.6 - Adds List utility class with sorting functions
+- 0.2.7 - Fixes type information for List utility class
+- 0.2.8 - Adds JsonComparer.typecheck for type checking api contracts
