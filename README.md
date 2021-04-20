@@ -7,17 +7,35 @@ Comparison tool allows you to compare jsons and arrays in more flexible ways.
 
 ## Examples
 ### Json Comparison
-TODO
+Look at ./src/spec/JsonComparer.test.ts for test cases / examples
+```
+import { jsonComparer as jc } from "json-test-utility";
+```
 ### Json Refactoring
-TODO
+Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
+```
+import { jsonRefactor as jr } from "json-test-utility";
+```
 ### Json Migration
-TODO
+Look at ./src/spec/JsonMigration.test.ts for test cases / examples
+```
+import { jsonMigration, ListOfJsonMigratorOf } from "json-test-utility";
+```
 ### Json Masker
-TODO
+Look at ./src/spec/JsonMasker.test.ts for test cases / examples
+```
+import { jsonMasker } from "json-test-utility";
+```
 ### Variable
-TODO
+Look at ./src/spec/Variable.test.ts for test cases / examples
+```
+import { variable } from "json-test-utility";
+```
 ### String
-TODO
+Look at ./src/spec/String.test.ts for test cases / examples
+```
+import { string as s } from "json-test-utility";
+```
 
 ## Change Log
 - 0.1.7 - Fixes isJson function for null case. isJson(null) is now false
