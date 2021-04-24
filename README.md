@@ -82,6 +82,14 @@ console.log(result) // true
 Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
 ```
 import { jsonRefactor as jr } from "json-test-utility";
+
+// The function minusJsons
+// json1 - json2
+let json1 = { x: 1, y: 2, z: 4, a: { xa: ['', {}] } };
+let json2 = { a: 3, x: [] };
+let result = jr.minusJsons(json1, json2);
+console.log(result); // { y: 2, z: 4 };
+
 ```
 ### Json Migration
 Look at ./src/spec/JsonMigration.test.ts for test cases / examples
