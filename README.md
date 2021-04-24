@@ -300,6 +300,7 @@ console.log(maskedJson); // { x: true, l: [2, 3, 4, 5] }
 ```
 
 ## Change Log
+
 - 0.1.7 - Fixes isJson function for null case. isJson(null) is now false
 - 0.1.8 - Fixes type information for sameType and JsonMigration
 - 0.1.9 - Fixes type information for functions with implicit any returns
@@ -313,6 +314,8 @@ console.log(maskedJson); // { x: true, l: [2, 3, 4, 5] }
 - 0.2.7 - Fixes type information for List utility class
 - 0.2.8 - Adds JsonComparer.typecheck for type checking api contracts
 - 0.2.9 - Adds basic docs to readme
+- 0.3.0 - Adds details docs to readme
+
 
 ## Contributing
 ### Development tools
