@@ -153,6 +153,29 @@ console.log(result); // { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } 
 
 ```
 
+### Variable
+Look at ./src/spec/Variable.test.ts for test cases / examples
+```
+import { variable } from "json-test-utility";
+
+// The function toString
+// Used to convert a variable name to a string
+const x = 'sweet';
+const result = variable.toString({ x }); // 'x'
+
+// The function splitCamelCase
+// Used to convert a camel cased variable name to a string split on the upper case letter
+const extr3m3CamelCasist4YouSwe3tie = 1;
+const result = variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie }, '<:>'); // 'extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie'
+
+```
+
+### String
+Look at ./src/spec/String.test.ts for test cases / examples
+```
+import { string as s } from "json-test-utility";
+```
+
 ### Json Migration
 Look at ./src/spec/JsonMigration.test.ts for test cases / examples
 ```
@@ -163,18 +186,6 @@ import { jsonMigration, ListOfJsonMigratorOf } from "json-test-utility";
 Look at ./src/spec/JsonMasker.test.ts for test cases / examples
 ```
 import { jsonMasker } from "json-test-utility";
-```
-
-### Variable
-Look at ./src/spec/Variable.test.ts for test cases / examples
-```
-import { variable } from "json-test-utility";
-```
-
-### String
-Look at ./src/spec/String.test.ts for test cases / examples
-```
-import { string as s } from "json-test-utility";
 ```
 
 ## Change Log
