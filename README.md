@@ -1,9 +1,14 @@
 # json-test-utility
 
+## Purpose
 A utility library for refactoring, comparing, and migrating jsons.
 Useful for writing api test suites.
 Migration and json refactor tools can be used to automate test data jsons as if they are a database.
 Comparison tool allows you to compare jsons and arrays in more flexible ways.
+
+## Motivation
+Although there are many other frameworks for testing, the api of testing json comparisons of various kinds is different in each.
+This library gives one api that can be used in combination with any other ui, api, or unit testing javascript framework
 
 ## Examples
 ### Json Comparison
@@ -51,6 +56,28 @@ import { string as s } from "json-test-utility";
 - 0.2.7 - Fixes type information for List utility class
 - 0.2.8 - Adds JsonComparer.typecheck for type checking api contracts
 - 0.2.9 - Adds basic docs to readme
+
+## Contributing
+### Development tools
+Visual Studio Code
+
+yarn (a nodejs package manager)
+
+node.js
+
+typescript
+
+prettier vscode extension for code linting
+
+### Install
+run the following at the root of the project
+
+`> yarn install`
+
+### Running unit tests
+See the package.json for all scripts
+
+`> yarn run specs`
 
 ## Publishing a new version
 Make sure the version in the package.json is unique / bumped up
