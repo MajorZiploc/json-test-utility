@@ -16,7 +16,7 @@ This library gives one api that can be used in combination with any other ui, ap
 ## Examples
 
 ### Json Comparison
-Look at ./src/spec/JsonComparer.test.ts for test cases / examples
+Look at ./src/spec/JsonComparer.test.ts for test cases
 ```
 import { jsonComparer as jc } from "json-test-utility";
 // The following examples are only a subset of all the functions
@@ -81,7 +81,7 @@ console.log(result) // true
 ```
 
 ### Json Refactoring
-Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
+Look at ./src/spec/JsonRefactor.test.ts for test cases
 ```
 import { jsonRefactor as jr } from "json-test-utility";
 
@@ -154,7 +154,7 @@ console.log(result); // { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } 
 ```
 
 ### Variable
-Look at ./src/spec/Variable.test.ts for test cases / examples
+Look at ./src/spec/Variable.test.ts for test cases
 ```
 import { variable } from "json-test-utility";
 
@@ -171,7 +171,7 @@ const result = variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie }, '<:>')
 ```
 
 ### String
-Look at ./src/spec/String.test.ts for test cases / examples
+Look at ./src/spec/String.test.ts for test cases
 ```
 import { string as s } from "json-test-utility";
 
@@ -189,7 +189,7 @@ const result = s.splitCamelCase(input.str, input.separator); // 'extr3m3<:>Camel
 ```
 
 ### Json Migration
-Look at ./src/spec/JsonMigration.test.ts for test cases / examples
+Look at ./src/spec/JsonMigration.test.ts for test cases
 ```
 import { jsonMigration, ListOfJsonMigratorOf } from "json-test-utility";
 ```
@@ -205,7 +205,7 @@ export enum DataMaskingStrategy {
   Scramble,
   Nullify
 }
-Look at ./src/spec/JsonMasker.test.ts for test cases / examples
+Look at ./src/spec/JsonMasker.test.ts for test cases
 ```
 import { jsonMasker as jmk, DataMaskingStrategy } from "json-test-utility";
 
