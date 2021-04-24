@@ -18,6 +18,8 @@ This library gives one api that can be used in combination with any other ui, ap
 Look at ./src/spec/JsonComparer.test.ts for test cases / examples
 ```
 import { jsonComparer as jc } from "json-test-utility";
+// The following examples are only a subset of all the functions
+// Use intellisense on jc. to see more
 
 // The typecheck function
 // There are tons of options, check out the index.d.ts or intellisense for more
@@ -46,6 +48,13 @@ let pattern = 'po.er';
 let regexOptions = 'gi';
 let result = jc.findAllKeyPaths(json, pattern, regexOptions);
 console.log(result); //['super_pOweRful', 'super_pOweRful.PoWeRpOwEr', 'kind.plusultra.qq.power_slow_PoweR']
+
+// The functioncontainSameElements
+// Check if the arrays have the same elements
+let array1 = [1, 2, { qq: ';-;' }];
+let array2 = [{ qq: ';-;' }, 2, 1];
+let result = jc.containSameElements(array1, array2);
+console.log(result); //true
 
 ```
 ### Json Refactoring
