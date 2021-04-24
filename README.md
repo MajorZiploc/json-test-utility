@@ -31,6 +31,19 @@ let result = jc.typecheck(actualJson, contractJson, {
   nullableKeys: ['qq'],
 });
 console.log(result); // true
+
+// The findAllKeyPaths function
+// A way to find all keys that contain a regex pattern in a json
+// That contain power with case insensitive and global flags
+let json = {
+  super_pOweRful: { PoWeRpOwEr: 1 },
+  kind: { plusultra: { qq: { power_slow_PoweR: 1 } }, nothingCoolHere: { x: 1, y: 3, zzz: { zzzzz: { I: 9 } } } },
+};
+let pattern = 'po.er';
+let regexOptions = 'gi';
+let result = jc.findAllKeyPaths(json, pattern, regexOptions);
+console.log(result); //['super_pOweRful', 'super_pOweRful.PoWeRpOwEr', 'kind.plusultra.qq.power_slow_PoweR']
+
 ```
 ### Json Refactoring
 Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
