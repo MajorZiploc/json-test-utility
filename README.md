@@ -174,6 +174,18 @@ const result = variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie }, '<:>')
 Look at ./src/spec/String.test.ts for test cases / examples
 ```
 import { string as s } from "json-test-utility";
+
+// The function titleCase
+// Title cases a string
+const input = 'iN thE W0rDs 0F TH3 wis3';
+const result = s.titleCase(input);
+console.log(result) // 'In The W0rds 0f Th3 Wis3'
+
+// The function splitCamelCase
+// split a camel cased string with the given splitter
+const input = { str: 'extr3m3CamelCasist4YouSwe3tie', separator: '<:>' };
+const result = s.splitCamelCase(input.str, input.separator); // 'extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie'
+
 ```
 
 ### Json Migration
