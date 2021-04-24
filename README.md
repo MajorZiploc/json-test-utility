@@ -90,6 +90,65 @@ let json2 = { a: 3, x: [] };
 let result = jr.minusJsons(json1, json2);
 console.log(result); // { y: 2, z: 4 };
 
+// The function subJson
+// Create a new json of the specified keys
+let json = { x: 1, y: 2, z: 3 };
+let result = jr.subJson(json, ['y', 'z']);
+console.log(result); // { y: 2, z: 3 };
+
+// The function subJsonExcept
+// Create a new json of the keys not specified
+let json = { x: 1, y: 2, z: 3 };
+let result = jr.subJsonExcept(json, ['y', 'z']);
+console.log(result); // { x: 1 }
+
+// The function toKeyValArray
+// Converts a json to a key value array
+// Useful for iterating or using list operations on a json
+const json = { x: 12, y: { g: 'ba' }, z: [1, 2, 3] };
+const actual = jr.toKeyValArray(json);
+const expected = [
+{ key: 'x', value: 12 },
+{ key: 'y', value: { g: 'ba' } },
+{ key: 'z', value: [1, 2, 3] },
+];
+const result = jc.containSameElements(actual, expected); // true
+
+// The function fromKeyValArray
+// Converts a key value array to a json
+const kvarray = [
+  { key: 'x', value: 12 },
+  { key: 'y', value: { g: 'ba' } },
+  { key: 'z', value: [1, 2, 3] },
+];
+const actual = jr.fromKeyValArray(kvarray);
+const expected = { x: 12, y: { g: 'ba' }, z: [1, 2, 3] };
+const result = _.isEqual(actual, expected); // true
+
+// The function Copy
+// Deep copy of a json
+const json = { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } } };
+const result = jr.copy(json);
+console.log(result); // { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } } }
+
+// The function RemoveField
+// Removes a field from a json
+const json = { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } } };
+const result = jr.removeField(json, 'j.i.k');
+console.log(result); // { status: 200, e: 'jones', j: { i: {} } }
+
+// The function SetField
+// Sets a field in a json to a new value
+const json = { status: 200, e: 'jones' };
+const result =  jr.setField(json, 'e', 300);
+console.log(result); // { status: 200, e: 300 }
+
+// The function AddField
+// Adds a field in a json to a new value
+const input = { status: 200, e: 'jones' };
+const result = jr.addField(input, 'j.i', { k: [{ x: 1 }, 1] });
+console.log(result); // { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } } }
+
 ```
 ### Json Migration
 Look at ./src/spec/JsonMigration.test.ts for test cases / examples
