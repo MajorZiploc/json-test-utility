@@ -1,5 +1,4 @@
 import { jsonComparer as jc } from './../JsonComparer';
-import { jsonRefactor as jr } from '../JsonRefactor';
 import { jsonMasker as jmk, DataMaskingStrategy } from '../JsonMasker';
 import * as testTools from '../testTools';
 import * as _ from 'lodash';

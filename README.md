@@ -195,9 +195,39 @@ import { jsonMigration, ListOfJsonMigratorOf } from "json-test-utility";
 ```
 
 ### Json Masker
+Used to mask the data in jsons
+Can use default masking strategies, other built in strategies, or user defined strategies per data type.
+The default masking strategy is DataMaskingStrategy.Scramble
+
+Built in strategies:
+export enum DataMaskingStrategy {
+  Identity,
+  Scramble,
+  Nullify
+}
 Look at ./src/spec/JsonMasker.test.ts for test cases / examples
 ```
-import { jsonMasker } from "json-test-utility";
+import { jsonMasker as jmk, DataMaskingStrategy } from "json-test-utility";
+
+// The function maskData
+// using default masking strategy
+const json = { x: false, l: [1, 2, 3] };
+const maskedJson = jmk.maskData(json);
+// nondeterministic by default
+const result = !_.isEqual(actual, expected) && jc.sameKeys(actual, expected); // true
+
+// The function maskData
+// given user strategies
+const json = { x: false, l: [1, 2, 3] };
+const maskedJson = jmk.maskData(json, {
+  list: l => {
+    l.push(4);
+    return l;
+  },
+  number: n => n + 1,
+  boolean: b => !b,
+});
+console.log(maskedJson); // { x: true, l: [2, 3, 4, 5] }
 ```
 
 ## Change Log

@@ -9,7 +9,7 @@ var testData = [
         testFn: function (input) {
             return String_1.string.splitCamelCase('x');
         },
-        label: 'splitCamelCase: s x should yield "x"',
+        label: 'splitCamelCase: string x should yield "x"',
         shouldRun: true,
     },
     {
@@ -18,7 +18,7 @@ var testData = [
         testFn: function (input) {
             return String_1.string.splitCamelCase(input.str, input.separator);
         },
-        label: 'splitCamelCase: s extr3m3CamelCasist4YouSwe3tie with separator <:>, should yield "extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie"',
+        label: 'splitCamelCase: string extr3m3CamelCasist4YouSwe3tie with separator <:>, should yield "extr3m3<:>Camel<:>Casist4<:>You<:>Swe3tie"',
         shouldRun: true,
     },
     {
@@ -36,7 +36,7 @@ var testData = [
         testFn: function (input) {
             return String_1.string.titleCase(input);
         },
-        label: "titleCase: s 'iN thE W0rDs 0F TH3 wis3' should yield 'In The W0rds 0f Th3 Wis3'",
+        label: "titleCase: string 'iN thE W0rDs 0F TH3 wis3' should yield 'In The W0rds 0f Th3 Wis3'",
         shouldRun: true,
     },
     {
@@ -45,7 +45,7 @@ var testData = [
         testFn: function (input) {
             return String_1.string.titleCase(input);
         },
-        label: "titleCase: s 'x' should yield 'X'",
+        label: "titleCase: string 'x' should yield 'X'",
         shouldRun: true,
     },
     {
@@ -54,7 +54,7 @@ var testData = [
         testFn: function (input) {
             return String_1.string.titleCase(input);
         },
-        label: 'titleCase: empty s',
+        label: 'titleCase: empty string',
         shouldRun: true,
     },
     {
