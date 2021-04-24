@@ -1,13 +1,13 @@
 import * as testTools from '../testTools';
 import * as _ from 'lodash';
-import { list } from '../List';
+import { list as l } from '../List';
 
 const testData: testTools.testInput[] = [
   {
     expected: true,
     input: { l: [1, 2, 3] },
     testFn: input => {
-      return list.isSorted(input.l);
+      return l.isSorted(input.l);
     },
     label: 'list isSorted - true, [1,2,3]',
     shouldRun: true,
@@ -16,7 +16,7 @@ const testData: testTools.testInput[] = [
     expected: true,
     input: { l: [1, 1, 1] },
     testFn: input => {
-      return list.isSorted(input.l);
+      return l.isSorted(input.l);
     },
     label: 'list isSorted - true, list of same eles',
     shouldRun: true,
@@ -25,7 +25,7 @@ const testData: testTools.testInput[] = [
     expected: true,
     input: { l: [1, 1, 1] },
     testFn: input => {
-      return list.isSortedDesc(input.l);
+      return l.isSortedDesc(input.l);
     },
     label: 'list isSortedDesc - true, list of same eles',
     shouldRun: true,
@@ -34,7 +34,7 @@ const testData: testTools.testInput[] = [
     expected: false,
     input: { l: [5, 2, 3] },
     testFn: input => {
-      return list.isSorted(input.l);
+      return l.isSorted(input.l);
     },
     label: 'list isSorted - false, [5,2,3]',
     shouldRun: true,
@@ -43,7 +43,7 @@ const testData: testTools.testInput[] = [
     expected: true,
     input: { l: [1, 2, 3] },
     testFn: input => {
-      return list.isSortedAsc(input.l);
+      return l.isSortedAsc(input.l);
     },
     label: 'list isSortedAsc - true, [1,2,3]',
     shouldRun: true,
@@ -52,7 +52,7 @@ const testData: testTools.testInput[] = [
     expected: false,
     input: { l: [5, 2, 3] },
     testFn: input => {
-      return list.isSortedAsc(input.l);
+      return l.isSortedAsc(input.l);
     },
     label: 'list isSortedAsc - false, [5,2,3]',
     shouldRun: true,
@@ -61,7 +61,7 @@ const testData: testTools.testInput[] = [
     expected: true,
     input: { l: [5, 4, 3] },
     testFn: input => {
-      return list.isSortedDesc(input.l);
+      return l.isSortedDesc(input.l);
     },
     label: 'list isSortedDesc - false, [5,4,3]',
     shouldRun: true,
@@ -70,7 +70,7 @@ const testData: testTools.testInput[] = [
     expected: true,
     input: { l: [] },
     testFn: input => {
-      return list.isSorted(input.l);
+      return l.isSorted(input.l);
     },
     label: 'list isSorted - true, []',
     shouldRun: true,
@@ -79,7 +79,7 @@ const testData: testTools.testInput[] = [
     expected: true,
     input: { l: [] },
     testFn: input => {
-      return list.isSortedAsc(input.l);
+      return l.isSortedAsc(input.l);
     },
     label: 'list isSortedAsc - true, []',
     shouldRun: true,
@@ -88,7 +88,7 @@ const testData: testTools.testInput[] = [
     expected: true,
     input: { l: [] },
     testFn: input => {
-      return list.isSortedDesc(input.l);
+      return l.isSortedDesc(input.l);
     },
     label: 'list isSortedDesc - true, []',
     shouldRun: true,
@@ -102,7 +102,7 @@ const testData: testTools.testInput[] = [
       ],
     },
     testFn: input => {
-      return list.isSorted(input.l, (f, s) => f.n <= s.n);
+      return l.isSorted(input.l, (f, s) => f.n <= s.n);
     },
     label: 'list isSorted - true, complex json structure sort by field n',
     shouldRun: true,
@@ -116,7 +116,7 @@ const testData: testTools.testInput[] = [
       ],
     },
     testFn: input => {
-      return list.isSorted(input.l, (f, s) => f.n >= s.n);
+      return l.isSorted(input.l, (f, s) => f.n >= s.n);
     },
     label: 'list isSorted - false, complex json structure sort by field n',
     shouldRun: true,
@@ -130,7 +130,7 @@ const testData: testTools.testInput[] = [
       ],
     },
     testFn: input => {
-      return list.isSorted(input.l, (f, s) => f.l.localeCompare(s.l) <= 0);
+      return l.isSorted(input.l, (f, s) => f.l.localeCompare(s.l) <= 0);
     },
     label: 'list isSorted - true, complex json structure sort by field l',
     shouldRun: true,
@@ -144,7 +144,7 @@ const testData: testTools.testInput[] = [
       ],
     },
     testFn: input => {
-      return list.isSorted(input.l, (f, s) => f.l.localeCompare(s.l) >= 0);
+      return l.isSorted(input.l, (f, s) => f.l.localeCompare(s.l) >= 0);
     },
     label: 'list isSorted - false, complex json structure sort by field l',
     shouldRun: true,
