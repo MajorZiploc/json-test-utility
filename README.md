@@ -191,7 +191,70 @@ const result = s.splitCamelCase(input.str, input.separator); // 'extr3m3<:>Camel
 ### Json Migration
 Look at ./src/spec/JsonMigration.test.ts for test cases
 ```
-import { jsonMigration, ListOfJsonMigratorOf } from "json-test-utility";
+import { jsonMigration, ListOfJsonMigratorOf, IJsonMigrator, jsonRefactor as jr } from "json-test-utility";
+
+// The function migrateJsons
+// Used to migrate jsons given json migrators
+
+class NameMigrator implements IJsonMigrator {
+  apply(json: any) {
+    const subJson = jr.subJson(json, ['status', 'date']);
+    return jr.addField(
+      subJson,
+      'name',
+      (json.prefix.length == 0 ? '' : json.prefix + ' ') + json.firstName + ' ' + json.lastName
+    );
+  }
+  description(): string {
+    return 'places all name fields into one field';
+  }
+}
+const nameMigrator = new NameMigrator();
+
+class DateMigrator implements IJsonMigrator {
+  apply(json: any) {
+    return jr.setField(json, 'date', json.date.replace(/\//g, '-'));
+  }
+  description(): string {
+    return 'Converts / to - for the date field';
+  }
+}
+const dateMigrator = new DateMigrator();
+
+const input = {
+  startingJsons: [
+    {
+      status: 200,
+      date: '11/12/20',
+      prefix: 'Mr. Sir',
+      firstName: 'Jacoby',
+      lastName: 'Bryan',
+    },
+    {
+      status: 302,
+      date: '1/2/19',
+      prefix: '',
+      firstName: 'James',
+      lastName: 'Yoyo',
+    },
+  ],
+  migrators: [dateMigrator, nameMigrator],
+};
+const result = jsonMigration.migrateJsons(input.startingJsons, input.migrators);
+// result is equal to the below
+// [
+//   {
+//     status: 200,
+//     date: '11-12-20',
+//     name: 'Mr. Sir Jacoby Bryan',
+//   },
+//   {
+//     status: 302,
+//     date: '1-2-19',
+//     name: 'James Yoyo',
+//   },
+// ];
+
 ```
 
 ### Json Masker
