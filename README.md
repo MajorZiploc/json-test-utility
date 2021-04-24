@@ -5,19 +5,25 @@ https://github.com/MajorZiploc/json-test-utility
 
 ## Purpose
 A utility library for refactoring, comparing, and migrating jsons.
+
 Useful for writing api test suites.
+
 Migration and json refactor tools can be used to automate test data jsons as if they are a database.
+
 Comparison tool allows you to compare jsons and arrays in more flexible ways.
 
 ## Motivation
 Although there are many other frameworks for testing, the api of testing json comparisons of various kinds is different in each.
+
 This library gives one api that can be used in combination with any other ui, api, or unit testing javascript framework
 
 ## Examples
 
 ### Json Comparison
 Useful for comparing jsons
+
 Look at ./src/spec/JsonComparer.test.ts for test cases
+
 ```
 import { jsonComparer as jc } from "json-test-utility";
 // The following examples are only a subset of all the functions
@@ -83,7 +89,9 @@ console.log(result) // true
 
 ### Json Refactoring
 Useful for changing or refactoring json data
+
 Look at ./src/spec/JsonRefactor.test.ts for test cases
+
 ```
 import { jsonRefactor as jr } from "json-test-utility";
 
@@ -157,7 +165,9 @@ console.log(result); // { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } 
 
 ### Variable
 Useful for formatting variables
+
 Look at ./src/spec/Variable.test.ts for test cases
+
 ```
 import { variable } from "json-test-utility";
 
@@ -175,7 +185,9 @@ const result = variable.splitCamelCase({ extr3m3CamelCasist4YouSwe3tie }, '<:>')
 
 ### String
 Useful for formatting strings
+
 Look at ./src/spec/String.test.ts for test cases
+
 ```
 import { string as s } from "json-test-utility";
 
@@ -194,8 +206,11 @@ const result = s.splitCamelCase(input.str, input.separator); // 'extr3m3<:>Camel
 
 ### Json Migration
 Used to migrate json data.
+
 Useful for migrating large amounts of test data.
+
 Look at ./src/spec/JsonMigration.test.ts for test cases
+
 ```
 import { jsonMigration, ListOfJsonMigratorOf, IJsonMigrator, jsonRefactor as jr } from "json-test-utility";
 
@@ -265,15 +280,19 @@ const result = jsonMigration.migrateJsons(input.startingJsons, input.migrators);
 
 ### Json Masker
 Used to mask the data in jsons
+
 Can use default masking strategies, other built in strategies, or user defined strategies per data type.
+
 The default masking strategy is DataMaskingStrategy.Scramble
 
 Built in strategies:
+
 export enum DataMaskingStrategy {
   Identity,
   Scramble,
   Nullify
 }
+
 Look at ./src/spec/JsonMasker.test.ts for test cases
 ```
 import { jsonMasker as jmk, DataMaskingStrategy } from "json-test-utility";
