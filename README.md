@@ -14,6 +14,7 @@ Although there are many other frameworks for testing, the api of testing json co
 This library gives one api that can be used in combination with any other ui, api, or unit testing javascript framework
 
 ## Examples
+
 ### Json Comparison
 Look at ./src/spec/JsonComparer.test.ts for test cases / examples
 ```
@@ -78,6 +79,7 @@ const result = jc.isSubset(json1, json2);
 console.log(result) // true
 
 ```
+
 ### Json Refactoring
 Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
 ```
@@ -150,21 +152,25 @@ const result = jr.addField(input, 'j.i', { k: [{ x: 1 }, 1] });
 console.log(result); // { status: 200, e: 'jones', j: { i: { k: [{ x: 1 }, 1] } } }
 
 ```
+
 ### Json Migration
 Look at ./src/spec/JsonMigration.test.ts for test cases / examples
 ```
 import { jsonMigration, ListOfJsonMigratorOf } from "json-test-utility";
 ```
+
 ### Json Masker
 Look at ./src/spec/JsonMasker.test.ts for test cases / examples
 ```
 import { jsonMasker } from "json-test-utility";
 ```
+
 ### Variable
 Look at ./src/spec/Variable.test.ts for test cases / examples
 ```
 import { variable } from "json-test-utility";
 ```
+
 ### String
 Look at ./src/spec/String.test.ts for test cases / examples
 ```
