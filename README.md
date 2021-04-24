@@ -15,6 +15,22 @@ This library gives one api that can be used in combination with any other ui, ap
 Look at ./src/spec/JsonComparer.test.ts for test cases / examples
 ```
 import { jsonComparer as jc } from "json-test-utility";
+
+// The typecheck function
+// There are tons of options, check out the index.d.ts or intellisense for more
+// check that a json (possibly an actual api json) is of the expected contract
+// given options for checking:
+// 1) if some keys are dates
+// 2) check that some lists are of the right type or empty
+// 3) check if some keys are of the right type or null
+let contractJson = [{ a: { j: [{ d: '2222-12-29' }] }, z: { k: [1] }, l: [''], u: 1000, qq: [1] }];
+let actualJson = [{ a: { j: [] }, z: { k: [1, 2, 3] }, l: [], u: 8, qq: null }];
+let result = jc.typecheck(actualJson, contractJson, {
+  dateKeys: ['a.j.d'],
+  emptyListKeys: ['a.j', 'z.k', 'l', 'qq'],
+  nullableKeys: ['qq'],
+});
+console.log(result); // true
 ```
 ### Json Refactoring
 Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
