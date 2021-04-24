@@ -63,6 +63,20 @@ let json2 = { x: 'asdffd', y: { fdsa: 1 }, s: 1 };
 let result = jc.sameKeys(json1, json2);
 console.log(result); // false
 
+// The function isSubsetKeys
+// Check if json1's keys are a subset of json2's keys
+let json1 = { x1: 123, y: { z: 1 } };
+let json2 = { x: 'ban', y: { z: 'anas' }, jk: 'extra' };
+let result = jc.isSubsetKeys(json1, json2);
+console.log(result); // false since json1's keys are not a subset of json2's keys
+
+// The function isSubset
+// Check if json1 is a subset of json2, includes key and value equality check
+let json1 = { x: 123, y: { z: 1 } };
+let json2 = { x: 123, y: { z: 1 }, jk: 'extra' };
+let result = jc.isSubset(json1, json2);
+console.log(result) // true
+
 ```
 ### Json Refactoring
 Look at ./src/spec/JsonRefactor.test.ts for test cases / examples
