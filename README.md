@@ -28,9 +28,9 @@ import { jsonComparer as jc } from "json-test-utility";
 // 1) if some keys are dates
 // 2) check that some lists are of the right type or empty
 // 3) check if some keys are of the right type or null
-let contractJson = [{ a: { j: [{ d: '2222-12-29' }] }, z: { k: [1] }, l: [''], u: 1000, qq: [1] }];
-let actualJson = [{ a: { j: [] }, z: { k: [1, 2, 3] }, l: [], u: 8, qq: null }];
-let result = jc.typecheck(actualJson, contractJson, {
+const contractJson = [{ a: { j: [{ d: '2222-12-29' }] }, z: { k: [1] }, l: [''], u: 1000, qq: [1] }];
+const actualJson = [{ a: { j: [] }, z: { k: [1, 2, 3] }, l: [], u: 8, qq: null }];
+const result = jc.typecheck(actualJson, contractJson, {
   dateKeys: ['a.j.d'],
   emptyListKeys: ['a.j', 'z.k', 'l', 'qq'],
   nullableKeys: ['qq'],
@@ -40,41 +40,41 @@ console.log(result); // true
 // The findAllKeyPaths function
 // A way to find all keys that contain a regex pattern in a json
 // That contain power with case insensitive and global flags
-let json = {
+const json = {
   super_pOweRful: { PoWeRpOwEr: 1 },
   kind: { plusultra: { qq: { power_slow_PoweR: 1 } }, nothingCoolHere: { x: 1, y: 3, zzz: { zzzzz: { I: 9 } } } },
 };
-let pattern = 'po.er';
-let regexOptions = 'gi';
-let result = jc.findAllKeyPaths(json, pattern, regexOptions);
+const pattern = 'po.er';
+const regexOptions = 'gi';
+const result = jc.findAllKeyPaths(json, pattern, regexOptions);
 console.log(result); //['super_pOweRful', 'super_pOweRful.PoWeRpOwEr', 'kind.plusultra.qq.power_slow_PoweR']
 
 // The function containSameElements
 // Check if the arrays have the same elements
-let array1 = [1, 2, { qq: ';-;' }];
-let array2 = [{ qq: ';-;' }, 2, 1];
-let result = jc.containSameElements(array1, array2);
+const array1 = [1, 2, { qq: ';-;' }];
+const array2 = [{ qq: ';-;' }, 2, 1];
+const result = jc.containSameElements(array1, array2);
 console.log(result); // true
 
 // The function sameKeys
 // For jsons with different keys
-let json1 = { x: 123, y: { z: 1 } };
-let json2 = { x: 'asdffd', y: { fdsa: 1 }, s: 1 };
-let result = jc.sameKeys(json1, json2);
+const json1 = { x: 123, y: { z: 1 } };
+const json2 = { x: 'asdffd', y: { fdsa: 1 }, s: 1 };
+const result = jc.sameKeys(json1, json2);
 console.log(result); // false
 
 // The function isSubsetKeys
 // Check if json1's keys are a subset of json2's keys
-let json1 = { x1: 123, y: { z: 1 } };
-let json2 = { x: 'ban', y: { z: 'anas' }, jk: 'extra' };
-let result = jc.isSubsetKeys(json1, json2);
+const json1 = { x1: 123, y: { z: 1 } };
+const json2 = { x: 'ban', y: { z: 'anas' }, jk: 'extra' };
+const result = jc.isSubsetKeys(json1, json2);
 console.log(result); // false since json1's keys are not a subset of json2's keys
 
 // The function isSubset
 // Check if json1 is a subset of json2, includes key and value equality check
-let json1 = { x: 123, y: { z: 1 } };
-let json2 = { x: 123, y: { z: 1 }, jk: 'extra' };
-let result = jc.isSubset(json1, json2);
+const json1 = { x: 123, y: { z: 1 } };
+const json2 = { x: 123, y: { z: 1 }, jk: 'extra' };
+const result = jc.isSubset(json1, json2);
 console.log(result) // true
 
 ```
@@ -85,21 +85,21 @@ import { jsonRefactor as jr } from "json-test-utility";
 
 // The function minusJsons
 // json1 - json2
-let json1 = { x: 1, y: 2, z: 4, a: { xa: ['', {}] } };
-let json2 = { a: 3, x: [] };
-let result = jr.minusJsons(json1, json2);
+const json1 = { x: 1, y: 2, z: 4, a: { xa: ['', {}] } };
+const json2 = { a: 3, x: [] };
+const result = jr.minusJsons(json1, json2);
 console.log(result); // { y: 2, z: 4 };
 
 // The function subJson
 // Create a new json of the specified keys
-let json = { x: 1, y: 2, z: 3 };
-let result = jr.subJson(json, ['y', 'z']);
+const json = { x: 1, y: 2, z: 3 };
+const result = jr.subJson(json, ['y', 'z']);
 console.log(result); // { y: 2, z: 3 };
 
 // The function subJsonExcept
 // Create a new json of the keys not specified
-let json = { x: 1, y: 2, z: 3 };
-let result = jr.subJsonExcept(json, ['y', 'z']);
+const json = { x: 1, y: 2, z: 3 };
+const result = jr.subJsonExcept(json, ['y', 'z']);
 console.log(result); // { x: 1 }
 
 // The function toKeyValArray
