@@ -49,12 +49,19 @@ let regexOptions = 'gi';
 let result = jc.findAllKeyPaths(json, pattern, regexOptions);
 console.log(result); //['super_pOweRful', 'super_pOweRful.PoWeRpOwEr', 'kind.plusultra.qq.power_slow_PoweR']
 
-// The functioncontainSameElements
+// The function containSameElements
 // Check if the arrays have the same elements
 let array1 = [1, 2, { qq: ';-;' }];
 let array2 = [{ qq: ';-;' }, 2, 1];
 let result = jc.containSameElements(array1, array2);
-console.log(result); //true
+console.log(result); // true
+
+// The function sameKeys
+// For jsons with different keys
+let json1 = { x: 123, y: { z: 1 } };
+let json2 = { x: 'asdffd', y: { fdsa: 1 }, s: 1 };
+let result = jc.sameKeys(json1, json2);
+console.log(result); // false
 
 ```
 ### Json Refactoring
