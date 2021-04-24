@@ -204,6 +204,25 @@ const result = s.splitCamelCase(input.str, input.separator); // 'extr3m3<:>Camel
 
 ```
 
+### List
+Useful for checking sorting of lists
+
+Look at ./src/spec/List.test.ts for test cases
+
+```
+import { list as l } from "json-test-utility";
+
+// The function isSorted
+// Check if a list is sorted
+const lst = [
+  { n: 1, l: 'pancakes' },
+  { n: 2, l: 'zone cones' }
+];
+const result = l.isSorted(lst, (f, s) => f.l.localeCompare(s.l) <= 0);
+console.log(result); // true
+
+```
+
 ### Json Migration
 Used to migrate json data.
 
