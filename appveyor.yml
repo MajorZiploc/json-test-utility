@@ -19,6 +19,9 @@ test_script:
   # run tests
   - yarn run specs
 
+build_script:
+  - sh ./build.sh
+
 cache:
   - node_modules -> package.json
   - '%APPDATA%\npm-cache'
