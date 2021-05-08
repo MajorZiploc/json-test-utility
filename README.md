@@ -353,6 +353,7 @@ console.log(maskedJson); // { x: true, l: [2, 3, 4, 5] }
 - 0.2.8 - Adds JsonComparer.typecheck for type checking api contracts
 - 0.2.9 - Adds basic docs to readme
 - 0.3.0 - Adds details docs to readme
+- 0.3.1 - Adds appveyor cicd pipeline
 
 
 ## Contributing
