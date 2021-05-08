@@ -4,8 +4,6 @@ environment:
 
 # Install scripts. (runs after repo cloning)
 install:
-  - ps: '"//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII'
-  - npm whoami
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
   # install modules
@@ -20,13 +18,14 @@ test_script:
   - yarn run specs
 
 build_script:
-  - sh ./build.sh
+  - cmd: sh ./build.sh
 
 cache:
   - node_modules -> package.json
   - '%APPDATA%\npm-cache'
 
 deploy_script:
+  - cmd: sh ./refresh_npm_auth_token.sh
   - cmd: sh ./deploy.sh
     on:
       branch: master
