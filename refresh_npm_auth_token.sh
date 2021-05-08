@@ -1,4 +1,4 @@
 #!/bin/bash
 
-"//registry.npmjs.org/:_authToken=$npm_auth_token\n" > "~/.npmrc"
+"//registry.npmjs.org/:_authToken=$npm_auth_token\n" > "$HOME/.npmrc"
 
