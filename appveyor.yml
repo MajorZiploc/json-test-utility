@@ -11,24 +11,24 @@ install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
   # install modules
-  - yarn install
+  - cmd: yarn install
 
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
-  - node --version
-  - yarn --version
+  - cmd: node --version
+  - cmd: yarn --version
   # run tests
-  - yarn run specs
+  - cmd: yarn run specs
 
 build_script:
-  - cmd: sh ./build.sh
+  - cmd: sh ./appveyor_helpers/build.sh
 
 cache:
   - node_modules -> package.json
   - '%APPDATA%\npm-cache'
 
 deploy_script:
-  - cmd: sh ./refresh_npm_auth_token.sh
-  - cmd: sh ./deploy.sh
+  - cmd: sh ./appveyor_helpers/refresh_npm_auth_token.sh
+  - cmd: sh ./appveyor_helpers/deploy.sh
 
