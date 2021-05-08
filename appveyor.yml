@@ -24,10 +24,6 @@ test_script:
 build_script:
   - cmd: sh ./appveyor_helpers/build.sh
 
-cache:
-  - node_modules -> package.json
-  - '%APPDATA%\npm-cache'
-
 deploy_script:
   - cmd: sh ./appveyor_helpers/refresh_npm_auth_token.sh
   - cmd: sh ./appveyor_helpers/deploy.sh
