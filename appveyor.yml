@@ -31,6 +31,4 @@ cache:
 deploy_script:
   - cmd: sh ./refresh_npm_auth_token.sh
   - cmd: sh ./deploy.sh
-    on:
-      branch: master
 
