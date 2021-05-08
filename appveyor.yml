@@ -2,6 +2,10 @@
 environment:
   nodejs_version: "6"
 
+branches:
+  only:
+    - master
+
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node.js or io.js
@@ -27,6 +31,4 @@ cache:
 deploy_script:
   - cmd: sh ./refresh_npm_auth_token.sh
   - cmd: sh ./deploy.sh
-    on:
-      branch: master
 
