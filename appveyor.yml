@@ -27,7 +27,7 @@ cache:
   - '%APPDATA%\npm-cache'
 
 deploy_script:
-  - sh ./deploy.sh
+  - cmd: sh ./deploy.sh
     on:
       branch: master
 
