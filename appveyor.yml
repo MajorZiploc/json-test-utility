@@ -19,7 +19,7 @@ test_script:
   - cmd: node --version
   - cmd: yarn --version
   # run tests
-  - cmd: yarn run specs
+  - cmd: yarn run test
 
 build_script:
   - cmd: sh ./appveyor_helpers/build.sh
