@@ -354,6 +354,7 @@ console.log(maskedJson); // { x: true, l: [2, 3, 4, 5] }
 - 0.2.9 - Adds basic docs to readme
 - 0.3.0 - Adds details docs to readme
 - 0.3.1 - Adds appveyor cicd pipeline
+- 0.3.2 - Edits test case messages and removes js build files from git
 
 
 ## Contributing
@@ -378,9 +379,3 @@ See the package.json for all scripts
 
 `> yarn run specs`
 
-## Publishing a new version
-Make sure the version in the package.json is unique / bumped up
-```
-> npm login
-> npm publish
-```
