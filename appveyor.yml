@@ -10,8 +10,6 @@ branches:
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
-  - ps: '"//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII'
-  - cmd: npm whoami
   # install modules
   - cmd: yarn install
 
@@ -32,5 +30,6 @@ cache:
 
 deploy_script:
   - ps: '"//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII'
+  - cmd: npm whoami
   - cmd: sh ./appveyor_helpers/deploy.sh
 
