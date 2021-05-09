@@ -355,6 +355,7 @@ console.log(maskedJson); // { x: true, l: [2, 3, 4, 5] }
 - 0.3.0 - Adds details docs to readme
 - 0.3.1 - Adds appveyor cicd pipeline
 - 0.3.2 - Edits test case messages and removes js build files from git
+- 0.3.3 - Adds js build files back to git, removing lead to import issue
 
 
 ## Contributing
