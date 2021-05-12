@@ -4,13 +4,16 @@
 https://github.com/MajorZiploc/json-test-utility
 
 ## Purpose
-A utility library for refactoring, comparing, and migrating jsons.
+A utility library for refactoring, comparing, migrating, and masking jsons.
 
 Useful for writing api test suites.
 
 Migration and json refactor tools can be used to automate test data jsons as if they are a database.
 
 Comparison tool allows you to compare jsons and arrays in more flexible ways.
+
+Masking tool allows you to mask data with various strategies (or your own strategy) to protect PHI and generate test
+data.
 
 ## Motivation
 Although there are many other frameworks for testing, the api of testing json comparisons of various kinds is different in each.
