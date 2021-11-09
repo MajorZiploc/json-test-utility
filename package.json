@@ -22,10 +22,10 @@
   "devDependencies": {
     "@types/lodash": "^4.14.151",
     "@types/tape": "^4.13.0",
-    "@types/tape-catch": "^1.0.0",
+    "@types/tape-async": "^2.3.1",
+    "tape-async": "^2.3.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.0.0",
-    "tape-catch": "^1.0.6",
     "ts-node": "^8.10.1",
     "typescript": "^3.9.2"
   },

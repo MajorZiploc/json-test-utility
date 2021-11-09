@@ -36,8 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testerAsync = exports.tester = exports.reporter = exports.safeStringify = void 0;
-var test = require("tape-catch");
+exports.tester = exports.reporter = exports.safeStringify = void 0;
+var test = require("tape-async");
 var _ = require("lodash");
 function safeStringify(thing) {
     try {
@@ -56,62 +56,56 @@ function reporter(actual, expected) {
 }
 exports.reporter = reporter;
 function tester(testData) {
-    if (testData.every(function (d) { var _a; return !((_a = d.shouldRun) !== null && _a !== void 0 ? _a : true); })) {
-        console.log('All test cases are marked as shouldRun=false!');
-    }
-    testData.forEach(function (d) {
-        var _a, _b, _c, _d, _e;
-        var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
-        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : (function (a, e, i) { return _.isEqual(a, e); });
-        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : (function (a, e, i) { return reporter(a, e); });
-        var tester = shouldRun ? test : test.skip;
-        var setup = (_d = d.setup) !== null && _d !== void 0 ? _d : (function () { });
-        var cleanup = (_e = d.cleanup) !== null && _e !== void 0 ? _e : (function () { });
-        tester(d.label, function (t) {
-            setup();
-            var input = d.input;
-            var actual = d.testFn(input);
-            var expected = d.expected;
-            t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
-            cleanup();
-            t.end();
-        });
-    });
-}
-exports.tester = tester;
-function testerAsync(testData) {
     var _this = this;
     if (testData.every(function (d) { var _a; return !((_a = d.shouldRun) !== null && _a !== void 0 ? _a : true); })) {
         console.log('All test cases are marked as shouldRun=false!');
     }
     testData.forEach(function (d) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         var shouldRun = (_a = d.shouldRun) !== null && _a !== void 0 ? _a : true;
-        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : (function (a, e, i) { return _.isEqual(a, e); });
-        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : (function (a, e, i) { return reporter(a, e); });
+        var comparer = (_b = d.comparer) !== null && _b !== void 0 ? _b : (function (a, e, _i) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+            return [2 /*return*/, _.isEqual(a, e)];
+        }); }); });
+        var testReporter = (_c = d.reporter) !== null && _c !== void 0 ? _c : (function (a, e, _r, _i) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+            return [2 /*return*/, reporter(a, e)];
+        }); }); });
         var tester = shouldRun ? test : test.skip;
         var setup = (_d = d.setup) !== null && _d !== void 0 ? _d : (function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
             return [2 /*return*/];
         }); }); });
-        var cleanup = (_e = d.cleanup) !== null && _e !== void 0 ? _e : (function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+        var testFn = (_e = d.testFn) !== null && _e !== void 0 ? _e : (function (input) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+            return [2 /*return*/, input];
+        }); }); });
+        var cleanup = (_f = d.cleanup) !== null && _f !== void 0 ? _f : (function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
             return [2 /*return*/];
         }); }); });
         tester(d.label, function (t) { return __awaiter(_this, void 0, void 0, function () {
-            var input, actual, expected;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var input, actual, expected, wasSuccessful, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0: return [4 /*yield*/, setup()];
                     case 1:
-                        _a.sent();
-                        input = d.input;
-                        return [4 /*yield*/, d.asyncTestFn(input)];
+                        _d.sent();
+                        return [4 /*yield*/, d.input];
                     case 2:
-                        actual = _a.sent();
-                        expected = d.expected;
-                        t.true(comparer(actual, expected, input), testReporter(actual, expected, input));
-                        return [4 /*yield*/, cleanup()];
+                        input = _d.sent();
+                        return [4 /*yield*/, testFn(input)];
                     case 3:
-                        _a.sent();
+                        actual = _d.sent();
+                        return [4 /*yield*/, d.expected];
+                    case 4:
+                        expected = _d.sent();
+                        return [4 /*yield*/, comparer(actual, expected, input)];
+                    case 5:
+                        wasSuccessful = _d.sent();
+                        _b = (_a = t).true;
+                        _c = [wasSuccessful];
+                        return [4 /*yield*/, testReporter(actual, expected, wasSuccessful, input)];
+                    case 6:
+                        _b.apply(_a, _c.concat([_d.sent()]));
+                        return [4 /*yield*/, cleanup()];
+                    case 7:
+                        _d.sent();
                         t.end();
                         return [2 /*return*/];
                 }
@@ -119,5 +113,5 @@ function testerAsync(testData) {
         }); });
     });
 }
-exports.testerAsync = testerAsync;
+exports.tester = tester;
 //# sourceMappingURL=testTools.js.map
