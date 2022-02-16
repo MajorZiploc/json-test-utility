@@ -21,6 +21,7 @@ var JsonMasker = /** @class */ (function () {
             DataMaskingStrategy.Scramble,
             // DataMaskingStrategy.Md5,
             DataMaskingStrategy.Nullify,
+            // DataMaskingStrategy.Deep // will be used to mask things inside lists and jsons even if json and list have a masking strategy of their own
         ];
         this.DataMaskingStrategyList = DataMaskingStrategyList;
         var DataMaskingStrategyNameList = [];
