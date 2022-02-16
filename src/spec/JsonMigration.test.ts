@@ -2,8 +2,6 @@ import * as testTools from '../testTools';
 import { jsonMigration } from '../JsonMigration';
 import * as _ from 'lodash';
 import * as m from './JsonMigrators';
-import { ListOfJsonMigratorOf } from './../ListOfJsonMigrator';
-import * as test from 'tape-catch';
 
 const testData: testTools.testInput[] = [
   {
