@@ -28,14 +28,14 @@ var JsonRefactor = /** @class */ (function () {
     };
     JsonRefactor.prototype.toKeyValArray = function (json) {
         if (json === null || json === undefined) {
-            return null;
+            return json;
         }
         return Object.keys(json).map(function (key) { return ({ key: key, value: json[key] }); });
     };
     JsonRefactor.prototype.fromKeyValArray = function (keyValueArray) {
         var _this = this;
         if (keyValueArray === null || keyValueArray === undefined) {
-            return null;
+            return keyValueArray;
         }
         return keyValueArray.reduce(function (acc, ele) { return _this.addField(acc, ele.key, ele.value); }, {});
     };

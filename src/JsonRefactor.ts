@@ -31,14 +31,14 @@ class JsonRefactor {
 
   public toKeyValArray(json: any): Array<{ key: string; value: any }> {
     if (json === null || json === undefined) {
-      return null;
+      return json;
     }
     return Object.keys(json).map(key => ({ key: key, value: json[key] }));
   }
 
   public fromKeyValArray(keyValueArray: Array<{ key: string; value: any }>) {
     if (keyValueArray === null || keyValueArray === undefined) {
-      return null;
+      return keyValueArray;
     }
     return keyValueArray.reduce((acc, ele) => this.addField(acc, ele.key, ele.value), {});
   }
